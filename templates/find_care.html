@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Find Low-Cost Care & Government Schemes — HealthMate AI</title>
+    <meta name="description" content="Search public hospitals, community health centres, de-addiction and psychiatric facilities across all 36 Indian States and 765 LGD districts with GPS and symptom matching.">
+    
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nirmala+UI:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS for OpenStreetMap (SPEC.md Phase 4) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <style>
+        .filter-panel {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .symptom-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+        .symptom-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .symptom-chip {
+            background: #ffffff;
+            border: 1px solid #86efac;
+            color: #166534;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .symptom-chip:hover {
+            background: #dcfce7;
+            border-color: #22c55e;
+            transform: translateY(-1px);
+        }
+        .match-alert {
+            background: #ecfdf5;
+            border: 1px solid #6ee7b7;
+            color: #065f46;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-top: 0.75rem;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .facility-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .facility-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .facility-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .fee-tag {
+            display: inline-block;
+            background: #ecfdf5;
+            color: #047857;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            border: 1px solid #a7f3d0;
+        }
+        .verify-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.55rem;
+            border-radius: 6px;
+            border: 1px solid #fde68a;
+        }
+        .verified-govt-badge {
+            display: inline-block;
+            background: #eff6ff;
+            color: #1e40af;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.55rem;
+            border-radius: 6px;
+            border: 1px solid #bfdbfe;
+        }
+        .distance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+        }
+        #facilitiesMap {
+            height: 420px;
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+            z-index: 10;
+        }
+        .gps-status-box {
+            padding: 0.85rem 1.15rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: none;
+        }
+        .pagination-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .scheme-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.35rem;
+            box-shadow: var(--shadow-sm);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Utility & Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">ఆరోగ్య సహచరి • Personal Health Copilot</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <span class="blood-group-badge" id="headerBloodGroupBadge" title="Active Patient Blood Group" style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; border-radius: 20px; font-weight: 700; font-size: 0.85rem; background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;">
+                    🩸 <span id="headerBloodGroupText">O+</span>
+                </span>
+                <a href="{{ url_for('logout_page') }}" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca;">🚪 Sign Out</a>
+            </div>
+        </div>
+    </header>
+    {% set active_page = 'find_care' %}
+    {% include "nav_shared.html" %}
+
+    <!-- Emergency Hotline Banner (SPEC.md Phase 3 Section 8: 108, 112, 104, 14416, share-location, blood group) -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong id="emergencyAlertHead">Emergency Medical Helplines:</strong>
+                <span id="emergencyAlertSub">Call instantly in case of chest pain, stroke, or severe breathlessness</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill" id="hotline108"><strong>108</strong> <span id="lblAmbulance">Ambulance</span></a>
+                <a href="tel:112" class="hotline-pill" id="hotline112"><strong>112</strong> <span id="lblNational">National Helpline</span></a>
+                <a href="tel:104" class="hotline-pill" id="hotline104"><strong>104</strong> <span id="lblHealthAdvice">Health Advice</span></a>
+                <a href="tel:14416" class="hotline-pill" id="hotline14416" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;"><strong>14416</strong> <span id="lblTeleManas">Tele-MANAS (Mental Health)</span></a>
+                <button type="button" class="hotline-pill" id="btnEmergencyShareLoc" style="cursor: pointer; background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">📍 <span id="lblShareLocation">Share Location</span></button>
+                <span class="hotline-pill" id="emergencyBloodGroupPill" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;">🩸 <span id="emergencyBloodGroupText">O+</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <main class="main-wrapper container" style="padding: 2rem 1rem;">
+        <div style="margin-bottom: 1.5rem;">
+            <h2 style="color: #1e3a8a; font-size: 1.85rem; margin-bottom: 0.25rem;">🏥 Find Nearby Low-Cost Care & Government Schemes</h2>
+            <p style="color: #64748b;">Verified Indian public health infrastructure across all 36 States/UTs and 765 LGD districts. Includes District Hospitals, CHCs, PHCs, DMHP Psychiatric clinics, and De-addiction centres.</p>
+        </div>
+
+        <!-- SYMPTOM TO SPECIALITY MATCHER (SPEC.md Phase 4 Section 9 & 16e) -->
+        <div class="symptom-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <h3 style="margin: 0; color: #14532d; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🩺</span> AI Lay-Term Symptom Matcher (300+ Indian Symptoms)
+                </h3>
+                <span style="font-size: 0.8rem; background: #dcfce7; color: #166534; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 4px;">Rule-Based Knowledge Engine</span>
+            </div>
+            <p style="color: #166534; font-size: 0.9rem; margin: 0 0 0.75rem 0;">Type your symptoms in simple everyday language. HealthMate AI will identify the appropriate medical specialty and auto-filter nearby clinics.</p>
+            
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <input type="text" id="symptomInput" class="form-input" style="flex: 1; min-width: 280px; padding: 0.65rem 1rem;" placeholder="e.g. chest pain, craving alcohol, feeling hopeless, knee pain, skin rash...">
+                <button type="button" id="btnMatchSymptom" class="btn btn-primary" style="background: #15803d; border-color: #15803d;">Find Specialty</button>
+                <button type="button" id="btnClearSymptom" class="btn btn-secondary">Clear</button>
+            </div>
+
+            <div class="symptom-chips">
+                <span style="font-size: 0.85rem; font-weight: 700; color: #166534; display: flex; align-items: center;">Try Common Symptoms:</span>
+                <button type="button" class="symptom-chip" data-symptom="chest pain">🚨 Chest Pain</button>
+                <button type="button" class="symptom-chip" data-symptom="craving alcohol">🍷 Craving Alcohol</button>
+                <button type="button" class="symptom-chip" data-symptom="feeling hopeless">🧠 Feeling Hopeless / Sad</button>
+                <button type="button" class="symptom-chip" data-symptom="shortness of breath">🫁 Shortness of Breath</button>
+                <button type="button" class="symptom-chip" data-symptom="joint pain">🦴 Joint Pain (Knee)</button>
+                <button type="button" class="symptom-chip" data-symptom="severe skin rash">🧴 Skin Rash</button>
+                <button type="button" class="symptom-chip" data-symptom="blurry vision">👁️ Blurry Vision</button>
+                <button type="button" class="symptom-chip" data-symptom="irregular periods">🌸 Irregular Periods</button>
+            </div>
+
+            <div id="symptomMatchAlert" class="match-alert"></div>
+        </div>
+
+        <!-- Filter Panel -->
+        <div class="filter-panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+                <h3 style="margin: 0; color: #1e293b; font-size: 1.15rem;">Filter Healthcare Facilities</h3>
+                <button type="button" class="btn btn-secondary" id="btnUseGps" style="display: flex; align-items: center; gap: 0.4rem; font-weight: 700;">
+                    <span>📍</span> Use My Location (GPS)
+                </button>
+            </div>
+
+            <!-- GPS Feedback Alert with Detailed Permission Guidance -->
+            <div id="gpsAlertBox" class="gps-status-box"></div>
+
+            <form id="careFilterForm">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem;">
+                    <!-- State (36 States/UTs from official LGD list) -->
+                    <div class="form-group">
+                        <label class="form-label" for="filterState">State / UT (36 Official)</label>
+                        <select id="filterState" class="form-select">
+                            <option value="All">All States & UTs</option>
+                            <option value="Telangana" selected>Telangana</option>
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                        </select>
+                    </div>
+
+                    <!-- District (Cascades from State) -->
+                    <div class="form-group">
+                        <label class="form-label" for="filterDistrict">District (LGD)</label>
+                        <select id="filterDistrict" class="form-select">
+                            <option value="All">All Districts</option>
+                            <option value="Hyderabad" selected>Hyderabad</option>
+                        </select>
+                    </div>
+
+                    <!-- Area Type -->
+                    <div class="form-group">
+                        <label class="form-label" for="filterAreaType">Urban / Rural</label>
+                        <select id="filterAreaType" class="form-select">
+                            <option value="All">All Areas</option>
+                            <option value="Urban">Urban</option>
+                            <option value="Rural">Rural</option>
+                        </select>
+                    </div>
+
+                    <!-- Facility Type -->
+                    <div class="form-group">
+                        <label class="form-label" for="filterFacilityType">Facility Type</label>
+                        <select id="filterFacilityType" class="form-select">
+                            <option value="All">All Facility Types</option>
+                            <option value="District Hospital">District Hospital</option>
+                            <option value="Sub-District Hospital">Sub-District Hospital</option>
+                            <option value="Community Health Centre (CHC)">Community Health Centre (CHC)</option>
+                            <option value="Primary Health Centre (PHC)">Primary Health Centre (PHC)</option>
+                            <option value="Psychiatric / DMHP Clinic">Psychiatric / DMHP Clinic</option>
+                            <option value="De-addiction & Rehabilitation Centre">De-addiction & Rehab Centre</option>
+                            <option value="Blood Bank">Blood Bank</option>
+                        </select>
+                    </div>
+
+                    <!-- Specialty -->
+                    <div class="form-group">
+                        <label class="form-label" for="filterSpecialty">Medical Specialty</label>
+                        <select id="filterSpecialty" class="form-select">
+                            <option value="All">All Specialties</option>
+                            <option value="General Medicine">General Medicine</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Psychiatry">Psychiatry</option>
+                            <option value="De-addiction">De-addiction</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Gynecology">Gynecology</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Dermatology">Dermatology</option>
+                            <option value="Ophthalmology">Ophthalmology</option>
+                            <option value="Emergency Medicine">Emergency Medicine</option>
+                        </select>
+                    </div>
+
+                    <!-- Pincode Search -->
+                    <div class="form-group">
+                        <label class="form-label" for="filterPincode">Pincode (PIN)</label>
+                        <input type="text" id="filterPincode" class="form-input" placeholder="e.g. 500001" maxlength="6">
+                    </div>
+                </div>
+
+                <!-- Text Search for Name / Keyword -->
+                <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr auto; gap: 0.75rem;">
+                    <input type="text" id="filterSearch" class="form-input" placeholder="Search facility name, street, doctor name...">
+                    <button type="submit" class="btn btn-primary" id="btnApplyFilters">Apply Filters</button>
+                </div>
+
+                <div style="margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <!-- Female Doctor Filter -->
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 600; color: #1e293b; cursor: pointer;">
+                        <input type="checkbox" id="filterFemaleDoctor" style="width: 18px; height: 18px;">
+                        👩‍⚕️ Female Doctor Only (For Women's Comfort)
+                    </label>
+
+                    <button type="button" class="btn btn-ghost" id="btnResetFilters">Clear Filters</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- LEAFLET + OPENSTREETMAP MAP CONTAINER (SPEC.md Phase 4) -->
+        <div style="margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <h3 style="margin: 0; color: #1e293b; font-size: 1.25rem;">🗺️ Interactive Facility Map View</h3>
+            <span style="font-size: 0.85rem; color: #64748b;">Powered by OpenStreetMap • Color-Coded Facility Pins</span>
+        </div>
+        <div id="facilitiesMap"></div>
+
+        <!-- Facilities Results Grid Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+            <h3 style="margin: 0; color: #1e293b;">
+                Matching Facilities (<span id="countDisplay">0</span>)
+            </h3>
+            <span id="activeSortNotice" style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Showing Page <span id="currentPageNum">1</span></span>
+        </div>
+
+        <!-- Facility Cards Grid -->
+        <div class="facility-grid" id="facilityGrid">
+            <div style="grid-column: 1 / -1; padding: 2rem; text-align: center; color: #64748b; background: #fff; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                Loading verified facilities from database...
+            </div>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-bar" id="paginationBar">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnPrevPage" disabled>← Previous</button>
+            <span style="font-size: 0.9rem; font-weight: 600; color: #334155;" id="paginationInfo">Page 1 of 1</span>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnNextPage" disabled>Next →</button>
+        </div>
+
+        <!-- Government Health Schemes Guide -->
+        <div style="margin-top: 3.5rem;">
+            <h3 style="color: #1e3a8a; font-size: 1.5rem; margin-bottom: 0.5rem;">🇮🇳 Pan-India Free Government Health Safety Nets</h3>
+            <p style="color: #64748b; margin-bottom: 1.5rem;">Official Indian healthcare safety schemes. Confirm eligibility criteria and hospital empanelment directly on the official portals.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+                {% for s in schemes %}
+                <div class="scheme-card">
+                    <h4 style="margin: 0 0 0.25rem 0; color: #0f172a; font-size: 1.1rem;">{{ s.name }}</h4>
+                    <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">{{ s.sponsor }}</span>
+                    <p style="color: #475569; font-size: 0.9rem; line-height: 1.5; margin: 0.75rem 0;">{{ s.description }}</p>
+                    <div style="background: #eff6ff; padding: 0.5rem 0.75rem; border-radius: 6px; font-size: 0.85rem; color: #1e40af; margin-bottom: 0.75rem;">
+                        💰 <strong>Cost:</strong> {{ s.cost }}
+                    </div>
+                    <p style="font-size: 0.8rem; color: #b45309; margin-bottom: 0.75rem;">
+                        ℹ️ <em>{{ s.note }}</em>
+                    </p>
+                    <a href="{{ s.official_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="font-size: 0.85rem;">
+                        Visit Official Website ↗
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Leaflet JS for OpenStreetMap -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        // State Management
+        let userLocation = null; // { lat, lon }
+        let currentPage = 1;
+        let totalPages = 1;
+        let map = null;
+        let markersGroup = null;
+        let userMarker = null;
+
+        // UI Selectors
+        const stateSelect = document.getElementById('filterState');
+        const districtSelect = document.getElementById('filterDistrict');
+        const areaTypeSelect = document.getElementById('filterAreaType');
+        const facilityTypeSelect = document.getElementById('filterFacilityType');
+        const specialtySelect = document.getElementById('filterSpecialty');
+        const pincodeInput = document.getElementById('filterPincode');
+        const searchInput = document.getElementById('filterSearch');
+        const femaleCheck = document.getElementById('filterFemaleDoctor');
+        const countDisplay = document.getElementById('countDisplay');
+        const facilityGrid = document.getElementById('facilityGrid');
+        const gpsBtn = document.getElementById('btnUseGps');
+        const gpsAlert = document.getElementById('gpsAlertBox');
+        const symptomInput = document.getElementById('symptomInput');
+        const btnMatchSymptom = document.getElementById('btnMatchSymptom');
+        const btnClearSymptom = document.getElementById('btnClearSymptom');
+        const symptomAlert = document.getElementById('symptomMatchAlert');
+        const btnPrevPage = document.getElementById('btnPrevPage');
+        const btnNextPage = document.getElementById('btnNextPage');
+        const paginationInfo = document.getElementById('paginationInfo');
+        const currentPageNum = document.getElementById('currentPageNum');
+
+        // Initialize Map
+        function initMap() {
+            if (map) return;
+            map = L.map('facilitiesMap').setView([17.3850, 78.4867], 11); // Default to Hyderabad / India
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            markersGroup = L.layerGroup().addTo(map);
+        }
+
+        // Load 36 States from API
+        async function loadStates() {
+            try {
+                const res = await fetch('/api/lgd/states');
+                const data = await res.json();
+                if (data.success && data.states) {
+                    const current = stateSelect.value || 'Telangana';
+                    stateSelect.innerHTML = '<option value="All">All States & UTs</option>' +
+                        data.states.map(s => `<option value="${s}" ${s === current ? 'selected' : ''}>${s}</option>`).join('');
+                    loadDistricts(current);
+                }
+            } catch (err) {
+                console.warn('Could not load LGD states:', err);
+            }
+        }
+
+        // Cascading Load of Districts
+        async function loadDistricts(selectedState) {
+            if (!selectedState || selectedState === 'All') {
+                districtSelect.innerHTML = '<option value="All">All Districts</option>';
+                return;
+            }
+            try {
+                const res = await fetch(`/api/lgd/districts?state=${encodeURIComponent(selectedState)}`);
+                const data = await res.json();
+                if (data.success && data.districts) {
+                    districtSelect.innerHTML = '<option value="All">All Districts</option>' +
+                        data.districts.map(d => `<option value="${d}">${d}</option>`).join('');
+                }
+            } catch (err) {
+                console.warn('Could not load districts:', err);
+            }
+        }
+
+        // Fetch Facilities with Cascading Filters & GPS Sorting
+        async function fetchFacilities(page = 1) {
+            currentPage = page;
+            const params = new URLSearchParams({
+                state: stateSelect.value,
+                district: districtSelect.value,
+                area_type: areaTypeSelect.value,
+                facility_type: facilityTypeSelect.value,
+                specialty: specialtySelect.value,
+                pincode: pincodeInput.value.trim(),
+                search: searchInput.value.trim(),
+                female_only: femaleCheck.checked ? '1' : '0',
+                page: page,
+                per_page: 9
+            });
+
+            if (userLocation) {
+                params.append('lat', userLocation.lat);
+                params.append('lon', userLocation.lon);
+            }
+
+            facilityGrid.innerHTML = `
+                <div style="grid-column: 1 / -1; padding: 2rem; text-align: center; color: #64748b;">
+                    Loading matching healthcare facilities...
+                </div>
+            `;
+
+            try {
+                const res = await fetch(`/api/facilities?${params.toString()}`);
+                const data = await res.json();
+                if (data.success) {
+                    renderFacilities(data.facilities, data.total, data.page, data.total_pages);
+                    updateMapMarkers(data.facilities);
+                }
+            } catch (err) {
+                facilityGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; padding: 2rem; text-align: center; color: #dc2626;">
+                        Error loading facilities. Please try again.
+                    </div>
+                `;
+            }
+        }
+
+        function renderFacilities(list, total, page, totalP) {
+            countDisplay.textContent = total;
+            currentPageNum.textContent = page;
+            totalPages = totalP || 1;
+            paginationInfo.textContent = `Page ${page} of ${totalPages}`;
+            btnPrevPage.disabled = (page <= 1);
+            btnNextPage.disabled = (page >= totalPages);
+
+            if (!list || list.length === 0) {
+                facilityGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; background: #ffffff; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #1e293b;">No facilities match the chosen filters</h4>
+                        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">Try clearing your specialty, district, or pincode filter to see more results.</p>
+                        <button type="button" class="btn btn-secondary" onclick="resetFilters()">Reset All Filters</button>
+                    </div>
+                `;
+                return;
+            }
+
+            facilityGrid.innerHTML = list.map(f => {
+                const isDeAddictOrPsych = (f.specialty === 'De-addiction' || f.specialty === 'Psychiatry' || f.facility_type?.includes('Psychiatric') || f.facility_type?.includes('De-addiction'));
+                const badgeHtml = isDeAddictOrPsych 
+                    ? `<span class="verify-badge">⚠️ Verify before visiting</span>` 
+                    : `<span class="verified-govt-badge">✓ Verified Official</span>`;
+
+                const distHtml = (f.distance_km !== undefined && f.distance_km !== null) 
+                    ? `<span class="distance-badge">📍 ${f.distance_km} km away</span>` 
+                    : '';
+
+                const directionsUrl = (f.latitude && f.longitude)
+                    ? `https://www.google.com/maps/dir/?api=1&destination=${f.latitude},${f.longitude}`
+                    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(f.name + ' ' + f.district)}`;
+
+                return `
+                    <div class="facility-card">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; gap: 0.5rem; flex-wrap: wrap;">
+                                <span style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">
+                                    ${escapeHtml(f.facility_type || 'Facility')} • ${escapeHtml(f.area_type || 'General')}
+                                </span>
+                                <span class="fee-tag">${escapeHtml(f.consultation_fee || 'Free / Low Cost')}</span>
+                            </div>
+
+                            <h4 style="margin: 0.25rem 0 0.5rem 0; font-size: 1.15rem; color: #0f172a;">${escapeHtml(f.name)}</h4>
+                            <p style="margin: 0 0 0.5rem 0; font-size: 0.88rem; color: #475569;">
+                                📍 ${escapeHtml(f.address || '')}, ${escapeHtml(f.district)}, ${escapeHtml(f.state)} ${f.pincode ? '• PIN ' + f.pincode : ''}
+                            </p>
+
+                            <p style="margin: 0 0 0.5rem 0; font-size: 0.9rem; color: #1e3a8a; font-weight: 600;">
+                                👨‍⚕️ ${escapeHtml(f.doctor_name || 'Medical Officer')} 
+                                <span style="font-weight: 400; color: #64748b;">(${escapeHtml(f.specialty || 'General')})</span>
+                            </p>
+
+                            <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                                ${badgeHtml}
+                                ${distHtml}
+                            </div>
+                        </div>
+
+                        <div style="border-top: 1px solid #f1f5f9; padding-top: 0.75rem; margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <a href="tel:${f.phone || '108'}" class="btn btn-primary btn-sm" style="flex: 1; text-align: center; text-decoration: none;">
+                                📞 Call ${escapeHtml(f.phone || '108')}
+                            </a>
+                            <a href="${directionsUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="text-align: center; text-decoration: none;">
+                                🧭 Directions
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update Map Markers with Color-Coding & Popups (Phase 4)
+        function updateMapMarkers(facilities) {
+            if (!map || !markersGroup) return;
+            markersGroup.clearLayers();
+
+            const bounds = [];
+
+            if (userLocation) {
+                const userIcon = L.divIcon({
+                    html: '<div style="background: #2563eb; width: 18px; height: 18px; border-radius: 50%; border: 3px solid #ffffff; box-shadow: 0 0 10px rgba(37,99,235,0.7);"></div>',
+                    className: 'user-gps-marker',
+                    iconSize: [18, 18],
+                    iconAnchor: [9, 9]
+                });
+                const uMarker = L.marker([userLocation.lat, userLocation.lon], { icon: userIcon })
+                    .bindPopup('<strong>📍 Your Current GPS Location</strong>');
+                markersGroup.addLayer(uMarker);
+                bounds.push([userLocation.lat, userLocation.lon]);
+            }
+
+            facilities.forEach(f => {
+                if (!f.latitude || !f.longitude) return;
+
+                // Color coding
+                let pinColor = '#0284c7'; // General blue
+                if (f.specialty === 'Psychiatry' || f.facility_type?.includes('Psychiatric')) pinColor = '#7c3aed'; // Purple
+                if (f.specialty === 'De-addiction' || f.facility_type?.includes('De-addiction')) pinColor = '#d97706'; // Amber
+                if (f.facility_type?.includes('Blood Bank')) pinColor = '#dc2626'; // Red
+
+                const customPin = L.divIcon({
+                    html: `<div style="background: ${pinColor}; color: white; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">✚</div>`,
+                    className: 'facility-pin',
+                    iconSize: [26, 26],
+                    iconAnchor: [13, 13]
+                });
+
+                const popupHtml = `
+                    <div style="min-width: 220px; font-family: sans-serif;">
+                        <h4 style="margin: 0 0 4px 0; color: #0f172a; font-size: 14px;">${escapeHtml(f.name)}</h4>
+                        <p style="margin: 0 0 4px 0; color: #475569; font-size: 12px;">${escapeHtml(f.specialty || 'General')} • ${escapeHtml(f.facility_type || 'Hospital')}</p>
+                        ${f.distance_km !== undefined ? `<p style="margin: 0 0 6px 0; color: #059669; font-weight: 700; font-size: 12px;">📍 ${f.distance_km} km away</p>` : ''}
+                        <div style="display: flex; gap: 4px; margin-top: 6px;">
+                            <a href="tel:${f.phone || '108'}" style="flex: 1; text-align: center; background: #0284c7; color: white; text-decoration: none; padding: 4px 6px; border-radius: 4px; font-size: 11px; font-weight: 700;">📞 Call</a>
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${f.latitude},${f.longitude}" target="_blank" style="flex: 1; text-align: center; background: #e2e8f0; color: #334155; text-decoration: none; padding: 4px 6px; border-radius: 4px; font-size: 11px; font-weight: 700;">🧭 Directions</a>
+                        </div>
+                    </div>
+                `;
+
+                const marker = L.marker([f.latitude, f.longitude], { icon: customPin }).bindPopup(popupHtml);
+                markersGroup.addLayer(marker);
+                bounds.push([f.latitude, f.longitude]);
+            });
+
+            if (bounds.length > 0) {
+                map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+            }
+        }
+
+        // Symptom Matcher Handler (SPEC.md Phase 4)
+        async function matchSymptom(queryText) {
+            const query = (queryText || symptomInput.value || '').trim();
+            if (!query) {
+                symptomAlert.style.display = 'none';
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/symptoms/search?q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if (data.success) {
+                    const spec = data.recommended_specialty;
+                    symptomAlert.style.display = 'block';
+                    symptomAlert.style.background = '#ecfdf5';
+                    symptomAlert.style.color = '#065f46';
+                    symptomAlert.innerHTML = `
+                        <strong>Recommended speciality: ${spec}</strong> based on "${escapeHtml(data.matched_symptom || query)}".
+                        <br><span style="font-size: 0.85rem; color: #047857;">Auto-selected in specialty filter below.</span>
+                    `;
+
+                    // Auto-select specialty in filter
+                    let matchedOption = false;
+                    for (let opt of specialtySelect.options) {
+                        if (opt.value.toLowerCase() === spec.toLowerCase()) {
+                            specialtySelect.value = opt.value;
+                            matchedOption = true;
+                            break;
+                        }
+                    }
+                    if (!matchedOption) {
+                        specialtySelect.value = 'All';
+                    }
+
+                    fetchFacilities(1);
+                }
+            } catch (err) {
+                symptomAlert.style.display = 'block';
+                symptomAlert.style.background = '#fef2f2';
+                symptomAlert.style.color = '#991b1b';
+                symptomAlert.textContent = 'Could not match symptom. Please try another keyword or choose specialty manually.';
+            }
+        }
+
+        // GPS Handler with Insecure Context & Specific Error Guidance (SPEC.md Phase 4 Section 16e)
+        gpsBtn.addEventListener('click', () => {
+            // Insecure Context Detection
+            if (!window.isSecureContext && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                gpsAlert.style.display = 'block';
+                gpsAlert.style.background = '#fef2f2';
+                gpsAlert.style.color = '#991b1b';
+                gpsAlert.innerHTML = '⚠️ <strong>Insecure Context:</strong> Geolocation requires HTTPS. For local testing, please use http://localhost:5000 or HTTPS.';
+                return;
+            }
+
+            if (!navigator.geolocation) {
+                gpsAlert.style.display = 'block';
+                gpsAlert.style.background = '#fef2f2';
+                gpsAlert.style.color = '#991b1b';
+                gpsAlert.innerHTML = '⚠️ Geolocation is not supported by your browser. Please select your State and District manually.';
+                return;
+            }
+
+            gpsAlert.style.display = 'block';
+            gpsAlert.style.background = '#eff6ff';
+            gpsAlert.style.color = '#1e40af';
+            gpsAlert.textContent = '📍 Acquiring high-accuracy GPS coordinates (10s timeout)...';
+
+            navigator.geolocation.getCurrentPosition(
+                async (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lon = pos.coords.longitude;
+                    userLocation = { lat, lon };
+
+                    gpsAlert.style.background = '#ecfdf5';
+                    gpsAlert.style.color = '#065f46';
+                    gpsAlert.innerHTML = `✅ <strong>Location Found:</strong> Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}. Sorting nearest facilities by Haversine distance in km.`;
+
+                    // Reverse geocode to nearest district
+                    try {
+                        const geoRes = await fetch('/api/location/reverse-geocode', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ lat, lon })
+                        });
+                        const geoData = await geoRes.json();
+                        if (geoData.success) {
+                            if (geoData.state) stateSelect.value = geoData.state;
+                            await loadDistricts(geoData.state);
+                            if (geoData.district) districtSelect.value = geoData.district;
+                        }
+                    } catch (_) {}
+
+                    fetchFacilities(1);
+                },
+                (err) => {
+                    gpsAlert.style.background = '#fffbeb';
+                    gpsAlert.style.color = '#92400e';
+                    let guidance = 'Please select your State and District manually from the dropdowns.';
+                    if (err.code === 1) { // PERMISSION_DENIED
+                        guidance = 'Location permission was denied. <strong>How to re-enable:</strong> Click the padlock 🔒 icon in your browser address bar -> Permissions -> Allow Location, then refresh.';
+                    } else if (err.code === 2) { // POSITION_UNAVAILABLE
+                        guidance = 'Location unavailable. Please check that GPS/Location services are enabled on your device.';
+                    } else if (err.code === 3) { // TIMEOUT
+                        guidance = 'GPS request timed out after 10 seconds. Check your signal or choose your district manually.';
+                    }
+                    gpsAlert.innerHTML = `⚠️ <strong>GPS Notice:</strong> ${guidance}`;
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        });
+
+        function resetFilters() {
+            stateSelect.value = 'All';
+            districtSelect.innerHTML = '<option value="All">All Districts</option>';
+            areaTypeSelect.value = 'All';
+            facilityTypeSelect.value = 'All';
+            specialtySelect.value = 'All';
+            pincodeInput.value = '';
+            searchInput.value = '';
+            femaleCheck.checked = false;
+            symptomInput.value = '';
+            symptomAlert.style.display = 'none';
+            fetchFacilities(1);
+        }
+
+        // Event Listeners
+        stateSelect.addEventListener('change', () => {
+            loadDistricts(stateSelect.value);
+            fetchFacilities(1);
+        });
+
+        [districtSelect, areaTypeSelect, facilityTypeSelect, specialtySelect, femaleCheck].forEach(el => {
+            el.addEventListener('change', () => fetchFacilities(1));
+        });
+
+        document.getElementById('careFilterForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            fetchFacilities(1);
+        });
+
+        document.getElementById('btnResetFilters').addEventListener('click', resetFilters);
+
+        btnMatchSymptom.addEventListener('click', () => matchSymptom());
+        symptomInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                matchSymptom();
+            }
+        });
+        btnClearSymptom.addEventListener('click', () => {
+            symptomInput.value = '';
+            symptomAlert.style.display = 'none';
+            specialtySelect.value = 'All';
+            fetchFacilities(1);
+        });
+
+        document.querySelectorAll('.symptom-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const s = chip.getAttribute('data-symptom');
+                symptomInput.value = s;
+                matchSymptom(s);
+            });
+        });
+
+        btnPrevPage.addEventListener('click', () => {
+            if (currentPage > 1) fetchFacilities(currentPage - 1);
+        });
+        btnNextPage.addEventListener('click', () => {
+            if (currentPage < totalPages) fetchFacilities(currentPage + 1);
+        });
+
+        // Emergency share location button
+        document.getElementById('btnEmergencyShareLoc')?.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser.');
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                pos => {
+                    const shareText = `Emergency Assistance Needed! My Location: https://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(shareText);
+                        alert('Location copied to clipboard: ' + shareText);
+                    } else {
+                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, '_blank');
+                    }
+                },
+                err => alert('Could not get GPS location. Please check browser permissions.')
+            );
+        });
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        // On Load
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            loadStates();
+            fetchFacilities(1);
+        });
+    </script>
+</body>
+</html>

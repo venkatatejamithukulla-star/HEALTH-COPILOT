@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Login & Access — HealthMate AI</title>
+    <meta name="description" content="Single entry point login for HealthMate AI personal health copilot.">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 50%, #f8fafc 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem 1rem;
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .login-card-container {
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px -5px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .login-header {
+            background: linear-gradient(135deg, #0f172a 0%, #115e59 100%);
+            color: #ffffff;
+            padding: 2rem 1.75rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        .login-header .logo-badge {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #0d9488 0%, #0284c7 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.85rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+        .login-header h1 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin: 0 0 0.35rem;
+            letter-spacing: -0.02em;
+        }
+        .login-header p {
+            font-size: 0.85rem;
+            color: #99f6e4;
+            margin: 0;
+        }
+        .login-body {
+            padding: 1.75rem;
+        }
+        .auth-tab-buttons {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 1.5rem;
+        }
+        .auth-tab-btn {
+            flex: 1;
+            padding: 0.6rem 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .auth-tab-btn.active {
+            background: #ffffff;
+            color: #0f172a;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .form-label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 0.35rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 0.9rem;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: #0f172a;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+            margin-bottom: 1rem;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #0d9488;
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: #0d9488;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .btn-submit:hover {
+            background: #0f766e;
+            transform: translateY(-1px);
+        }
+        .btn-demo-login {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1.5px solid #bfdbfe;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+            transition: background 0.15s;
+        }
+        .btn-demo-login:hover {
+            background: #dbeafe;
+        }
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.25rem 0;
+            color: #94a3b8;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .auth-divider span {
+            padding: 0 0.75rem;
+        }
+        .doctor-portal-banner {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .doctor-portal-banner strong {
+            display: block;
+            color: #0f172a;
+            font-size: 0.88rem;
+            margin-bottom: 0.25rem;
+        }
+        .doctor-portal-banner a {
+            color: #0284c7;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+        .doctor-portal-banner a:hover {
+            text-decoration: underline;
+        }
+        .alert-box {
+            padding: 0.65rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .alert-success {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-card-container">
+        <!-- Brand Header with Authentic Logo -->
+        <div class="login-header">
+            <div class="brand-logo-large">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Personal Health Copilot Logo" class="brand-logo-svg header-heart-beat" width="76" height="66" style="margin: 0 auto;">
+                <div class="brand-wordmark-wrap">
+                    <span class="wordmark-personal" style="font-size: 1.65rem; color: #ffffff; letter-spacing: 0.05em;">PERSONAL</span>
+                    <span class="wordmark-copilot" style="font-size: 0.72rem; color: #ff8fab; letter-spacing: 0.38em; margin-top: 4px;">HEALTH COPILOT</span>
+                </div>
+            </div>
+            <p style="margin-top: 0.65rem; font-size: 0.85rem; color: #99f6e4; font-weight: 600;">HealthMate AI • Secure Patient Portal</p>
+        </div>
+
+        <div class="login-body">
+            <!-- Alert Banner -->
+            <div id="loginAlertBox" class="alert-box alert-error"></div>
+
+            <!-- Fast 1-Click Demo Login -->
+            <button type="button" class="btn-demo-login" id="btnQuickDemoLogin" onclick="handleDemoLogin()">
+                <span>⚡</span>
+                <span>Fast 1-Click Demo Login (Grandpa Rao)</span>
+            </button>
+
+            <div class="auth-divider">
+                <span>OR SIGN IN WITH CREDENTIALS</span>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="auth-tab-buttons">
+                <button type="button" class="auth-tab-btn active" id="tabBtnPassword" onclick="switchTab('password')">Password</button>
+                <button type="button" class="auth-tab-btn" id="tabBtnOtp" onclick="switchTab('otp')">Mobile OTP</button>
+                <button type="button" class="auth-tab-btn" id="tabBtnRegister" onclick="switchTab('register')">Register</button>
+            </div>
+
+            <!-- Tab 1: Email/Mobile + Password -->
+            <form id="formPasswordLogin" onsubmit="handlePasswordLogin(event)">
+                <input type="hidden" name="next" id="nextParam" value="{{ next or '' }}">
+                <label class="form-label" for="loginIdentifier">Email Address or 10-digit Mobile:</label>
+                <input type="text" id="loginIdentifier" class="form-input" placeholder="e.g. grandpa@healthmate.ai or 9876543210" required autocomplete="username">
+
+                <label class="form-label" for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
+
+                <button type="submit" class="btn-submit" id="btnPasswordSubmit">
+                    Sign In to HealthMate AI
+                </button>
+            </form>
+
+            <!-- Tab 2: Mobile OTP Login -->
+            <form id="formOtpLogin" style="display: none;" onsubmit="handleVerifyOtp(event)">
+                <label class="form-label" for="otpMobile">Registered Mobile Number:</label>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                    <input type="tel" id="otpMobile" class="form-input" style="margin-bottom: 0;" placeholder="10-digit mobile" maxlength="10">
+                    <button type="button" class="btn-submit" style="width: auto; padding: 0.75rem 1rem; white-space: nowrap; font-size: 0.85rem;" id="btnSendOtp" onclick="handleSendOtp()">
+                        Send OTP
+                    </button>
+                </div>
+
+                <div id="otpInputGroup" style="display: none;">
+                    <label class="form-label" for="otpCode">Enter 6-Digit OTP:</label>
+                    <input type="text" id="otpCode" class="form-input" placeholder="e.g. 123456" maxlength="6">
+
+                    <button type="submit" class="btn-submit" id="btnOtpSubmit">
+                        Verify OTP & Login
+                    </button>
+                </div>
+            </form>
+
+            <!-- Tab 3: Register New User -->
+            <form id="formRegister" style="display: none;" onsubmit="handleRegister(event)">
+                <label class="form-label" for="regEmail">Email Address (Optional):</label>
+                <input type="email" id="regEmail" class="form-input" placeholder="e.g. newuser@example.com">
+
+                <label class="form-label" for="regMobile">Mobile Number:</label>
+                <input type="tel" id="regMobile" class="form-input" placeholder="10-digit mobile number" required maxlength="10">
+
+                <label class="form-label" for="regPassword">Create Password (min 8 characters):</label>
+                <input type="password" id="regPassword" class="form-input" placeholder="Create a strong password" required minlength="8">
+
+                <button type="submit" class="btn-submit" id="btnRegisterSubmit">
+                    Create Patient Account
+                </button>
+            </form>
+
+            <!-- Doctor Portal Link (Requirement 4) -->
+            <div class="doctor-portal-banner">
+                <strong>🩺 Are you a Doctor or Healthcare Provider?</strong>
+                <a href="{{ url_for('doctor_portal_entry') }}">Access Doctor Portal →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimal script for auth and next redirect -->
+    <script>
+        const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        const NEXT_URL = new URLSearchParams(window.location.search).get('next') || '/';
+
+        function showAlert(msg, isSuccess = false) {
+            const b = document.getElementById('loginAlertBox');
+            b.innerText = msg;
+            b.className = 'alert-box ' + (isSuccess ? 'alert-success' : 'alert-error');
+            b.style.display = 'block';
+        }
+
+        function switchTab(tab) {
+            document.getElementById('loginAlertBox').style.display = 'none';
+            document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('formPasswordLogin').style.display = 'none';
+            document.getElementById('formOtpLogin').style.display = 'none';
+            document.getElementById('formRegister').style.display = 'none';
+
+            if (tab === 'password') {
+                document.getElementById('tabBtnPassword').classList.add('active');
+                document.getElementById('formPasswordLogin').style.display = 'block';
+            } else if (tab === 'otp') {
+                document.getElementById('tabBtnOtp').classList.add('active');
+                document.getElementById('formOtpLogin').style.display = 'block';
+            } else if (tab === 'register') {
+                document.getElementById('tabBtnRegister').classList.add('active');
+                document.getElementById('formRegister').style.display = 'block';
+            }
+        }
+
+        async function handleDemoLogin() {
+            const btn = document.getElementById('btnQuickDemoLogin');
+            btn.disabled = true;
+            btn.innerText = 'Signing in...';
+            try {
+                const res = await fetch('/api/auth/demo-login?next=' + encodeURIComponent(NEXT_URL), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN }
+                });
+                const d = await res.json();
+                if (d.success) {
+                    window.location.href = NEXT_URL;
+                } else {
+                    showAlert(d.error || 'Demo login failed');
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                showAlert('Connection error during demo login');
+                btn.disabled = false;
+            }
+        }
+
+        async function handlePasswordLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnPasswordSubmit');
+            btn.disabled = true;
+            btn.innerText = 'Verifying credentials...';
+
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({ identifier, password, _csrf: CSRF_TOKEN })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    showAlert('Login successful! Redirecting...', true);
+                    setTimeout(() => { window.location.href = NEXT_URL; }, 500);
+                } else {
+                    showAlert(d.error || 'Invalid credentials.');
+                    btn.disabled = false;
+                    btn.innerText = 'Sign In to HealthMate AI';
+                }
+            } catch (err) {
+                showAlert('Network error connecting to server.');
+                btn.disabled = false;
+                btn.innerText = 'Sign In to HealthMate AI';
+            }
+        }
+
+        async function handleSendOtp() {
+            const mobile = document.getElementById('otpMobile').value.trim();
+            if (!mobile || mobile.length < 10) {
+                showAlert('Please enter a valid 10-digit mobile number.');
+                return;
+            }
+            const btn = document.getElementById('btnSendOtp');
+            btn.disabled = true;
+            btn.innerText = 'Sending...';
+
+            try {
+                const res = await fetch('/api/auth/otp/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({ mobile, _csrf: CSRF_TOKEN })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    showAlert(`OTP sent! (Test OTP: ${d._prototype_otp || '123456'})`, true);
+                    document.getElementById('otpInputGroup').style.display = 'block';
+                    if (d._prototype_otp) {
+                        document.getElementById('otpCode').value = d._prototype_otp;
+                    }
+                } else {
+                    showAlert(d.error || 'Failed to send OTP.');
+                }
+            } catch (e) {
+                showAlert('Error sending OTP.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Send OTP';
+            }
+        }
+
+        async function handleVerifyOtp(e) {
+            e.preventDefault();
+            const mobile = document.getElementById('otpMobile').value.trim();
+            const otp = document.getElementById('otpCode').value.trim();
+            const btn = document.getElementById('btnOtpSubmit');
+            btn.disabled = true;
+            btn.innerText = 'Verifying...';
+
+            try {
+                const res = await fetch('/api/auth/otp/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({ mobile, otp, _csrf: CSRF_TOKEN })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    showAlert('OTP verified! Logging in...', true);
+                    setTimeout(() => { window.location.href = NEXT_URL; }, 500);
+                } else {
+                    showAlert(d.error || 'Invalid OTP code.');
+                    btn.disabled = false;
+                    btn.innerText = 'Verify OTP & Login';
+                }
+            } catch (err) {
+                showAlert('Network error verifying OTP.');
+                btn.disabled = false;
+                btn.innerText = 'Verify OTP & Login';
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value.trim();
+            const mobile = document.getElementById('regMobile').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const btn = document.getElementById('btnRegisterSubmit');
+            btn.disabled = true;
+            btn.innerText = 'Creating account...';
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({ email, mobile, password, role: 'patient', _csrf: CSRF_TOKEN })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    showAlert('Account created! Now signing in...', true);
+                    // Automatically log in
+                    const loginRes = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                        body: JSON.stringify({ identifier: mobile || email, password, _csrf: CSRF_TOKEN })
+                    });
+                    const loginData = await loginRes.json();
+                    if (loginData.success) {
+                        setTimeout(() => { window.location.href = NEXT_URL; }, 500);
+                    } else {
+                        switchTab('password');
+                        showAlert('Account created! Please sign in with your password.');
+                    }
+                } else {
+                    showAlert(d.error || 'Registration failed.');
+                    btn.disabled = false;
+                    btn.innerText = 'Create Patient Account';
+                }
+            } catch (err) {
+                showAlert('Network error creating account.');
+                btn.disabled = false;
+                btn.innerText = 'Create Patient Account';
+            }
+        }
+    </script>
+</body>
+</html>

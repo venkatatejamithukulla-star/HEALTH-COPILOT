@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitor Research & Architecture Comparison — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .research-hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+        .matrix-table-container {
+            overflow-x: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            margin: 2rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .matrix-table th, .matrix-table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .matrix-table th {
+            background: #f8fafc;
+            color: #1e293b;
+            font-weight: 700;
+        }
+        .row-highlight {
+            background: #f0fdf4 !important;
+            font-weight: 600;
+        }
+        .competitor-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .badge-gap {
+            background: #fef2f2;
+            color: #991b1b;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-edge {
+            background: #ecfdf5;
+            color: #047857;
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .roadmap-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">ఆరోగ్య సహచరి • Personal Health Copilot</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
+                <a href="/timeline" class="btn btn-secondary">Records Timeline</a>
+                <a href="/explainer" class="btn btn-secondary">Term Explainer</a>
+                <a href="/find-care" class="btn btn-primary">Find Care</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Emergency Hotline Banner (Mandatory 112/108/104) -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong>Emergency Medical Helplines:</strong>
+                <span>Call immediately for chest pain, stroke, or severe breathlessness</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill"><strong>108</strong> Ambulance</a>
+                <a href="tel:112" class="hotline-pill"><strong>112</strong> National Helpline</a>
+                <a href="tel:104" class="hotline-pill"><strong>104</strong> Health Advice</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <main class="container" style="padding: 2rem 1rem;">
+        <!-- Hero Header -->
+        <div class="research-hero">
+            <span style="display: inline-block; background: rgba(255,255,255,0.15); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem;">
+                Hackathon Stage 7 Market Research
+            </span>
+            <h2 style="margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: 700; color: #ffffff;">
+                🔬 Competitor Research & Architecture Comparison
+            </h2>
+            <p style="margin: 0; color: #cbd5e1; font-size: 0.95rem; max-width: 750px; line-height: 1.6;">
+                A critical comparative evaluation of 9 existing healthcare applications against HealthMate AI. Explaining why Western or commercial solutions fail low-income and rural Indian families, and how our offline-first architecture bridges the divide.
+            </p>
+        </div>
+
+        <!-- Section 1: Executive Comparison Matrix -->
+        <h3 style="color: #0f172a; font-size: 1.35rem; margin-bottom: 0.5rem;">
+            📊 Architectural Comparison Matrix
+        </h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+            Evaluating offline usability, linguistic accessibility, paper slip archiving, and low-cost care discovery.
+        </p>
+
+        <div class="matrix-table-container">
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th>Platform / App</th>
+                        <th>Category</th>
+                        <th>Offline Storage</th>
+                        <th>Vernacular Voice (TE/HI/TA)</th>
+                        <th>Physical Papers Timeline</th>
+                        <th>Government Schemes & Pricing</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="row-highlight">
+                        <td><strong>⭐ HealthMate AI (Our Project)</strong></td>
+                        <td>Multilingual Personal Copilot</td>
+                        <td>✅ 100% Offline SQLite</td>
+                        <td>✅ English & Telugu Audio</td>
+                        <td>✅ Unified Date Spine</td>
+                        <td>✅ Aarogyasri, PM-JAY, Free PHCs</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Apple Health</strong></td>
+                        <td>Big Tech Device Ecosystem</td>
+                        <td>⚠️ iOS Hardware Locked</td>
+                        <td>❌ English Only</td>
+                        <td>❌ Sensor/Watch Focused</td>
+                        <td>❌ No Indian Clinic Pricing</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Epic MyChart</strong></td>
+                        <td>Enterprise Hospital EHR</td>
+                        <td>❌ Cloud Hospital Portal</td>
+                        <td>❌ English / Spanish</td>
+                        <td>❌ Digital EHR Only</td>
+                        <td>❌ Hospital Network Only</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ada Health</strong></td>
+                        <td>AI Symptom Checker</td>
+                        <td>❌ Cloud API Dependent</td>
+                        <td>❌ Limited Regional</td>
+                        <td>❌ No Document Timeline</td>
+                        <td>❌ No Indian Government Schemes</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Healthily</strong></td>
+                        <td>UK NHS Triage</td>
+                        <td>❌ Cloud Dependent</td>
+                        <td>❌ Western Focused</td>
+                        <td>❌ No Paper Slip Archive</td>
+                        <td>❌ UK NHS Specific</td>
+                    </tr>
+                    <tr>
+                        <td><strong>eSanjeevani (Govt.)</strong></td>
+                        <td>National Telemedicine</td>
+                        <td>❌ Live Video Calling Only</td>
+                        <td>✅ Multilingual Doctors</td>
+                        <td>❌ No Personal Paper Timeline</td>
+                        <td>⚠️ Teleconsult Focus Only</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Practo</strong></td>
+                        <td>Commercial Marketplace</td>
+                        <td>❌ Cloud SaaS</td>
+                        <td>❌ English UI</td>
+                        <td>⚠️ Paid Cloud Drive</td>
+                        <td>❌ Private Tier-1 Clinics Only</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ABHA / ABDM (NHA)</strong></td>
+                        <td>National Health Identity</td>
+                        <td>❌ ABDM Gateway Server</td>
+                        <td>✅ Portal Languages</td>
+                        <td>⚠️ Requires Empanelled Hospitals</td>
+                        <td>⚠️ National Registry Only</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Apollo 24|7</strong></td>
+                        <td>Corporate Super-App</td>
+                        <td>❌ Cloud SaaS</td>
+                        <td>❌ English Centric</td>
+                        <td>⚠️ Apollo Receipts Only</td>
+                        <td>❌ Expensive Apollo Care Only</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tata 1mg</strong></td>
+                        <td>E-Pharmacy & Diagnostics</td>
+                        <td>❌ Commercial Cloud</td>
+                        <td>❌ English Centric</td>
+                        <td>❌ Order History Only</td>
+                        <td>❌ Commercial Paid Labs Only</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 2: Deep Dive into 9 Platforms -->
+        <h3 style="color: #0f172a; font-size: 1.35rem; margin: 2.5rem 0 0.5rem 0;">
+            🔍 In-Depth Competitor Analysis & Identified Gaps
+        </h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Detailed breakdown of real-world barriers Indian patients encounter with existing options.
+        </p>
+
+        {% for c in competitors %}
+        <div class="competitor-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                    <h4 style="margin: 0; font-size: 1.25rem; color: #0f172a;">{{ c.name }}</h4>
+                    <span style="font-size: 0.85rem; color: #64748b;">{{ c.category }} • {{ c.origin }}</span>
+                </div>
+                <a href="{{ c.official_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" style="font-size: 0.8rem;">
+                    Official Site ↗
+                </a>
+            </div>
+
+            <div style="margin: 1rem 0; font-size: 0.9rem; line-height: 1.6; color: #334155;">
+                <div><strong>Pricing Model:</strong> {{ c.pricing }}</div>
+                <div><strong>Offline Architecture:</strong> {{ c.offline_support }}</div>
+            </div>
+
+            <div style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 0.75rem; font-size: 0.85rem;">
+                <strong style="color: #991b1b;">⚠️ Identified Market Gap:</strong>
+                <div style="color: #7f1d1d; margin-top: 0.25rem;">{{ c.gaps }}</div>
+            </div>
+
+            <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.85rem;">
+                <strong style="color: #065f46;">🚀 HealthMate AI Advantage:</strong>
+                <div style="color: #064e3b; margin-top: 0.25rem;">{{ c.healthmate_advantage }}</div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Section 3: Architecture & Product Roadmap -->
+        <h3 style="color: #0f172a; font-size: 1.35rem; margin: 3rem 0 0.5rem 0;">
+            🗺️ HealthMate AI Implementation Status & Future Roadmap
+        </h3>
+        <p style="color: #64748b; font-size: 0.9rem;">
+            Transparent breakdown of what is fully built for the hackathon versus planned production expansions.
+        </p>
+
+        <div class="roadmap-grid">
+            <div class="roadmap-card" style="border-top: 4px solid #10b981;">
+                <h4 style="color: #065f46; margin: 0 0 0.5rem 0;">✅ Implemented (Stages 1–7)</h4>
+                <ul style="font-size: 0.85rem; color: #334155; line-height: 1.6; padding-left: 1.25rem; margin: 0;">
+                    <li>Reverse-chronological hospital papers timeline</li>
+                    <li>Single-device family member profiles</li>
+                    <li>Appointment Preparation Summary Pack</li>
+                    <li>Low-cost care & Aarogyasri scheme finder</li>
+                    <li>Bilingual English & Telugu voice narration</li>
+                    <li>24-hour revocable doctor share codes</li>
+                    <li>Hand-written CSRF security tokens</li>
+                    <li>100% offline SQLite storage</li>
+                </ul>
+            </div>
+
+            <div class="roadmap-card" style="border-top: 4px solid #0284c7;">
+                <h4 style="color: #0369a1; margin: 0 0 0.5rem 0;">⏳ Planned Next Steps</h4>
+                <ul style="font-size: 0.85rem; color: #334155; line-height: 1.6; padding-left: 1.25rem; margin: 0;">
+                    <li>Live ABDM / ABHA 14-digit ID integration</li>
+                    <li>Free NDHM Health Facility Registry API live lookup</li>
+                    <li>On-device camera OCR for printed doctor slips</li>
+                    <li>SMS reminder fallback for feature phones</li>
+                </ul>
+            </div>
+
+            <div class="roadmap-card" style="border-top: 4px solid #f59e0b;">
+                <h4 style="color: #b45309; margin: 0 0 0.5rem 0;">⚠️ Prototype Limitations</h4>
+                <ul style="font-size: 0.85rem; color: #334155; line-height: 1.6; padding-left: 1.25rem; margin: 0;">
+                    <li>Sample clinic directory with simulated prices</li>
+                    <li>Fictitious demo records for hackathon review</li>
+                    <li>Does NOT formulate clinical diagnoses or alter doses</li>
+                    <li>Educational term matching, not medical advice</li>
+                </ul>
+            </div>
+
+            <div class="roadmap-card" style="border-top: 4px solid #8b5cf6;">
+                <h4 style="color: #6d28d9; margin: 0 0 0.5rem 0;">🔭 Long-Term Future Scope</h4>
+                <ul style="font-size: 0.85rem; color: #334155; line-height: 1.6; padding-left: 1.25rem; margin: 0;">
+                    <li>Offline bluetooth sync with low-cost BP cuffs</li>
+                    <li>Integration with rural ASHA worker handheld tablets</li>
+                    <li>Expanded native audio in Marathi, Kannada, Odia</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Academic Disclaimer -->
+        <div class="card" style="margin-top: 3rem; background: #fafaf9; border-left: 4px solid #64748b; padding: 1.25rem;">
+            <p style="margin: 0; color: #475569; font-size: 0.85rem; line-height: 1.5;">
+                <em>Disclaimer: Product names, logos, and brands mentioned on this research page are property of their respective owners. Their mention does not imply endorsement or affiliation. The comparison matrix is compiled solely for academic research, hackathon system architecture review, and public interest health evaluation.</em>
+            </p>
+        </div>
+    </main>
+</body>
+</html>

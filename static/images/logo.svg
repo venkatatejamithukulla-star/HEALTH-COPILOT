@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 170" width="100%" height="100%" role="img" aria-label="Personal Health Copilot Logo">
+  <defs>
+    <!-- Soft pink gradient from left #FF7A9C to right #E5316B -->
+    <linearGradient id="heartGradient" x1="0%" y1="20%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#FF7A9C" />
+      <stop offset="100%" stop-color="#E5316B" />
+    </linearGradient>
+    <filter id="softGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#E5316B" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <g id="logo-heart-group">
+    <!-- Heart Base with Pink Gradient -->
+    <path id="heart-body" filter="url(#softGlow)" fill="url(#heartGradient)"
+          d="M 100,158 C 96,155 24,106 24,56 C 24,28 46,14 70,14 C 86,14 95,23 100,30 C 105,23 114,14 130,14 C 154,14 176,28 176,56 C 176,106 104,155 100,158 Z" />
+
+    <!-- White Medical Plus Cross (+) in Top-Right Lobe -->
+    <g id="medical-cross" fill="#FFFFFF">
+      <rect x="131" y="24" width="8.5" height="24" rx="4.25" />
+      <rect x="123.25" y="31.75" width="24" height="8.5" rx="4.25" />
+    </g>
+
+    <!-- ECG Line Tails (Thin Pink Outside the Heart) -->
+    <path id="ecg-tail-left" d="M 8,96 L 36,96" fill="none" stroke="#E5316B" stroke-width="3" stroke-linecap="round" />
+    <path id="ecg-tail-right" d="M 164,96 L 192,96" fill="none" stroke="#E5316B" stroke-width="3" stroke-linecap="round" />
+
+    <!-- White ECG Heartbeat Waveform Passing Through the Heart -->
+    <path id="ecg-line" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"
+          d="M 36,96 L 56,96 L 63,72 L 72,118 L 82,42 L 92,132 L 102,80 L 110,114 L 118,68 L 126,112 L 134,82 L 142,104 L 148,96 L 164,96" />
+  </g>
+</svg>

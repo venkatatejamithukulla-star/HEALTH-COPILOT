@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Health Records Timeline — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .timeline-header-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+        .profile-chip-bar {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1.25rem;
+            align-items: center;
+        }
+        .profile-pill {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        .profile-pill:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: translateY(-1px);
+        }
+        .profile-pill.active {
+            background: #0d9488;
+            border-color: #14b8a6;
+            box-shadow: 0 0 12px rgba(20, 184, 166, 0.4);
+        }
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            background: #ffffff;
+            padding: 0.75rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: var(--shadow-sm);
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .tab-btn.active {
+            background: #0284c7;
+            color: #ffffff;
+        }
+        .timeline-container {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 3px solid #cbd5e1;
+            margin-left: 1rem;
+        }
+        .timeline-node {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        .timeline-node::before {
+            content: '';
+            position: absolute;
+            left: -2.65rem;
+            top: 0.75rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 0 3px #cbd5e1;
+        }
+        .node-appointment::before { background: #0284c7; box-shadow: 0 0 0 3px #bae6fd; }
+        .node-report::before { background: #0d9488; box-shadow: 0 0 0 3px #99f6e4; }
+        .node-medicine::before { background: #f59e0b; box-shadow: 0 0 0 3px #fde68a; }
+        
+        .timeline-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .timeline-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        .node-date-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #334155;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+        .type-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+            margin-left: 0.5rem;
+        }
+        .badge-apt { background: #e0f2fe; color: #0369a1; }
+        .badge-rep { background: #ccfbf1; color: #0f766e; }
+        .badge-med { background: #fef3c7; color: #b45309; }
+        
+        @media print {
+            .app-header, .emergency-strip, .filter-tabs, .btn-action-bar, .profile-chip-bar {
+                display: none !important;
+            }
+            .timeline-container {
+                border-left: 2px solid #000;
+                padding-left: 1.5rem;
+            }
+            .timeline-card {
+                box-shadow: none;
+                border: 1px solid #999;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">ఆరోగ్య సహచరి • Personal Health Copilot</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('logout_page') }}" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca;">🚪 Sign Out</a>
+            </div>
+        </div>
+    </header>
+    {% set active_page = 'timeline' %}
+    {% include "nav_shared.html" %}
+
+    <!-- Emergency Hotline Banner (Mandatory 112/108/104) -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong>Emergency Medical Helplines:</strong>
+                <span>Call immediately for chest pain, stroke, or severe breathlessness</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill"><strong>108</strong> Ambulance</a>
+                <a href="tel:112" class="hotline-pill"><strong>112</strong> National Helpline</a>
+                <a href="tel:104" class="hotline-pill"><strong>104</strong> Health Advice</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 1rem;">
+        <!-- Top Banner with Family Profile Switcher -->
+        <div class="timeline-header-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="margin: 0 0 0.5rem 0; font-size: 1.85rem; font-weight: 700; color: #ffffff;">
+                        📁 Patient Care & Records Timeline
+                    </h2>
+                    <p style="margin: 0; color: #94a3b8; font-size: 0.95rem; max-width: 650px; line-height: 1.5;">
+                        "Keep hospital papers organized so they are never lost." A unified reverse-chronological record linking doctor visits, uploaded lab papers, and prescriptions for your entire family.
+                    </p>
+                </div>
+                <div class="btn-action-bar" style="display: flex; gap: 0.5rem;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3);">
+                        🖨️ Print Records
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnSpeakSummary" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3);">
+                        🔊 Read Aloud
+                    </button>
+                </div>
+            </div>
+
+            <!-- Family Profiles Selector -->
+            <div style="margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 1.25rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; font-weight: 700;">
+                        Family Member Profile Switcher (కుటుంబ సభ్యులు)
+                    </span>
+                    <button type="button" id="btnOpenAddProfileModal" style="background: none; border: none; color: #38bdf8; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: underline;">
+                        + Add Family Member
+                    </button>
+                </div>
+                <div class="profile-chip-bar" id="profileChipBar">
+                    <!-- Loaded dynamically via /api/profiles -->
+                    <span style="color: #94a3b8; font-size: 0.85rem;">Loading family profiles...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button type="button" class="tab-btn active" data-type="all">All Records (<span id="countAll">0</span>)</button>
+            <button type="button" class="tab-btn" data-type="appointment">🩺 Doctor Visits (<span id="countApt">0</span>)</button>
+            <button type="button" class="tab-btn" data-type="report">📄 Lab Reports & Papers (<span id="countRep">0</span>)</button>
+            <button type="button" class="tab-btn" data-type="medicine">💊 Prescriptions (<span id="countMed">0</span>)</button>
+        </div>
+
+        <!-- Timeline Items List -->
+        <div id="timelineContainer" class="timeline-container">
+            <div style="padding: 2rem; text-align: center; color: #64748b;">
+                Loading medical records...
+            </div>
+        </div>
+
+        <!-- Real-world note -->
+        <div class="card" style="margin-top: 3rem; background: #fafaf9; border-left: 4px solid #0d9488; padding: 1.25rem;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #0f172a; font-size: 1rem;">🛡️ Privacy & Offline Architecture</h4>
+            <p style="margin: 0; color: #475569; font-size: 0.85rem; line-height: 1.6;">
+                All hospital papers and doctor appointments remain stored inside local SQLite database on your machine. No medical data is sent to external commercial advertising clouds.
+            </p>
+        </div>
+    </main>
+
+    <!-- Modal for Adding Family Member -->
+    <div id="modalAddProfile" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: #ffffff; width: 90%; max-width: 450px; border-radius: 16px; padding: 1.75rem; box-shadow: var(--shadow-lg);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0; color: #0f172a; font-size: 1.25rem;">Add Family Member Profile</h3>
+                <button type="button" id="btnCloseProfileModal" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">&times;</button>
+            </div>
+            <form id="formAddProfile">
+                <div style="margin-bottom: 0.75rem;">
+                    <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem;">Full Name</label>
+                    <input type="text" id="profName" class="form-input" placeholder="e.g. Grandma Lakshmi, Chintu" required style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem;">Relationship</label>
+                        <select id="profRelation" class="form-input" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                            <option value="Self">Self</option>
+                            <option value="Mother">Mother</option>
+                            <option value="Father">Father</option>
+                            <option value="Child">Child</option>
+                            <option value="Grandparent">Grandparent</option>
+                            <option value="Spouse">Spouse</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div style="width: 80px;">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem;">Age</label>
+                        <input type="number" id="profAge" class="form-input" value="45" min="0" max="120" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+                    <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem;">Gender</label>
+                        <select id="profGender" class="form-input" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #334155; margin-bottom: 0.25rem;">Blood Group</label>
+                        <input type="text" id="profBlood" class="form-input" placeholder="e.g. B+, O+" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnCancelProfileModal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        let currentProfileId = 'all';
+        let currentTypeFilter = 'all';
+        let rawTimelineData = [];
+
+        // Fetch CSRF Helper
+        function safeFetch(url, options = {}) {
+            options.headers = options.headers || {};
+            if (options.method && options.method.toUpperCase() !== 'GET') {
+                options.headers['X-CSRF-Token'] = csrfToken;
+                if (!options.headers['Content-Type'] && !(options.body instanceof FormData)) {
+                    options.headers['Content-Type'] = 'application/json';
+                }
+            }
+            return fetch(url, options);
+        }
+
+        // Load Profiles
+        async function loadProfiles() {
+            try {
+                const res = await safeFetch('/api/profiles');
+                const data = await res.json();
+                if (!data.success) return;
+
+                const bar = document.getElementById('profileChipBar');
+                bar.innerHTML = '';
+
+                // 'All Family' Chip
+                const allPill = document.createElement('button');
+                allPill.type = 'button';
+                allPill.className = `profile-pill ${currentProfileId === 'all' ? 'active' : ''}`;
+                allPill.innerHTML = `<span>👥</span> <span>All Family (${data.profiles.reduce((a, b) => a + b.total_records, 0)})</span>`;
+                allPill.addEventListener('click', () => {
+                    currentProfileId = 'all';
+                    updateProfilePillUI();
+                    loadTimeline();
+                });
+                bar.appendChild(allPill);
+
+                // Individual Member Chips
+                data.profiles.forEach(p => {
+                    const pill = document.createElement('button');
+                    pill.type = 'button';
+                    pill.className = `profile-pill ${currentProfileId == p.id ? 'active' : ''}`;
+                    pill.setAttribute('data-id', p.id);
+                    const icon = p.relationship === 'Child' ? '👶' : (p.gender === 'Female' ? '👩' : '👨');
+                    pill.innerHTML = `<span>${icon}</span> <span>${p.name} (${p.relationship})</span> <small style="opacity: 0.8; margin-left: 4px;">• ${p.total_records}</small>`;
+                    pill.addEventListener('click', () => {
+                        currentProfileId = p.id;
+                        safeFetch('/api/profiles/active', {
+                            method: 'POST',
+                            body: JSON.stringify({ profile_id: p.id, _csrf: csrfToken })
+                        });
+                        updateProfilePillUI();
+                        loadTimeline();
+                    });
+                    bar.appendChild(pill);
+                });
+            } catch (err) {
+                console.error('Error loading profiles:', err);
+            }
+        }
+
+        function updateProfilePillUI() {
+            document.querySelectorAll('.profile-pill').forEach(btn => {
+                if (currentProfileId === 'all' && btn.innerText.includes('All Family')) {
+                    btn.classList.add('active');
+                } else if (btn.getAttribute('data-id') == currentProfileId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Load Timeline
+        async function loadTimeline() {
+            const container = document.getElementById('timelineContainer');
+            container.innerHTML = '<div style="padding: 2rem; text-align: center; color: #64748b;">Refreshing timeline...</div>';
+
+            try {
+                const url = `/api/timeline?profile_id=${currentProfileId}&type=${currentTypeFilter}`;
+                const res = await safeFetch(url);
+                const data = await res.json();
+
+                if (!data.success) {
+                    container.innerHTML = `<div style="padding: 2rem; color: #ef4444;">Failed to load records: ${data.error || 'Server error'}</div>`;
+                    return;
+                }
+
+                rawTimelineData = data.timeline;
+                renderTimeline(rawTimelineData);
+
+                // Update Counts
+                document.getElementById('countAll').textContent = rawTimelineData.length;
+                document.getElementById('countApt').textContent = rawTimelineData.filter(i => i.item_type === 'appointment').length;
+                document.getElementById('countRep').textContent = rawTimelineData.filter(i => i.item_type === 'report').length;
+                document.getElementById('countMed').textContent = rawTimelineData.filter(i => i.item_type === 'medicine').length;
+
+            } catch (err) {
+                container.innerHTML = `<div style="padding: 2rem; color: #ef4444;">Network error loading timeline.</div>`;
+            }
+        }
+
+        function renderTimeline(items) {
+            const container = document.getElementById('timelineContainer');
+            if (!items || items.length === 0) {
+                container.innerHTML = `
+                    <div style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 3rem 1.5rem; text-align: center; color: #64748b;">
+                        <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">📂</span>
+                        <h4 style="margin: 0 0 0.5rem 0; color: #334155;">No records found for this view</h4>
+                        <p style="margin: 0; font-size: 0.9rem;">Upload a lab report or book an appointment to start building this timeline.</p>
+                        <a href="/" class="btn btn-primary btn-sm" style="margin-top: 1rem; display: inline-block;">Go to Upload / Schedule</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+
+            items.forEach(item => {
+                const node = document.createElement('div');
+                node.className = `timeline-node node-${item.item_type}`;
+
+                let badgeClass = 'badge-apt';
+                let badgeIcon = '🩺';
+                if (item.item_type === 'report') { badgeClass = 'badge-rep'; badgeIcon = '📄'; }
+                if (item.item_type === 'medicine') { badgeClass = 'badge-med'; badgeIcon = '💊'; }
+
+                let actionHtml = '';
+                if (item.item_type === 'appointment') {
+                    actionHtml = `
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <a href="/prep" class="btn btn-secondary btn-sm" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;">Prepare Summary Pack →</a>
+                        </div>
+                    `;
+                } else if (item.item_type === 'report') {
+                    actionHtml = `
+                        <div style="margin-top: 0.75rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem; font-size: 0.85rem;">
+                            <strong style="color: #0f766e;">Summary:</strong> ${item.summary || 'Summary generated from uploaded medical document.'}
+                            ${item.summary_te ? `<div style="margin-top: 0.4rem; color: #0284c7; font-weight: 500;"><strong>తెలుగు:</strong> ${item.summary_te}</div>` : ''}
+                        </div>
+                    `;
+                }
+
+                node.innerHTML = `
+                    <div class="timeline-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem;">
+                            <div>
+                                <span class="node-date-badge">🗓️ ${item.date || 'Undated'} ${item.time ? '• ' + item.time : ''}</span>
+                                <span class="type-badge ${badgeClass}">${badgeIcon} ${item.badge || item.item_type}</span>
+                                <span style="font-size: 0.8rem; color: #64748b; margin-left: 0.5rem;">👤 ${item.patient_name || item.profile_name || 'Patient'}</span>
+                            </div>
+                            <span style="font-size: 0.8rem; font-weight: 600; color: #0284c7; background: #f0f9ff; padding: 0.2rem 0.5rem; border-radius: 4px;">
+                                ${item.status || 'Active'}
+                            </span>
+                        </div>
+
+                        <h3 style="margin: 0.5rem 0 0.25rem 0; color: #0f172a; font-size: 1.15rem; font-weight: 700;">
+                            ${item.title}
+                        </h3>
+                        <p style="margin: 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                            ${item.subtitle}
+                        </p>
+
+                        ${item.notes ? `<p style="margin: 0.5rem 0 0 0; color: #64748b; font-size: 0.85rem; font-style: italic;">📝 Notes: ${item.notes}</p>` : ''}
+                        ${item.instructions ? `<p style="margin: 0.5rem 0 0 0; color: #64748b; font-size: 0.85rem;">📋 Instructions: ${item.instructions}</p>` : ''}
+
+                        ${actionHtml}
+                    </div>
+                `;
+
+                container.appendChild(node);
+            });
+        }
+
+        // Filter Tabs Click
+        document.querySelectorAll('.filter-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTypeFilter = btn.getAttribute('data-type');
+                loadTimeline();
+            });
+        });
+
+        // Speech Read Aloud
+        document.getElementById('btnSpeakSummary').addEventListener('click', () => {
+            if (!('speechSynthesis' in window)) {
+                alert('Text-to-speech is not supported in this browser.');
+                return;
+            }
+            window.speechSynthesis.cancel();
+            if (rawTimelineData.length === 0) {
+                const u = new SpeechSynthesisUtterance("No medical records are recorded in this timeline yet.");
+                window.speechSynthesis.speak(u);
+                return;
+            }
+
+            const topItems = rawTimelineData.slice(0, 3);
+            let text = `Reading your latest health records timeline. `;
+            topItems.forEach((item, index) => {
+                text += `Item ${index + 1}: On ${item.date || 'recent date'}, ${item.title}. ${item.subtitle}. `;
+            });
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.95;
+            window.speechSynthesis.speak(utterance);
+        });
+
+        // Add Profile Modal Controls
+        const modal = document.getElementById('modalAddProfile');
+        document.getElementById('btnOpenAddProfileModal').addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+        document.getElementById('btnCloseProfileModal').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        document.getElementById('btnCancelProfileModal').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        document.getElementById('formAddProfile').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                _csrf: csrfToken,
+                name: document.getElementById('profName').value.trim(),
+                relationship: document.getElementById('profRelation').value,
+                age: document.getElementById('profAge').value,
+                gender: document.getElementById('profGender').value,
+                blood_group: document.getElementById('profBlood').value.trim()
+            };
+
+            try {
+                const res = await safeFetch('/api/profiles', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    modal.style.display = 'none';
+                    document.getElementById('formAddProfile').reset();
+                    await loadProfiles();
+                } else {
+                    alert('Error adding profile: ' + (data.error || 'Server error'));
+                }
+            } catch (err) {
+                alert('Network error while saving profile.');
+            }
+        });
+
+        // Initialize on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProfiles();
+            loadTimeline();
+        });
+    </script>
+</body>
+</html>

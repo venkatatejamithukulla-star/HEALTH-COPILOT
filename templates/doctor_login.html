@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Doctor Portal Login — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nirmala+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .auth-card { max-width: 480px; margin: 3rem auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 2.5rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem; font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; }
+        .form-input:focus { border-color: #0284c7; outline: none; box-shadow: 0 0 0 3px rgba(2,132,199,0.15); }
+        .role-badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; }
+        .alert-box { padding: 0.85rem 1rem; border-radius: 8px; margin-bottom: 1.25rem; font-size: 0.9rem; display: none; }
+        .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+        .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">Clinical Portal • Doctor Authentication</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="/doctor/register" class="btn btn-secondary">Register as Doctor</a>
+                <a href="/" class="btn btn-secondary">Patient Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper container">
+        <div class="auth-card">
+            <span class="role-badge">🩺 Doctor Clinical Access</span>
+            <h2 style="color: #0f172a; margin-top: 0; margin-bottom: 0.5rem; font-size: 1.65rem;">Doctor Portal Login</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                Secure login for licensed doctors. Two-Factor Authentication (2FA) enforced.
+            </p>
+
+            <div id="alertBox" class="alert-box alert-error"></div>
+
+            <!-- Step 1: Password Form -->
+            <form id="doctorLoginForm">
+                <div class="form-group">
+                    <label class="form-label" for="loginIdentifier">Email or Mobile Number:</label>
+                    <input type="text" id="loginIdentifier" class="form-input" placeholder="doctor@hospital.org or 9876543210" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnSubmit" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 700;">
+                    Verify Credentials & Send 2FA OTP →
+                </button>
+            </form>
+
+            <!-- Step 2: 2FA OTP Form (Hidden initially) -->
+            <form id="doctor2FaForm" style="display: none; margin-top: 1rem;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; font-size: 0.85rem; color: #475569;">
+                    🔒 <strong>2FA Security Code:</strong> A 6-digit verification code has been generated for your registered phone number.
+                    <div style="margin-top: 0.35rem; color: #0284c7; font-weight: 700;" id="demoOtpHint">Demo OTP: 482910</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="otpCode">Enter 6-Digit 2FA Code:</label>
+                    <input type="text" id="otpCode" class="form-input" placeholder="482910" maxlength="6" style="letter-spacing: 4px; font-size: 1.2rem; text-align: center;" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnVerifyOtp" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 700;">
+                    Confirm 2FA & Access Dashboard →
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: #64748b;">
+                New medical doctor? <a href="/doctor/register" style="color: #0284c7; font-weight: 700; text-decoration: none;">Register Medical License</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const loginForm = document.getElementById('doctorLoginForm');
+        const twoFaForm = document.getElementById('doctor2FaForm');
+        const alertBox = document.getElementById('alertBox');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnVerifyOtp = document.getElementById('btnVerifyOtp');
+        let pendingDoctorId = null;
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alertBox.style.display = 'none';
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Verifying...';
+
+            const payload = {
+                identifier: document.getElementById('loginIdentifier').value.trim(),
+                password: document.getElementById('loginPassword').value
+            };
+
+            try {
+                const res = await fetch('/api/doctor/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success && data.require_2fa) {
+                    pendingDoctorId = data.doctor_id;
+                    if (data.demo_otp) {
+                        document.getElementById('demoOtpHint').textContent = 'Demo 2FA OTP: ' + data.demo_otp;
+                    }
+                    loginForm.style.display = 'none';
+                    twoFaForm.style.display = 'block';
+                    alertBox.className = 'alert-box alert-success';
+                    alertBox.textContent = 'Credentials verified. Please enter your 6-digit 2FA code.';
+                    alertBox.style.display = 'block';
+                } else if (data.success) {
+                    window.location.href = '/doctor/dashboard';
+                } else {
+                    alertBox.className = 'alert-box alert-error';
+                    alertBox.textContent = data.error || 'Invalid doctor credentials.';
+                    alertBox.style.display = 'block';
+                    btnSubmit.disabled = false;
+                    btnSubmit.textContent = 'Verify Credentials & Send 2FA OTP →';
+                }
+            } catch (err) {
+                alertBox.className = 'alert-box alert-error';
+                alertBox.textContent = 'Network error: ' + err;
+                alertBox.style.display = 'block';
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = 'Verify Credentials & Send 2FA OTP →';
+            }
+        });
+
+        twoFaForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alertBox.style.display = 'none';
+            btnVerifyOtp.disabled = true;
+            btnVerifyOtp.textContent = 'Validating 2FA...';
+
+            const payload = {
+                doctor_id: pendingDoctorId,
+                otp: document.getElementById('otpCode').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/doctor/verify-2fa', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = '/doctor/dashboard';
+                } else {
+                    alertBox.className = 'alert-box alert-error';
+                    alertBox.textContent = data.error || 'Invalid 2FA code.';
+                    alertBox.style.display = 'block';
+                    btnVerifyOtp.disabled = false;
+                    btnVerifyOtp.textContent = 'Confirm 2FA & Access Dashboard →';
+                }
+            } catch (err) {
+                alertBox.className = 'alert-box alert-error';
+                alertBox.textContent = 'Network error: ' + err;
+                alertBox.style.display = 'block';
+                btnVerifyOtp.disabled = false;
+                btnVerifyOtp.textContent = 'Confirm 2FA & Access Dashboard →';
+            }
+        });
+    </script>
+</body>
+</html>

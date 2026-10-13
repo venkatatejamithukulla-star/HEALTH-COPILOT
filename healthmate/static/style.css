@@ -1,0 +1,106 @@
+/* HealthMate AI - Stage 1 styles. System fonts only, so pages load fast on slow networks. */
+:root{
+  --ink:#14313a; --muted:#4b6670; --bg:#eef4f3; --surface:#ffffff;
+  --primary:#0b6e7a; --primary-dark:#08545d; --line:#b9cdd0;
+  --warn-bg:#fff4d6; --warn-line:#c98a00; --danger:#a8201a; --ok-bg:#e3f4ea; --ok-line:#2d7a4b;
+  --radius:6px;
+}
+*{box-sizing:border-box}
+html{font-size:100%}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.55;
+  font-family:"Segoe UI","Noto Sans","Noto Sans Telugu","Noto Sans Devanagari",Roboto,Arial,sans-serif;font-size:1.05rem}
+a{color:var(--primary-dark)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f2b705;outline-offset:2px}
+.skip{position:absolute;left:-999px;top:0;background:#fff;padding:8px 12px}
+.skip:focus{left:8px;top:8px;z-index:10}
+
+.emergency{background:var(--danger);color:#fff;text-align:center;padding:8px 12px;font-size:.95rem}
+.site-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 24px;
+  background:var(--surface);border-bottom:1px solid var(--line);padding:10px 20px}
+.brand{font-weight:700;font-size:1.25rem;color:var(--primary-dark);text-decoration:none}
+.site-header nav{display:flex;flex-wrap:wrap;gap:4px 18px}
+.site-header nav a{text-decoration:none;color:var(--ink);padding:6px 2px;border-bottom:2px solid transparent}
+.site-header nav a:hover{border-bottom-color:var(--primary)}
+
+main{max-width:960px;margin:0 auto;padding:24px 20px 40px}
+h1{font-size:1.9rem;line-height:1.2;margin:.2rem 0 .8rem}
+h2{font-size:1.25rem;margin:1.6rem 0 .5rem}
+.muted{color:var(--muted)} .small{font-size:.88rem} .pre{white-space:pre-wrap}
+.note,.hint{color:var(--muted);font-size:.92rem;margin:.3rem 0}
+.empty{background:var(--surface);border:1px dashed var(--line);padding:14px;border-radius:var(--radius)}
+
+.hero{background:var(--primary-dark);color:#fff;padding:32px 28px;border-radius:var(--radius);margin-bottom:20px}
+.hero h1{font-size:2.3rem;max-width:18ch}
+.hero p{max-width:60ch}
+.summary-row{display:flex;flex-wrap:wrap;gap:8px 40px;margin:8px 0 4px}
+.summary-row p{margin:0}
+.big{font-size:1.8rem;margin-right:.3rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px 32px}
+.plain-list{list-style:none;padding:0;margin:0}
+.plain-list li{padding:9px 0;border-bottom:1px solid var(--line)}
+.plain-list li .muted{display:block;font-size:.9rem}
+.danger-zone{margin-top:32px;padding-top:8px;border-top:1px solid var(--line)}
+.page-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
+
+.btn{display:inline-block;font:inherit;font-weight:600;cursor:pointer;text-decoration:none;
+  padding:10px 18px;border-radius:var(--radius);border:2px solid var(--primary);background:var(--surface);color:var(--primary-dark);min-height:44px}
+.btn:hover{background:#e1eff0}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.hero .btn{border-color:#fff}
+.hero .btn-primary{background:#fff;color:var(--primary-dark)}
+.hero .btn:not(.btn-primary){background:transparent;color:#fff}
+.btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn-danger-outline{border-color:var(--danger);color:var(--danger)}
+.actions,.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0}
+.actions form,.toolbar form{margin:0}
+
+.flash{padding:10px 14px;border-radius:var(--radius);border:1px solid;margin:0 0 16px}
+.flash-ok{background:var(--ok-bg);border-color:var(--ok-line)}
+.flash-error{background:#fde8e6;border-color:var(--danger)}
+
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 16px}
+.filters a{text-decoration:none;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:.95rem}
+.filters a[aria-current]{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;background:var(--surface)}
+th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{background:#dcebec}
+
+.form{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;max-width:680px}
+.field{margin:0 0 18px;border:0;padding:0}
+.field label,.field legend{display:block;font-weight:600;margin-bottom:5px;padding:0}
+input[type=text],input:not([type]),input[type=date],select,textarea,input[type=file]{
+  width:100%;font:inherit;padding:10px;border:2px solid #7f9ca1;border-radius:var(--radius);background:#fff;color:var(--ink)}
+[aria-invalid=true]{border-color:var(--danger)}
+.error{color:var(--danger);font-weight:600;margin:.35rem 0 0}
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-weight:400 !important}
+.check input{width:22px;height:22px;margin-top:3px;flex:none}
+
+.facts{display:grid;grid-template-columns:max-content 1fr;gap:8px 20px;background:var(--surface);padding:16px;border:1px solid var(--line);border-radius:var(--radius)}
+.facts dt{font-weight:600} .facts dd{margin:0}
+
+/* The printable summary: styled like a paper form */
+.sheet{background:var(--surface);border:2px solid var(--ink);padding:28px 32px;max-width:780px}
+.sheet h1{font-size:1.7rem;margin:0}
+.sheet h2{font-size:1.05rem;border-bottom:1px solid var(--ink);padding-bottom:3px;margin-top:1.4rem}
+.sheet-meta{color:var(--muted);margin:.2rem 0 0}
+.notice{border:2px solid var(--warn-line);background:var(--warn-bg);padding:10px 12px;margin-top:1.6rem}
+
+.site-footer{border-top:1px solid var(--line);background:var(--surface);padding:14px 20px;font-size:.9rem;color:var(--muted)}
+.site-footer p{max-width:960px;margin:0 auto}
+
+@media (max-width:700px){
+  .two-col{grid-template-columns:1fr}
+  .hero h1{font-size:1.8rem}
+  .facts{grid-template-columns:1fr}
+  .sheet{padding:18px}
+}
+@media print{
+  .no-print{display:none !important}
+  body{background:#fff;font-size:11pt}
+  main{max-width:none;padding:0}
+  .sheet{border:0;padding:0;max-width:none}
+  .notice{border:1px solid #000;background:#fff}
+}

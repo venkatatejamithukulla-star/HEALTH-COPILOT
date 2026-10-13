@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hackathon Presentation Pack & Demo Guide — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .hackathon-hero {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+        .pitch-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-top: 1.25rem;
+        }
+        .demo-step-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            margin-bottom: 1.25rem;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            gap: 1.25rem;
+        }
+        .step-num {
+            background: #0d9488;
+            color: #ffffff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .qa-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .focus-pill {
+            display: inline-block;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">ఆరోగ్య సహచరి • Personal Health Copilot</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="/" class="btn btn-secondary">← Back to Dashboard</a>
+                <a href="/timeline" class="btn btn-secondary">Records Timeline</a>
+                <a href="/prep" class="btn btn-secondary">Prep Pack</a>
+                <a href="/research" class="btn btn-primary">Competitor Research</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Emergency Hotline Banner (Mandatory 112/108/104) -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong>Emergency Medical Helplines:</strong>
+                <span>Call immediately for chest pain, stroke, or severe breathlessness</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill"><strong>108</strong> Ambulance</a>
+                <a href="tel:112" class="hotline-pill"><strong>112</strong> National Helpline</a>
+                <a href="tel:104" class="hotline-pill"><strong>104</strong> Health Advice</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <main class="container" style="padding: 2rem 1rem;">
+        <!-- Hero Card -->
+        <div class="hackathon-hero">
+            <span style="display: inline-block; background: #fbbf24; color: #78350f; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem;">
+                🏆 Hackathon Mentor & Judge Package
+            </span>
+            <h2 style="margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: 700; color: #ffffff;">
+                HealthMate AI: Hackathon Presentation Pack
+            </h2>
+            <p style="margin: 0; color: #c7d2fe; font-size: 0.95rem; max-width: 800px; line-height: 1.6;">
+                A multilingual, offline-first personal health copilot engineered for Indian families and rural/low-income patients. Solves the paper chaos problem, translates confusing blood reports into Telugu & English, finds low-cost care, and creates appointment preparation summaries.
+            </p>
+
+            <!-- 1-Minute Elevator Pitch -->
+            <div class="pitch-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <strong style="color: #fbbf24; font-size: 0.95rem;">⏱️ 1-Minute Elevator Pitch for Judges:</strong>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('pitchText').innerText); alert('Pitch copied to clipboard!');" style="background: rgba(255,255,255,0.2); color: #fff; border: none; font-size: 0.75rem;">
+                        📋 Copy Pitch
+                    </button>
+                </div>
+                <p id="pitchText" style="margin: 0; color: #f8fafc; font-size: 0.9rem; line-height: 1.6; font-style: italic;">
+                    "In India, over 800 million citizens carry their lifetime of medical history in wrinkled paper envelopes. When visiting government hospitals, elderly patients and rural families often forget past test numbers, cannot decipher lab jargon, and face long queues without knowing low-cost alternatives. HealthMate AI is an offline-first personal copilot built specifically for them: it organizes physical paper slips into a single family timeline, explains lab results in plain Telugu and English voice, prepares a 1-page Appointment Preparation Pack for the doctor visit, and guides users to nearby free PHCs and Aarogyasri-empanelled hospitals. With zero cloud tracking, hand-written CSRF security, and guaranteed offline SQLite reliability, HealthMate AI delivers healthcare dignity to every household."
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 1: The 5 Strong Hackathon Focus Areas -->
+        <h3 style="color: #0f172a; font-size: 1.35rem; margin-bottom: 0.5rem;">
+            🎯 The 5 Strong Hackathon Focus Areas (With Proof in Code)
+        </h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Every focus area is fully functional and backed by working unit tests.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
+            <div class="card" style="padding: 1.25rem; background: #ffffff; border-left: 4px solid #0d9488; border-radius: 10px;">
+                <span class="focus-pill">Focus 1</span>
+                <h4 style="margin: 0.5rem 0 0.25rem 0; color: #0f172a;">1. Papers Kept Organised</h4>
+                <p style="margin: 0; color: #475569; font-size: 0.85rem; line-height: 1.5;">
+                    Unified reverse-chronological timeline interleaving doctor appointments, medical test papers, and prescriptions on a single date spine (<a href="/timeline">/timeline</a>). Prevents lost hospital slips.
+                </p>
+            </div>
+
+            <div class="card" style="padding: 1.25rem; background: #ffffff; border-left: 4px solid #0284c7; border-radius: 10px;">
+                <span class="focus-pill">Focus 2</span>
+                <h4 style="margin: 0.5rem 0 0.25rem 0; color: #0f172a;">2. Appointment Prep Pack</h4>
+                <p style="margin: 0; color: #475569; font-size: 0.85rem; line-height: 1.5;">
+                    Generates a printable 1-page summary pack (<a href="/prep">/prep</a>) containing current medicines, symptom notes, and crucial questions to ask the doctor during short 3-minute clinic visits.
+                </p>
+            </div>
+
+            <div class="card" style="padding: 1.25rem; background: #ffffff; border-left: 4px solid #10b981; border-radius: 10px;">
+                <span class="focus-pill">Focus 3</span>
+                <h4 style="margin: 0.5rem 0 0.25rem 0; color: #0f172a;">3. Low-Cost Care & Schemes Finder</h4>
+                <p style="margin: 0; color: #475569; font-size: 0.85rem; line-height: 1.5;">
+                    Filterable directory of free PHCs, blood banks, and charitable clinics (<a href="/find-care">/find-care</a>) with transparent fees, female-doctor filter, browser GPS fallback, and verified Aarogyasri/PM-JAY schemes.
+                </p>
+            </div>
+
+            <div class="card" style="padding: 1.25rem; background: #ffffff; border-left: 4px solid #f59e0b; border-radius: 10px;">
+                <span class="focus-pill">Focus 4</span>
+                <h4 style="margin: 0.5rem 0 0.25rem 0; color: #0f172a;">4. Multilingual with Voice Read-Aloud</h4>
+                <p style="margin: 0; color: #475569; font-size: 0.85rem; line-height: 1.5;">
+                    Supports 4 languages (English, Telugu, Hindi, Tamil) via translations.json. Uses Web Speech API for slow, clear speech narration for illiterate and elderly family members.
+                </p>
+            </div>
+
+            <div class="card" style="padding: 1.25rem; background: #ffffff; border-left: 4px solid #8b5cf6; border-radius: 10px;">
+                <span class="focus-pill">Focus 5</span>
+                <h4 style="margin: 0.5rem 0 0.25rem 0; color: #0f172a;">5. Single-Device Family Profiles</h4>
+                <p style="margin: 0; color: #475569; font-size: 0.85rem; line-height: 1.5;">
+                    Allows an entire joint family (Grandpa, Mother, Father, Child) to share one smartphone with 1-click profile switching. Scopes medical records and 24h revocable doctor view codes safely.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 2: 3-Minute Live Demo Script -->
+        <h3 style="color: #0f172a; font-size: 1.35rem; margin-bottom: 0.5rem;">
+            🎬 3-Minute Live Hackathon Demo Script
+        </h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Follow this exact sequence and timestamps during your live demonstration to judges:
+        </p>
+
+        <div class="demo-step-card">
+            <div class="step-num">1</div>
+            <div>
+                <strong style="color: #0f172a; font-size: 1rem;">0:00 – 0:45 | Introduction & Family Paper Timeline</strong>
+                <p style="margin: 0.25rem 0 0.5rem 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                    <strong>Action:</strong> Open <a href="/">Dashboard</a>. Point to the family profile switcher showing Grandpa Rao. Click <a href="/timeline">📁 Records Timeline</a>.
+                    <br><strong>Narration:</strong> <em>"In India, families carry papers in chaotic folders. Here you see Grandpa Rao's lifetime timeline: his doctor visits, his blood test slips, and his daily medicines in clean date order. One click switches to daughter Ananya's vaccination records."</em>
+                </p>
+            </div>
+        </div>
+
+        <div class="demo-step-card">
+            <div class="step-num">2</div>
+            <div>
+                <strong style="color: #0f172a; font-size: 1rem;">0:45 – 1:30 | Report Explainer & Telugu Audio Read-Aloud</strong>
+                <p style="margin: 0.25rem 0 0.5rem 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                    <strong>Action:</strong> Click <a href="/explainer">📖 Term Explainer</a>. Click the quick chip for <code>HbA1c</code>. Click <code>🔊 Read Aloud</code>.
+                    <br><strong>Narration:</strong> <em>"Patients get scared by medical terms. Our explainer provides standardized reference ranges, healthy dietary tips, and translates everything into simple Telugu. The read-aloud button reads it aloud for elderly users who cannot read small text."</em>
+                </p>
+            </div>
+        </div>
+
+        <div class="demo-step-card">
+            <div class="step-num">3</div>
+            <div>
+                <strong style="color: #0f172a; font-size: 1rem;">1:30 – 2:15 | Low-Cost Care & Government Schemes Finder</strong>
+                <p style="margin: 0.25rem 0 0.5rem 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                    <strong>Action:</strong> Open <a href="/find-care">🏥 Find Care</a>. Filter by "Dentist" and check "Female Doctor Available". Point to the Aarogyasri and PM-JAY cards.
+                    <br><strong>Narration:</strong> <em>"Unlike commercial apps like Practo that promote ₹1,000 corporate clinics in metros, HealthMate AI shows free Primary Health Centres and sub-district hospitals with verified opening times, female doctor filters for women's comfort, and government scheme eligibility links."</em>
+                </p>
+            </div>
+        </div>
+
+        <div class="demo-step-card">
+            <div class="step-num">4</div>
+            <div>
+                <strong style="color: #0f172a; font-size: 1rem;">2:15 – 2:45 | Appointment Prep Summary & 24h Doctor Share Code</strong>
+                <p style="margin: 0.25rem 0 0.5rem 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                    <strong>Action:</strong> Open <a href="/prep">📋 Prep Pack</a> and click "Generate Pack". Show the printable 1-page layout. Mention the 24-hour temporary share code (<a href="/doctor-view">/doctor-view</a>).
+                    <br><strong>Narration:</strong> <em>"Doctors in Indian clinics have under 3 minutes per patient. Our Prep Pack arms the patient with their current medicines and key questions so nothing is missed. When arriving, the patient can generate a temporary 24-hour share code for the doctor without surrendering their password."</em>
+                </p>
+            </div>
+        </div>
+
+        <div class="demo-step-card">
+            <div class="step-num">5</div>
+            <div>
+                <strong style="color: #0f172a; font-size: 1rem;">2:45 – 3:00 | Safety Guardrails & 100% Offline Architecture</strong>
+                <p style="margin: 0.25rem 0 0.5rem 0; color: #475569; font-size: 0.9rem; line-height: 1.5;">
+                    <strong>Action:</strong> Point to the persistent 112/108/104 red emergency banner on the screen.
+                    <br><strong>Narration:</strong> <em>"HealthMate AI includes medical guardrails on every page: acute symptoms trigger instant 108 ambulance banners, medicines are never prescribed independently, and all patient records remain 100% private in local SQLite storage with hand-written CSRF security."</em>
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 3: Judge Q&A Cheat Sheet -->
+        <h3 style="color: #0f172a; font-size: 1.35rem; margin: 3rem 0 0.5rem 0;">
+            ❓ Judge Q&A Cheat Sheet (How to Win the Presentation)
+        </h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+            Winning answers to common questions judges ask at hackathons:
+        </p>
+
+        <div class="qa-card">
+            <h4 style="margin: 0 0 0.4rem 0; color: #1e3a8a;">Q1: "Why not just use ChatGPT or WhatsApp for health advice?"</h4>
+            <p style="margin: 0; color: #334155; font-size: 0.85rem; line-height: 1.5;">
+                <strong>Winning Answer:</strong> <em>"ChatGPT frequently hallucinates drug doses, requires high-speed cloud internet, stores sensitive medical prompts on corporate servers, and cannot organize physical paper slips into a timeline or generate a printable clinic prep pack. HealthMate AI is an offline-first system with strict medical guardrails, local SQLite privacy, and verified Indian public health registries."</em>
+            </p>
+        </div>
+
+        <div class="qa-card">
+            <h4 style="margin: 0 0 0.4rem 0; color: #1e3a8a;">Q2: "What if a patient types in a life-threatening symptom like chest pain?"</h4>
+            <p style="margin: 0; color: #334155; font-size: 0.85rem; line-height: 1.5;">
+                <strong>Winning Answer:</strong> <em>"Safety is our first priority. Our emergency guardrail engine intercepts keywords like chest pain, breathlessness, or stroke and immediately displays an unmissable red alert to call 108 or 112, refusing to waste critical minutes with conversational text."</em>
+            </p>
+        </div>
+
+        <div class="qa-card">
+            <h4 style="margin: 0 0 0.4rem 0; color: #1e3a8a;">Q3: "How does this integrate with the Government of India's ABHA / ABDM ecosystem?"</h4>
+            <p style="margin: 0; color: #334155; font-size: 0.85rem; line-height: 1.5;">
+                <strong>Winning Answer:</strong> <em>"ABDM is a fantastic national backend standard, but it lacks an accessible, plain-language Telugu paper explainer for rural citizens. HealthMate AI is designed as the citizen-facing bridge that can link to the 14-digit ABHA number and pull from the National Digital Health Mission Health Facility Registry API (data.gov.in) with zero API licensing cost."</em>
+            </p>
+        </div>
+
+        <div class="qa-card">
+            <h4 style="margin: 0 0 0.4rem 0; color: #1e3a8a;">Q4: "Why did you build hand-written CSRF rather than installing a heavy external package?"</h4>
+            <p style="margin: 0; color: #334155; font-size: 0.85rem; line-height: 1.5;">
+                <strong>Winning Answer:</strong> <em>"To maintain zero-dependency reliability and maximum control across both traditional HTML forms (using the hidden _csrf input) and modern asynchronous fetch requests (using the X-CSRF-Token header). It ensures strict security against cross-site request forgery without bloating the deployment bundle."</em>
+            </p>
+        </div>
+
+        <!-- Section 4: Quick Startup Commands for Evaluators -->
+        <div class="card" style="margin-top: 3rem; background: #0f172a; color: #ffffff; padding: 1.5rem; border-radius: 12px;">
+            <h4 style="color: #38bdf8; margin: 0 0 0.75rem 0;">💻 VS Code PowerShell Startup Commands (For Evaluators)</h4>
+            <pre style="background: #1e293b; padding: 1rem; border-radius: 8px; color: #e2e8f0; font-family: monospace; font-size: 0.9rem; overflow-x: auto;">
+# 1. Run all 42 automated tests:
+python -m unittest discover -s tests -v
+
+# 2. Launch HealthMate AI locally on Windows:
+python app.py
+
+# 3. Open in your browser:
+http://127.0.0.1:5000</pre>
+        </div>
+    </main>
+</body>
+</html>

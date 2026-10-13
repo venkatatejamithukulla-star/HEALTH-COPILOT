@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy & Data Safety — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">ఆరోగ్య సహచరి • Personal Health Copilot</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('logout_page') }}" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca;">🚪 Sign Out</a>
+            </div>
+        </div>
+    </header>
+    {% set active_page = 'privacy' %}
+    {% include "nav_shared.html" %}
+
+    <!-- Emergency Hotline Banner -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong>Emergency Medical Helplines:</strong>
+                <span>Call immediately for chest pain, stroke, or severe breathlessness</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill"><strong>108</strong> Ambulance</a>
+                <a href="tel:112" class="hotline-pill"><strong>112</strong> National Helpline</a>
+                <a href="tel:104" class="hotline-pill"><strong>104</strong> Health Advice</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-wrapper container" style="max-width: 900px; padding: 2rem 1rem;">
+        <div class="card" style="padding: 2.5rem; background: var(--card-bg, #ffffff); border-radius: 12px; box-shadow: var(--shadow-md);">
+            <h1 style="color: var(--primary-color, #1e3a8a); margin-bottom: 0.5rem; font-size: 1.85rem;">🔒 Privacy, Security & Data Safety Policy</h1>
+            <p style="color: var(--text-muted, #64748b); margin-bottom: 2rem;">HealthMate AI is designed with privacy-by-default for Indian families, students, and seniors.</p>
+
+            <div class="info-block" style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                <h3 style="margin-top: 0; color: #1e293b;">1. 100% Local SQLite Storage</h3>
+                <p style="margin-bottom: 0; color: #475569;">All your medical reports, appointment schedules, and medicine reminders are stored in a local SQLite file (<code>healthmate.db</code>) on your own device. No health records are sent to third-party advertising companies or marketing trackers.</p>
+            </div>
+
+            <div class="info-block" style="background: #f8fafc; border-left: 4px solid #10b981; padding: 1rem 1.25rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                <h3 style="margin-top: 0; color: #1e293b;">2. No Commercial Data Selling</h3>
+                <p style="margin-bottom: 0; color: #475569;">We will never monetize, sell, or rent your health reports or personal details. The prototype uses fictitious sample data by default and does not require credit cards, passwords, or personal identity numbers.</p>
+            </div>
+
+            <div class="info-block" style="background: #f8fafc; border-left: 4px solid #f59e0b; padding: 1rem 1.25rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                <h3 style="margin-top: 0; color: #1e293b;">3. Screen Privacy Mode</h3>
+                <p style="margin-bottom: 0; color: #475569;">The application includes an instant <strong>"Privacy"</strong> button that automatically masks patient names on shared or public screens so bystanders cannot read family member names.</p>
+            </div>
+
+            <div class="info-block" style="background: #fef2f2; border-left: 4px solid #ef4444; padding: 1rem 1.25rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                <h3 style="margin-top: 0; color: #991b1b;">4. Educational Prototype Disclaimer</h3>
+                <p style="margin-bottom: 0; color: #7f1d1d;"><strong>HealthMate AI is a coursework and hackathon educational prototype.</strong> It is NOT certified as a medical device and is NOT suitable for critical emergency treatment or legal medical records. Always consult a registered medical practitioner (MBBS/MD) for health diagnoses, prescriptions, and emergencies.</p>
+            </div>
+
+            <div class="info-block" style="background: #f8fafc; border-left: 4px solid #8b5cf6; padding: 1rem 1.25rem; border-radius: 6px;">
+                <h3 style="margin-top: 0; color: #1e293b;">5. One-Click Data Deletion</h3>
+                <p style="color: #475569;">You have complete control over your data. You can delete individual records anytime or clear all stored data with a single click using the Reset/Delete features.</p>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                <a href="/" class="btn btn-primary">Return to Health Copilot</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

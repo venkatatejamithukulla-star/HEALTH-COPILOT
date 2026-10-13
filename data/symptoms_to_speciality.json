@@ -1,0 +1,2861 @@
+{
+  "total": 309,
+  "symptoms": [
+    {
+      "symptom": "chest pain",
+      "specialty": "Cardiology",
+      "urgency": "High",
+      "aliases": [
+        "chest tightness",
+        "angina",
+        "గుండె నొప్పి",
+        "सीने में दर्द",
+        "நெஞ்சு வலி",
+        "سینے میں درد"
+      ]
+    },
+    {
+      "symptom": "heart palpitations",
+      "specialty": "Cardiology",
+      "urgency": "Medium",
+      "aliases": [
+        "rapid heartbeat",
+        "fluttering heart",
+        "గుండె దడ",
+        "दिल की धड़कन तेज"
+      ]
+    },
+    {
+      "symptom": "shortness of breath on exertion",
+      "specialty": "Cardiology",
+      "urgency": "High",
+      "aliases": [
+        "breathless walking",
+        "శ్వాస ఆడకపోవడం",
+        "सांस फूलना"
+      ]
+    },
+    {
+      "symptom": "swollen legs and ankles",
+      "specialty": "Cardiology",
+      "urgency": "Medium",
+      "aliases": [
+        "edema",
+        "foot swelling",
+        "కాళ్ల వాపులు",
+        "पैरों में सूजन"
+      ]
+    },
+    {
+      "symptom": "dizziness when standing",
+      "specialty": "Cardiology",
+      "urgency": "Medium",
+      "aliases": [
+        "lightheadedness",
+        "orthostatic hypotension",
+        "కళ్లు తిరగడం"
+      ]
+    },
+    {
+      "symptom": "high blood pressure",
+      "specialty": "Cardiology",
+      "urgency": "Medium",
+      "aliases": [
+        "hypertension",
+        "elevated bp",
+        "బి.పి ఎక్కువ"
+      ]
+    },
+    {
+      "symptom": "left arm pain",
+      "specialty": "Cardiology",
+      "urgency": "High",
+      "aliases": [
+        "radiating shoulder pain",
+        "left arm tingling"
+      ]
+    },
+    {
+      "symptom": "fainting spells",
+      "specialty": "Cardiology",
+      "urgency": "High",
+      "aliases": [
+        "syncope",
+        "blackout",
+        "స్పృహ తప్పడం"
+      ]
+    },
+    {
+      "symptom": "craving alcohol",
+      "specialty": "De-addiction",
+      "urgency": "High",
+      "aliases": [
+        "alcohol urge",
+        "liquor craving",
+        "alcohol addiction",
+        "మద్యం వ్యసనం",
+        "शराब की तलब",
+        "மதுப் பழக்கம்"
+      ]
+    },
+    {
+      "symptom": "alcohol withdrawal shakes",
+      "specialty": "De-addiction",
+      "urgency": "High",
+      "aliases": [
+        "delirium tremens",
+        "hand tremors morning",
+        "చేతుల వణుకు"
+      ]
+    },
+    {
+      "symptom": "nicotine dependence",
+      "specialty": "De-addiction",
+      "urgency": "Medium",
+      "aliases": [
+        "tobacco craving",
+        "cigarette addiction",
+        "ధూమపానం మానుకోవడం",
+        "बीड़ी तंबाकू छोड़ना"
+      ]
+    },
+    {
+      "symptom": "drug withdrawal symptoms",
+      "specialty": "De-addiction",
+      "urgency": "High",
+      "aliases": [
+        "opioid withdrawal",
+        "substance detox",
+        "మాదకద్రవ్యాల విముక్తి"
+      ]
+    },
+    {
+      "symptom": "gutkha chewing addiction",
+      "specialty": "De-addiction",
+      "urgency": "Medium",
+      "aliases": [
+        "pan masala craving",
+        "khaini addiction"
+      ]
+    },
+    {
+      "symptom": "cannabis dependence",
+      "specialty": "De-addiction",
+      "urgency": "Medium",
+      "aliases": [
+        "weed addiction",
+        "ganja withdrawal"
+      ]
+    },
+    {
+      "symptom": "uncontrollable urges to drink",
+      "specialty": "De-addiction",
+      "urgency": "High",
+      "aliases": [
+        "binge drinking",
+        "loss of control alcohol"
+      ]
+    },
+    {
+      "symptom": "relapse prevention support",
+      "specialty": "De-addiction",
+      "urgency": "Medium",
+      "aliases": [
+        "sobriety support",
+        "addiction counselling"
+      ]
+    },
+    {
+      "symptom": "feeling hopeless",
+      "specialty": "Psychiatry",
+      "urgency": "High",
+      "aliases": [
+        "hopelessness",
+        "loss of hope",
+        "feeling depressed",
+        "తీవ్ర నిరాశ",
+        "निराशा"
+      ]
+    },
+    {
+      "symptom": "severe anxiety",
+      "specialty": "Psychiatry",
+      "urgency": "Medium",
+      "aliases": [
+        "panic",
+        "nervousness",
+        "ఆందోళన",
+        "घबराहट",
+        "பதற்றம்"
+      ]
+    },
+    {
+      "symptom": "panic attacks",
+      "specialty": "Psychiatry",
+      "urgency": "High",
+      "aliases": [
+        "sudden terror",
+        "hyperventilation anxiety",
+        "తీవ్ర భయాందోళన"
+      ]
+    },
+    {
+      "symptom": "persistent sadness",
+      "specialty": "Psychiatry",
+      "urgency": "Medium",
+      "aliases": [
+        "depression",
+        "loss of interest",
+        "కుంగుబాటు",
+        "उदासी"
+      ]
+    },
+    {
+      "symptom": "insomnia and sleeplessness",
+      "specialty": "Psychiatry",
+      "urgency": "Medium",
+      "aliases": [
+        "cannot sleep",
+        "broken sleep",
+        "నిద్రలేమి",
+        "अनिद्रा"
+      ]
+    },
+    {
+      "symptom": "suicidal thoughts",
+      "specialty": "Psychiatry",
+      "urgency": "Urgent",
+      "aliases": [
+        "hopelessness",
+        "want to end life",
+        "ఆత్మహత్య ఆలోచనలు",
+        "आत्महत्या के विचार"
+      ]
+    },
+    {
+      "symptom": "hearing voices",
+      "specialty": "Psychiatry",
+      "urgency": "High",
+      "aliases": [
+        "auditory hallucinations",
+        "schizophrenia signs"
+      ]
+    },
+    {
+      "symptom": "extreme mood swings",
+      "specialty": "Psychiatry",
+      "urgency": "Medium",
+      "aliases": [
+        "bipolar mania",
+        "unstable mood",
+        "మూడ్ మార్పులు"
+      ]
+    },
+    {
+      "symptom": "obsessive compulsive thoughts",
+      "specialty": "Psychiatry",
+      "urgency": "Medium",
+      "aliases": [
+        "ocd",
+        "repetitive checking",
+        "repeated hand washing"
+      ]
+    },
+    {
+      "symptom": "post-traumatic stress",
+      "specialty": "Psychiatry",
+      "urgency": "Medium",
+      "aliases": [
+        "ptsd",
+        "nightmares from trauma"
+      ]
+    },
+    {
+      "symptom": "loss of appetite due to stress",
+      "specialty": "Psychiatry",
+      "urgency": "Low",
+      "aliases": [
+        "eating disorder",
+        "emotional starvation"
+      ]
+    },
+    {
+      "symptom": "severe sudden headache",
+      "specialty": "Neurology",
+      "urgency": "High",
+      "aliases": [
+        "thunderclap headache",
+        "తీవ్ర తలనొప్పి",
+        "सिरदर्द"
+      ]
+    },
+    {
+      "symptom": "migraine with aura",
+      "specialty": "Neurology",
+      "urgency": "Medium",
+      "aliases": [
+        "one sided head pain",
+        "visual flashes"
+      ]
+    },
+    {
+      "symptom": "facial drooping",
+      "specialty": "Neurology",
+      "urgency": "High",
+      "aliases": [
+        "bells palsy",
+        "stroke face",
+        "ముఖం వంకర"
+      ]
+    },
+    {
+      "symptom": "numbness in hands and feet",
+      "specialty": "Neurology",
+      "urgency": "Medium",
+      "aliases": [
+        "peripheral neuropathy",
+        "కాళ్లు చేతులు తిమ్మిర్లు",
+        "हाथ-पैर सुन्न"
+      ]
+    },
+    {
+      "symptom": "seizures or fits",
+      "specialty": "Neurology",
+      "urgency": "High",
+      "aliases": [
+        "epilepsy",
+        "convulsions",
+        "ఫిట్స్",
+        "दौरे"
+      ]
+    },
+    {
+      "symptom": "tremors and shaking hands",
+      "specialty": "Neurology",
+      "urgency": "Medium",
+      "aliases": [
+        "parkinsons sign",
+        "resting tremor"
+      ]
+    },
+    {
+      "symptom": "memory loss and confusion",
+      "specialty": "Neurology",
+      "urgency": "Medium",
+      "aliases": [
+        "dementia",
+        "forgetfulness",
+        "జ్ఞాపకశక్తి తగ్గడం"
+      ]
+    },
+    {
+      "symptom": "loss of balance walking",
+      "specialty": "Neurology",
+      "urgency": "Medium",
+      "aliases": [
+        "ataxia",
+        "unsteady gait",
+        "నడక తూలడం"
+      ]
+    },
+    {
+      "symptom": "knee joint pain",
+      "specialty": "Orthopedics",
+      "urgency": "Medium",
+      "aliases": [
+        "osteoarthritis",
+        "knee creaking",
+        "మోకాళ్ళ నొప్పులు",
+        "घुटनों का दर्द"
+      ]
+    },
+    {
+      "symptom": "lower back pain",
+      "specialty": "Orthopedics",
+      "urgency": "Medium",
+      "aliases": [
+        "lumbago",
+        "sciatica",
+        "నడుము నొప్పి",
+        "कमर दर्द"
+      ]
+    },
+    {
+      "symptom": "shoulder stiffness",
+      "specialty": "Orthopedics",
+      "urgency": "Low",
+      "aliases": [
+        "frozen shoulder",
+        "cannot lift arm",
+        "భుజం నొప్పి"
+      ]
+    },
+    {
+      "symptom": "bone fracture suspicion",
+      "specialty": "Orthopedics",
+      "urgency": "High",
+      "aliases": [
+        "broken bone",
+        "swollen fall",
+        "ఎముక విరుగుట"
+      ]
+    },
+    {
+      "symptom": "morning joint stiffness",
+      "specialty": "Orthopedics",
+      "urgency": "Medium",
+      "aliases": [
+        "rheumatoid arthritis",
+        "finger stiffness"
+      ]
+    },
+    {
+      "symptom": "heel pain morning",
+      "specialty": "Orthopedics",
+      "urgency": "Low",
+      "aliases": [
+        "plantar fasciitis",
+        "మడమ నొప్పి"
+      ]
+    },
+    {
+      "symptom": "neck pain radiating down arm",
+      "specialty": "Orthopedics",
+      "urgency": "Medium",
+      "aliases": [
+        "cervical spondylosis",
+        "మెడ నొప్పి"
+      ]
+    },
+    {
+      "symptom": "acid reflux and heartburn",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "gerd",
+        "burning in chest throat",
+        "ఎసిడిటీ",
+        "छाती में जलन"
+      ]
+    },
+    {
+      "symptom": "severe abdominal pain",
+      "specialty": "Gastroenterology",
+      "urgency": "High",
+      "aliases": [
+        "stomach cramps",
+        "appendicitis sign",
+        "కడుపు నొప్పి",
+        "पेट दर्द"
+      ]
+    },
+    {
+      "symptom": "yellow eyes and skin",
+      "specialty": "Gastroenterology",
+      "urgency": "High",
+      "aliases": [
+        "jaundice",
+        "liver infection",
+        "పచ్చకామెర్లు",
+        "पीलिया"
+      ]
+    },
+    {
+      "symptom": "blood in stool",
+      "specialty": "Gastroenterology",
+      "urgency": "High",
+      "aliases": [
+        "melena",
+        "rectal bleeding",
+        "మలంలో రక్తం"
+      ]
+    },
+    {
+      "symptom": "chronic constipation",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "irregular bowel",
+        "మలబద్ధకం",
+        "कब्ज"
+      ]
+    },
+    {
+      "symptom": "chronic watery diarrhea",
+      "specialty": "Gastroenterology",
+      "urgency": "Medium",
+      "aliases": [
+        "loose motions",
+        "విరేచనాలు",
+        "दस्त"
+      ]
+    },
+    {
+      "symptom": "persistent vomiting",
+      "specialty": "Gastroenterology",
+      "urgency": "Medium",
+      "aliases": [
+        "cannot keep fluids down",
+        "వాంతులు"
+      ]
+    },
+    {
+      "symptom": "chronic cough over 3 weeks",
+      "specialty": "Pulmonology",
+      "urgency": "High",
+      "aliases": [
+        "tb suspicion",
+        "coughing phlegm",
+        "దగ్గు",
+        "खांसी"
+      ]
+    },
+    {
+      "symptom": "coughing up blood",
+      "specialty": "Pulmonology",
+      "urgency": "High",
+      "aliases": [
+        "hemoptysis",
+        "రక్తం పడడం దగ్గులో"
+      ]
+    },
+    {
+      "symptom": "wheezing and whistling breath",
+      "specialty": "Pulmonology",
+      "urgency": "Medium",
+      "aliases": [
+        "asthma attack",
+        "శ్వాసలో పిల్లికూతలు"
+      ]
+    },
+    {
+      "symptom": "chest congestion and thick mucus",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "bronchitis",
+        "छाती में जकड़न"
+      ]
+    },
+    {
+      "symptom": "snoring and choking in sleep",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "sleep apnea",
+        "daytime sleepiness"
+      ]
+    },
+    {
+      "symptom": "itching red skin rash",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "eczema",
+        "hives",
+        "దురద దద్దుర్లు",
+        "त्वचा पर खुजली"
+      ]
+    },
+    {
+      "symptom": "fungal ringworm infection",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "tinea",
+        "తామర",
+        "दाद"
+      ]
+    },
+    {
+      "symptom": "severe acne and boils",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "pimples",
+        "మొటిమలు",
+        "मुंहासे"
+      ]
+    },
+    {
+      "symptom": "hair loss in circular patches",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "alopecia areata",
+        "జుట్టు రాలడం"
+      ]
+    },
+    {
+      "symptom": "changing skin mole or dark spot",
+      "specialty": "Dermatology",
+      "urgency": "Medium",
+      "aliases": [
+        "melanoma check",
+        "పుట్టుమచ్చ మార్పు"
+      ]
+    },
+    {
+      "symptom": "dry scaly silver patches",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "psoriasis",
+        "సోరియాసిస్"
+      ]
+    },
+    {
+      "symptom": "irregular menstrual periods",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Medium",
+      "aliases": [
+        "pcos sign",
+        "missed period",
+        "ముట్టు లోపాలు",
+        "अनियमित मासिक धर्म"
+      ]
+    },
+    {
+      "symptom": "heavy menstrual bleeding",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Medium",
+      "aliases": [
+        "menorrhagia",
+        "అధిక రక్తస్రావం"
+      ]
+    },
+    {
+      "symptom": "pelvic pain",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Medium",
+      "aliases": [
+        "lower abdominal pain women",
+        "కటి నొప్పి"
+      ]
+    },
+    {
+      "symptom": "breast lump or nipple discharge",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "High",
+      "aliases": [
+        "breast mass",
+        "రొమ్ములో గడ్డ"
+      ]
+    },
+    {
+      "symptom": "pregnancy nausea and vomiting",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "morning sickness",
+        "గర్భధారణ వాంతులు"
+      ]
+    },
+    {
+      "symptom": "abnormal vaginal discharge",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "yeast infection",
+        "తెల్లబట్ట"
+      ]
+    },
+    {
+      "symptom": "high fever in child with shivering",
+      "specialty": "Pediatrics",
+      "urgency": "High",
+      "aliases": [
+        "infant fever",
+        "పిల్లల్లో జ్వరం",
+        "बच्चों में बुखार"
+      ]
+    },
+    {
+      "symptom": "child poor growth or weight loss",
+      "specialty": "Pediatrics",
+      "urgency": "Medium",
+      "aliases": [
+        "failure to thrive",
+        "పిల్లల ఎదుగుదల లోపం"
+      ]
+    },
+    {
+      "symptom": "child persistent barking cough",
+      "specialty": "Pediatrics",
+      "urgency": "Medium",
+      "aliases": [
+        "croup",
+        "పిల్లాడికి దగ్గు"
+      ]
+    },
+    {
+      "symptom": "child dehydration from diarrhea",
+      "specialty": "Pediatrics",
+      "urgency": "High",
+      "aliases": [
+        "sunken eyes infant",
+        "no tears crying"
+      ]
+    },
+    {
+      "symptom": "child speech delay",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "not talking at 2 years",
+        "మాటలు రాకపోవడం"
+      ]
+    },
+    {
+      "symptom": "cloudy blurred vision",
+      "specialty": "Ophthalmology",
+      "urgency": "Medium",
+      "aliases": [
+        "cataract sign",
+        "కంటి మసక",
+        "आंखों में धुंधलापन"
+      ]
+    },
+    {
+      "symptom": "sudden loss of vision",
+      "specialty": "Ophthalmology",
+      "urgency": "Urgent",
+      "aliases": [
+        "retinal detachment",
+        "black vision"
+      ]
+    },
+    {
+      "symptom": "red painful eye with discharge",
+      "specialty": "Ophthalmology",
+      "urgency": "Medium",
+      "aliases": [
+        "conjunctivitis",
+        "pink eye",
+        "కండ్లకలక"
+      ]
+    },
+    {
+      "symptom": "eye pain with rainbow halos",
+      "specialty": "Ophthalmology",
+      "urgency": "High",
+      "aliases": [
+        "acute glaucoma",
+        "కంటి నొప్పి"
+      ]
+    },
+    {
+      "symptom": "ear pain with discharge",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Medium",
+      "aliases": [
+        "otitis media",
+        "చెవి నొప్పి",
+        "कान में दर्द"
+      ]
+    },
+    {
+      "symptom": "hearing loss in one ear",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Medium",
+      "aliases": [
+        "tinnitus",
+        "చెవి దిబ్బడ"
+      ]
+    },
+    {
+      "symptom": "sore throat painful swallowing",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "tonsillitis",
+        "గొంతు నొప్పి",
+        "गले में खराश"
+      ]
+    },
+    {
+      "symptom": "chronic nasal blockage and sneezing",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "sinusitis",
+        "ముక్కు దిబ్బడ",
+        "साइनस"
+      ]
+    },
+    {
+      "symptom": "spinning dizziness room rotating",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Medium",
+      "aliases": [
+        "vertigo",
+        "తల తిరగడం"
+      ]
+    },
+    {
+      "symptom": "excessive thirst and frequent urination",
+      "specialty": "Endocrinology",
+      "urgency": "Medium",
+      "aliases": [
+        "high blood sugar",
+        "diabetes signs",
+        "ఎక్కువ దాహం",
+        "बार बार पेशाब"
+      ]
+    },
+    {
+      "symptom": "unexplained rapid weight loss",
+      "specialty": "Endocrinology",
+      "urgency": "Medium",
+      "aliases": [
+        "hyperthyroidism",
+        "బరువు తగ్గడం"
+      ]
+    },
+    {
+      "symptom": "unexplained weight gain and cold intolerance",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "hypothyroidism",
+        "బరువు పెరగడం"
+      ]
+    },
+    {
+      "symptom": "swelling in front of neck",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "goiter",
+        "మెడ వాపు"
+      ]
+    },
+    {
+      "symptom": "burning pain during urination",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Medium",
+      "aliases": [
+        "uti",
+        "urinary infection",
+        "మూత్రంలో మంట",
+        "पेशाब में जलन"
+      ]
+    },
+    {
+      "symptom": "severe flank side back pain",
+      "specialty": "Urology & Nephrology",
+      "urgency": "High",
+      "aliases": [
+        "kidney stone",
+        "కిడ్నీ రాయి నొప్పి"
+      ]
+    },
+    {
+      "symptom": "blood in urine",
+      "specialty": "Urology & Nephrology",
+      "urgency": "High",
+      "aliases": [
+        "hematuria",
+        "మూత్రంలో రక్తం"
+      ]
+    },
+    {
+      "symptom": "difficulty passing urine in elderly men",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Medium",
+      "aliases": [
+        "prostate enlargement",
+        "bph sign"
+      ]
+    },
+    {
+      "symptom": "puffiness around eyes in morning",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Medium",
+      "aliases": [
+        "kidney edema",
+        "కళ్ల వాపులు"
+      ]
+    },
+    {
+      "symptom": "itchy scalp",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "itchy-scalp",
+        "skin itchy scalp"
+      ]
+    },
+    {
+      "symptom": "dry cracked skin",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "dry-cracked-skin",
+        "skin dry cracked skin"
+      ]
+    },
+    {
+      "symptom": "nail discoloration",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "nail-discoloration",
+        "skin nail discoloration"
+      ]
+    },
+    {
+      "symptom": "skin peeling",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "skin-peeling",
+        "skin skin peeling"
+      ]
+    },
+    {
+      "symptom": "sunburn blisters",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "sunburn-blisters",
+        "skin sunburn blisters"
+      ]
+    },
+    {
+      "symptom": "dark patches on neck",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "dark-patches-on-neck",
+        "skin dark patches on neck"
+      ]
+    },
+    {
+      "symptom": "white patches on skin",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "white-patches-on-skin",
+        "skin white patches on skin"
+      ]
+    },
+    {
+      "symptom": "ingrown nail infection",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "ingrown-nail-infection",
+        "skin ingrown nail infection"
+      ]
+    },
+    {
+      "symptom": "sweat rash underarms",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "sweat-rash-underarms",
+        "skin sweat rash underarms"
+      ]
+    },
+    {
+      "symptom": "skin tags neck",
+      "specialty": "Dermatology",
+      "urgency": "Low",
+      "aliases": [
+        "skin-tags-neck",
+        "skin skin tags neck"
+      ]
+    },
+    {
+      "symptom": "bloating after eating",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "bloating-after-eating",
+        "stomach bloating after eating"
+      ]
+    },
+    {
+      "symptom": "excessive belching",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "excessive-belching",
+        "stomach excessive belching"
+      ]
+    },
+    {
+      "symptom": "indigestion fullness",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "indigestion-fullness",
+        "stomach indigestion fullness"
+      ]
+    },
+    {
+      "symptom": "hiccups persistent",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "hiccups-persistent",
+        "stomach hiccups persistent"
+      ]
+    },
+    {
+      "symptom": "anal itching worms",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "anal-itching-worms",
+        "stomach anal itching worms"
+      ]
+    },
+    {
+      "symptom": "nausea after oily food",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "nausea-after-oily-food",
+        "stomach nausea after oily food"
+      ]
+    },
+    {
+      "symptom": "gas flatulence foul",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "gas-flatulence-foul",
+        "stomach gas flatulence foul"
+      ]
+    },
+    {
+      "symptom": "stomach rumbling pain",
+      "specialty": "Gastroenterology",
+      "urgency": "Medium",
+      "aliases": [
+        "stomach-rumbling-pain",
+        "stomach stomach rumbling pain"
+      ]
+    },
+    {
+      "symptom": "loss of taste food",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "loss-of-taste-food",
+        "stomach loss of taste food"
+      ]
+    },
+    {
+      "symptom": "metallic taste tongue",
+      "specialty": "Gastroenterology",
+      "urgency": "Low",
+      "aliases": [
+        "metallic-taste-tongue",
+        "stomach metallic taste tongue"
+      ]
+    },
+    {
+      "symptom": "chest fluttering laying down",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "chest-fluttering-laying-down",
+        "chest chest fluttering laying down"
+      ]
+    },
+    {
+      "symptom": "pulse jumping feeling",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "pulse-jumping-feeling",
+        "chest pulse jumping feeling"
+      ]
+    },
+    {
+      "symptom": "heavy chest morning",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "heavy-chest-morning",
+        "chest heavy chest morning"
+      ]
+    },
+    {
+      "symptom": "racing pulse rest",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "racing-pulse-rest",
+        "chest racing pulse rest"
+      ]
+    },
+    {
+      "symptom": "cold sweat anxiety",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "cold-sweat-anxiety",
+        "chest cold sweat anxiety"
+      ]
+    },
+    {
+      "symptom": "chest stitch breathing",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "chest-stitch-breathing",
+        "chest chest stitch breathing"
+      ]
+    },
+    {
+      "symptom": "blue lips exertion",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "blue-lips-exertion",
+        "chest blue lips exertion"
+      ]
+    },
+    {
+      "symptom": "swollen vein neck",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "swollen-vein-neck",
+        "chest swollen vein neck"
+      ]
+    },
+    {
+      "symptom": "skipped heart beats",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "skipped-heart-beats",
+        "chest skipped heart beats"
+      ]
+    },
+    {
+      "symptom": "high resting pulse",
+      "specialty": "Cardiology",
+      "urgency": "Low",
+      "aliases": [
+        "high-resting-pulse",
+        "chest high resting pulse"
+      ]
+    },
+    {
+      "symptom": "finger stiffness typing",
+      "specialty": "Orthopedics",
+      "urgency": "Low",
+      "aliases": [
+        "finger-stiffness-typing",
+        "joints finger stiffness typing"
+      ]
+    },
+    {
+      "symptom": "creaking sound neck",
+      "specialty": "Orthopedics",
+      "urgency": "Low",
+      "aliases": [
+        "creaking-sound-neck",
+        "joints creaking sound neck"
+      ]
+    },
+    {
+      "symptom": "swollen ankle twist",
+      "specialty": "Orthopedics",
+      "urgency": "Low",
+      "aliases": [
+        "swollen-ankle-twist",
+        "joints swollen ankle twist"
+      ]
+    },
+    {
+      "symptom": "tailbone pain sitting",
+      "specialty": "Orthopedics",
+      "urgency": "Medium",
+      "aliases": [
+        "tailbone-pain-sitting",
+        "joints tailbone pain sitting"
+      ]
+    },
+    {
+      "symptom": "elbow tender touch",
+      "specialty": "Orthopedics",
+      "urgency": "Low",
+      "aliases": [
+        "elbow-tender-touch",
+        "joints elbow tender touch"
+      ]
+    },
+    {
+      "symptom": "wrist numbness typing",
+      "specialty": "Orthopedics",
+      "urgency": "Low",
+      "aliases": [
+        "wrist-numbness-typing",
+        "joints wrist numbness typing"
+      ]
+    },
+    {
+      "symptom": "hip pain walking stairs",
+      "specialty": "Orthopedics",
+      "urgency": "Medium",
+      "aliases": [
+        "hip-pain-walking-stairs",
+        "joints hip pain walking stairs"
+      ]
+    },
+    {
+      "symptom": "clicking knee climbing",
+      "specialty": "Orthopedics",
+      "urgency": "Low",
+      "aliases": [
+        "clicking-knee-climbing",
+        "joints clicking knee climbing"
+      ]
+    },
+    {
+      "symptom": "toe pain gout attack",
+      "specialty": "Orthopedics",
+      "urgency": "Medium",
+      "aliases": [
+        "toe-pain-gout-attack",
+        "joints toe pain gout attack"
+      ]
+    },
+    {
+      "symptom": "shoulder blade ache",
+      "specialty": "Orthopedics",
+      "urgency": "Low",
+      "aliases": [
+        "shoulder-blade-ache",
+        "joints shoulder blade ache"
+      ]
+    },
+    {
+      "symptom": "throbbing forehead temples",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "throbbing-forehead-temples",
+        "head throbbing forehead temples"
+      ]
+    },
+    {
+      "symptom": "scalp tenderness comb",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "scalp-tenderness-comb",
+        "head scalp tenderness comb"
+      ]
+    },
+    {
+      "symptom": "flashing lights vision",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "flashing-lights-vision",
+        "head flashing lights vision"
+      ]
+    },
+    {
+      "symptom": "tingling tongue cheek",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "tingling-tongue-cheek",
+        "head tingling tongue cheek"
+      ]
+    },
+    {
+      "symptom": "shaky handwriting coffee",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "shaky-handwriting-coffee",
+        "head shaky handwriting coffee"
+      ]
+    },
+    {
+      "symptom": "trouble finding words",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "trouble-finding-words",
+        "head trouble finding words"
+      ]
+    },
+    {
+      "symptom": "clumsy dropping glasses",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "clumsy-dropping-glasses",
+        "head clumsy dropping glasses"
+      ]
+    },
+    {
+      "symptom": "eyelid twitching daily",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "eyelid-twitching-daily",
+        "head eyelid twitching daily"
+      ]
+    },
+    {
+      "symptom": "head pressure reading",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "head-pressure-reading",
+        "head head pressure reading"
+      ]
+    },
+    {
+      "symptom": "brain fog tiredness",
+      "specialty": "Neurology",
+      "urgency": "Low",
+      "aliases": [
+        "brain-fog-tiredness",
+        "head brain fog tiredness"
+      ]
+    },
+    {
+      "symptom": "breathless climbing stairs",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "breathless-climbing-stairs",
+        "breathing breathless climbing stairs"
+      ]
+    },
+    {
+      "symptom": "tight chest cold air",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "tight-chest-cold-air",
+        "breathing tight chest cold air"
+      ]
+    },
+    {
+      "symptom": "dry tickly night cough",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "dry-tickly-night-cough",
+        "breathing dry tickly night cough"
+      ]
+    },
+    {
+      "symptom": "throat mucus morning",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "throat-mucus-morning",
+        "breathing throat mucus morning"
+      ]
+    },
+    {
+      "symptom": "gasping night waking",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "gasping-night-waking",
+        "breathing gasping night waking"
+      ]
+    },
+    {
+      "symptom": "dust allergy sneezing",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "dust-allergy-sneezing",
+        "breathing dust allergy sneezing"
+      ]
+    },
+    {
+      "symptom": "pollen allergy eyes",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "pollen-allergy-eyes",
+        "breathing pollen allergy eyes"
+      ]
+    },
+    {
+      "symptom": "smoke irritation throat",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "smoke-irritation-throat",
+        "breathing smoke irritation throat"
+      ]
+    },
+    {
+      "symptom": "shallow fast breathing",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "shallow-fast-breathing",
+        "breathing shallow fast breathing"
+      ]
+    },
+    {
+      "symptom": "chest soreness coughing",
+      "specialty": "Pulmonology",
+      "urgency": "Low",
+      "aliases": [
+        "chest-soreness-coughing",
+        "breathing chest soreness coughing"
+      ]
+    },
+    {
+      "symptom": "crying spells unprovoked",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "crying-spells-unprovoked",
+        "mental crying spells unprovoked"
+      ]
+    },
+    {
+      "symptom": "racing thoughts at night",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "racing-thoughts-at-night",
+        "mental racing thoughts at night"
+      ]
+    },
+    {
+      "symptom": "fear of leaving house",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "fear-of-leaving-house",
+        "mental fear of leaving house"
+      ]
+    },
+    {
+      "symptom": "feeling unreal disconnected",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "feeling-unreal-disconnected",
+        "mental feeling unreal disconnected"
+      ]
+    },
+    {
+      "symptom": "irritability with family",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "irritability-with-family",
+        "mental irritability with family"
+      ]
+    },
+    {
+      "symptom": "social gathering dread",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "social-gathering-dread",
+        "mental social gathering dread"
+      ]
+    },
+    {
+      "symptom": "excessive guilt past",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "excessive-guilt-past",
+        "mental excessive guilt past"
+      ]
+    },
+    {
+      "symptom": "difficulty concentrating",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "difficulty-concentrating",
+        "mental difficulty concentrating"
+      ]
+    },
+    {
+      "symptom": "low energy motivation",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "low-energy-motivation",
+        "mental low energy motivation"
+      ]
+    },
+    {
+      "symptom": "constant worrying future",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "constant-worrying-future",
+        "mental constant worrying future"
+      ]
+    },
+    {
+      "symptom": "sneaking drinks secret",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "sneaking-drinks-secret",
+        "addiction sneaking drinks secret"
+      ]
+    },
+    {
+      "symptom": "lying about alcohol intake",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "lying-about-alcohol-intake",
+        "addiction lying about alcohol intake"
+      ]
+    },
+    {
+      "symptom": "shaky mornings needing drink",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "shaky-mornings-needing-drink",
+        "addiction shaky mornings needing drink"
+      ]
+    },
+    {
+      "symptom": "blackout events party",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "blackout-events-party",
+        "addiction blackout events party"
+      ]
+    },
+    {
+      "symptom": "irritated without tobacco",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "irritated-without-tobacco",
+        "addiction irritated without tobacco"
+      ]
+    },
+    {
+      "symptom": "using drugs alone",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "using-drugs-alone",
+        "addiction using drugs alone"
+      ]
+    },
+    {
+      "symptom": "stealing money for substances",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "stealing-money-for-substances",
+        "addiction stealing money for substances"
+      ]
+    },
+    {
+      "symptom": "ignoring duties for drinking",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "ignoring-duties-for-drinking",
+        "addiction ignoring duties for drinking"
+      ]
+    },
+    {
+      "symptom": "tolerance needing more liquor",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "tolerance-needing-more-liquor",
+        "addiction tolerance needing more liquor"
+      ]
+    },
+    {
+      "symptom": "hangover sickness regular",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "hangover-sickness-regular",
+        "addiction hangover sickness regular"
+      ]
+    },
+    {
+      "symptom": "painful cramps periods",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Medium",
+      "aliases": [
+        "painful-cramps-periods",
+        "women painful cramps periods"
+      ]
+    },
+    {
+      "symptom": "breast tenderness before cycle",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "breast-tenderness-before-cycle",
+        "women breast tenderness before cycle"
+      ]
+    },
+    {
+      "symptom": "hot flashes night sweats",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "hot-flashes-night-sweats",
+        "women hot flashes night sweats"
+      ]
+    },
+    {
+      "symptom": "vaginal dryness itching",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "vaginal-dryness-itching",
+        "women vaginal dryness itching"
+      ]
+    },
+    {
+      "symptom": "mood swings before menses",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "mood-swings-before-menses",
+        "women mood swings before menses"
+      ]
+    },
+    {
+      "symptom": "spotting between periods",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "spotting-between-periods",
+        "women spotting between periods"
+      ]
+    },
+    {
+      "symptom": "heavy bleeding clots",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "heavy-bleeding-clots",
+        "women heavy bleeding clots"
+      ]
+    },
+    {
+      "symptom": "cervical discharge odor",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "cervical-discharge-odor",
+        "women cervical discharge odor"
+      ]
+    },
+    {
+      "symptom": "pain during intercourse",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Medium",
+      "aliases": [
+        "pain-during-intercourse",
+        "women pain during intercourse"
+      ]
+    },
+    {
+      "symptom": "lower pelvic pressure",
+      "specialty": "Gynecology & Obstetrics",
+      "urgency": "Low",
+      "aliases": [
+        "lower-pelvic-pressure",
+        "women lower pelvic pressure"
+      ]
+    },
+    {
+      "symptom": "teething pain infant",
+      "specialty": "Pediatrics",
+      "urgency": "Medium",
+      "aliases": [
+        "teething-pain-infant",
+        "children teething pain infant"
+      ]
+    },
+    {
+      "symptom": "child refusing liquids",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "child-refusing-liquids",
+        "children child refusing liquids"
+      ]
+    },
+    {
+      "symptom": "child ear pulling crying",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "child-ear-pulling-crying",
+        "children child ear pulling crying"
+      ]
+    },
+    {
+      "symptom": "diaper rash redness",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "diaper-rash-redness",
+        "children diaper rash redness"
+      ]
+    },
+    {
+      "symptom": "bedwetting over 6 years",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "bedwetting-over-6-years",
+        "children bedwetting over 6 years"
+      ]
+    },
+    {
+      "symptom": "child thumb sucking anxiety",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "child-thumb-sucking-anxiety",
+        "children child thumb sucking anxiety"
+      ]
+    },
+    {
+      "symptom": "child rash with fever",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "child-rash-with-fever",
+        "children child rash with fever"
+      ]
+    },
+    {
+      "symptom": "persistent diarrhea baby",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "persistent-diarrhea-baby",
+        "children persistent diarrhea baby"
+      ]
+    },
+    {
+      "symptom": "frequent colds preschool",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "frequent-colds-preschool",
+        "children frequent colds preschool"
+      ]
+    },
+    {
+      "symptom": "restless sleeping toddler",
+      "specialty": "Pediatrics",
+      "urgency": "Low",
+      "aliases": [
+        "restless-sleeping-toddler",
+        "children restless sleeping toddler"
+      ]
+    },
+    {
+      "symptom": "dry gritty feeling eyes",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "dry-gritty-feeling-eyes",
+        "eyes dry gritty feeling eyes"
+      ]
+    },
+    {
+      "symptom": "eye strain computer",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "eye-strain-computer",
+        "eyes eye strain computer"
+      ]
+    },
+    {
+      "symptom": "watery eyes wind",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "watery-eyes-wind",
+        "eyes watery eyes wind"
+      ]
+    },
+    {
+      "symptom": "itchy eye rubbing",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "itchy-eye-rubbing",
+        "eyes itchy eye rubbing"
+      ]
+    },
+    {
+      "symptom": "sensitive to bright sun",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "sensitive-to-bright-sun",
+        "eyes sensitive to bright sun"
+      ]
+    },
+    {
+      "symptom": "floaters cobwebs vision",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "floaters-cobwebs-vision",
+        "eyes floaters cobwebs vision"
+      ]
+    },
+    {
+      "symptom": "crusty eyelids waking",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "crusty-eyelids-waking",
+        "eyes crusty eyelids waking"
+      ]
+    },
+    {
+      "symptom": "contact lens burning",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "contact-lens-burning",
+        "eyes contact lens burning"
+      ]
+    },
+    {
+      "symptom": "double vision reading",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "double-vision-reading",
+        "eyes double vision reading"
+      ]
+    },
+    {
+      "symptom": "twitching eye stress",
+      "specialty": "Ophthalmology",
+      "urgency": "Low",
+      "aliases": [
+        "twitching-eye-stress",
+        "eyes twitching eye stress"
+      ]
+    },
+    {
+      "symptom": "scratchy throat dust",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "scratchy-throat-dust",
+        "throat scratchy throat dust"
+      ]
+    },
+    {
+      "symptom": "hoarse raspy voice",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "hoarse-raspy-voice",
+        "throat hoarse raspy voice"
+      ]
+    },
+    {
+      "symptom": "lump sensation throat",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "lump-sensation-throat",
+        "throat lump sensation throat"
+      ]
+    },
+    {
+      "symptom": "blocked ear flight",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "blocked-ear-flight",
+        "throat blocked ear flight"
+      ]
+    },
+    {
+      "symptom": "ear popping swallowing",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "ear-popping-swallowing",
+        "throat ear popping swallowing"
+      ]
+    },
+    {
+      "symptom": "nose bleeding dry weather",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "nose-bleeding-dry-weather",
+        "throat nose bleeding dry weather"
+      ]
+    },
+    {
+      "symptom": "runny clear nose sneezing",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "runny-clear-nose-sneezing",
+        "throat runny clear nose sneezing"
+      ]
+    },
+    {
+      "symptom": "loss of smell taste",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "loss-of-smell-taste",
+        "throat loss of smell taste"
+      ]
+    },
+    {
+      "symptom": "snoring loud mouth breathing",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "snoring-loud-mouth-breathing",
+        "throat snoring loud mouth breathing"
+      ]
+    },
+    {
+      "symptom": "clicking jaw chewing",
+      "specialty": "ENT (Ear, Nose & Throat)",
+      "urgency": "Low",
+      "aliases": [
+        "clicking-jaw-chewing",
+        "throat clicking jaw chewing"
+      ]
+    },
+    {
+      "symptom": "waking twice to pee",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Low",
+      "aliases": [
+        "waking-twice-to-pee",
+        "urinary waking twice to pee"
+      ]
+    },
+    {
+      "symptom": "weak urine stream",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Low",
+      "aliases": [
+        "weak-urine-stream",
+        "urinary weak urine stream"
+      ]
+    },
+    {
+      "symptom": "urgent rush to toilet",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Low",
+      "aliases": [
+        "urgent-rush-to-toilet",
+        "urinary urgent rush to toilet"
+      ]
+    },
+    {
+      "symptom": "cloudy smelly urine",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Low",
+      "aliases": [
+        "cloudy-smelly-urine",
+        "urinary cloudy smelly urine"
+      ]
+    },
+    {
+      "symptom": "foamy bubbly urine",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Low",
+      "aliases": [
+        "foamy-bubbly-urine",
+        "urinary foamy bubbly urine"
+      ]
+    },
+    {
+      "symptom": "pain after passing water",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Medium",
+      "aliases": [
+        "pain-after-passing-water",
+        "urinary pain after passing water"
+      ]
+    },
+    {
+      "symptom": "dribbling urine after toilet",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Low",
+      "aliases": [
+        "dribbling-urine-after-toilet",
+        "urinary dribbling urine after toilet"
+      ]
+    },
+    {
+      "symptom": "feeling bladder not empty",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Low",
+      "aliases": [
+        "feeling-bladder-not-empty",
+        "urinary feeling bladder not empty"
+      ]
+    },
+    {
+      "symptom": "dark amber tea urine",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Low",
+      "aliases": [
+        "dark-amber-tea-urine",
+        "urinary dark amber tea urine"
+      ]
+    },
+    {
+      "symptom": "pain in groins walking",
+      "specialty": "Urology & Nephrology",
+      "urgency": "Medium",
+      "aliases": [
+        "pain-in-groins-walking",
+        "urinary pain in groins walking"
+      ]
+    },
+    {
+      "symptom": "frailty and unsteadiness",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "frailty-and-unsteadiness",
+        "elderly frailty and unsteadiness"
+      ]
+    },
+    {
+      "symptom": "frequent falls elderly",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "frequent-falls-elderly",
+        "elderly frequent falls elderly"
+      ]
+    },
+    {
+      "symptom": "confusion at twilight sundowning",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "confusion-at-twilight-sundowning",
+        "elderly confusion at twilight sundowning"
+      ]
+    },
+    {
+      "symptom": "difficulty swallowing liquids",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "difficulty-swallowing-liquids",
+        "elderly difficulty swallowing liquids"
+      ]
+    },
+    {
+      "symptom": "involuntary urine leakage",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "involuntary-urine-leakage",
+        "elderly involuntary urine leakage"
+      ]
+    },
+    {
+      "symptom": "loss of independence daily tasks",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "loss-of-independence-daily-tasks",
+        "elderly loss of independence daily tasks"
+      ]
+    },
+    {
+      "symptom": "weight loss elderly dentures",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "weight-loss-elderly-dentures",
+        "elderly weight loss elderly dentures"
+      ]
+    },
+    {
+      "symptom": "slow walking shuffle",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "slow-walking-shuffle",
+        "elderly slow walking shuffle"
+      ]
+    },
+    {
+      "symptom": "bruising easily thin skin",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "bruising-easily-thin-skin",
+        "elderly bruising easily thin skin"
+      ]
+    },
+    {
+      "symptom": "hearing impairment elderly",
+      "specialty": "Geriatrics",
+      "urgency": "Low",
+      "aliases": [
+        "hearing-impairment-elderly",
+        "elderly hearing impairment elderly"
+      ]
+    },
+    {
+      "symptom": "chills and shivering rigor",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Low",
+      "aliases": [
+        "chills-and-shivering-rigor",
+        "infectious chills and shivering rigor"
+      ]
+    },
+    {
+      "symptom": "night sweats soaking sheets",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Low",
+      "aliases": [
+        "night-sweats-soaking-sheets",
+        "infectious night sweats soaking sheets"
+      ]
+    },
+    {
+      "symptom": "persistent low grade fever",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Low",
+      "aliases": [
+        "persistent-low-grade-fever",
+        "infectious persistent low grade fever"
+      ]
+    },
+    {
+      "symptom": "body aches all over",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Low",
+      "aliases": [
+        "body-aches-all-over",
+        "infectious body aches all over"
+      ]
+    },
+    {
+      "symptom": "extreme fatigue exhaustion",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Low",
+      "aliases": [
+        "extreme-fatigue-exhaustion",
+        "infectious extreme fatigue exhaustion"
+      ]
+    },
+    {
+      "symptom": "swollen lymph nodes neck",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Low",
+      "aliases": [
+        "swollen-lymph-nodes-neck",
+        "infectious swollen lymph nodes neck"
+      ]
+    },
+    {
+      "symptom": "loss of taste COVID sign",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Low",
+      "aliases": [
+        "loss-of-taste-COVID-sign",
+        "infectious loss of taste COVID sign"
+      ]
+    },
+    {
+      "symptom": "dengue joint bone breaking pain",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Medium",
+      "aliases": [
+        "dengue-joint-bone-breaking-pain",
+        "infectious dengue joint bone breaking pain"
+      ]
+    },
+    {
+      "symptom": "malaria sweating cycle",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Low",
+      "aliases": [
+        "malaria-sweating-cycle",
+        "infectious malaria sweating cycle"
+      ]
+    },
+    {
+      "symptom": "typhoid stomach ache fever",
+      "specialty": "General Medicine & Infectious Diseases",
+      "urgency": "Low",
+      "aliases": [
+        "typhoid-stomach-ache-fever",
+        "infectious typhoid stomach ache fever"
+      ]
+    },
+    {
+      "symptom": "sugar cravings afternoon",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "sugar-cravings-afternoon",
+        "lifestyle sugar cravings afternoon"
+      ]
+    },
+    {
+      "symptom": "feeling shaky when hungry",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "feeling-shaky-when-hungry",
+        "lifestyle feeling shaky when hungry"
+      ]
+    },
+    {
+      "symptom": "dark velvety skin armpits",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "dark-velvety-skin-armpits",
+        "lifestyle dark velvety skin armpits"
+      ]
+    },
+    {
+      "symptom": "slow healing minor cuts",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "slow-healing-minor-cuts",
+        "lifestyle slow healing minor cuts"
+      ]
+    },
+    {
+      "symptom": "tingling burning in toes",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "tingling-burning-in-toes",
+        "lifestyle tingling burning in toes"
+      ]
+    },
+    {
+      "symptom": "constant dry mouth thirst",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "constant-dry-mouth-thirst",
+        "lifestyle constant dry mouth thirst"
+      ]
+    },
+    {
+      "symptom": "frequent boils skin infections",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "frequent-boils-skin-infections",
+        "lifestyle frequent boils skin infections"
+      ]
+    },
+    {
+      "symptom": "blurred vision after sweets",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "blurred-vision-after-sweets",
+        "lifestyle blurred vision after sweets"
+      ]
+    },
+    {
+      "symptom": "tiredness after heavy rice meals",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "tiredness-after-heavy-rice-meals",
+        "lifestyle tiredness after heavy rice meals"
+      ]
+    },
+    {
+      "symptom": "abdominal fat accumulation",
+      "specialty": "Endocrinology",
+      "urgency": "Low",
+      "aliases": [
+        "abdominal-fat-accumulation",
+        "lifestyle abdominal fat accumulation"
+      ]
+    },
+    {
+      "symptom": "phobia of crowded markets",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "phobia-of-crowded-markets",
+        "mental_extra phobia of crowded markets"
+      ]
+    },
+    {
+      "symptom": "social anxiety public speaking",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "social-anxiety-public-speaking",
+        "mental_extra social anxiety public speaking"
+      ]
+    },
+    {
+      "symptom": "hypochondria health anxiety",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "hypochondria-health-anxiety",
+        "mental_extra hypochondria health anxiety"
+      ]
+    },
+    {
+      "symptom": "hair pulling trichotillomania",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "hair-pulling-trichotillomania",
+        "mental_extra hair pulling trichotillomania"
+      ]
+    },
+    {
+      "symptom": "skin picking excoriation",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "skin-picking-excoriation",
+        "mental_extra skin picking excoriation"
+      ]
+    },
+    {
+      "symptom": "imposter syndrome dread",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "imposter-syndrome-dread",
+        "mental_extra imposter syndrome dread"
+      ]
+    },
+    {
+      "symptom": "burnout work exhaustion",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "burnout-work-exhaustion",
+        "mental_extra burnout work exhaustion"
+      ]
+    },
+    {
+      "symptom": "dissociation floating feeling",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "dissociation-floating-feeling",
+        "mental_extra dissociation floating feeling"
+      ]
+    },
+    {
+      "symptom": "morning gloom waking early",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "morning-gloom-waking-early",
+        "mental_extra morning gloom waking early"
+      ]
+    },
+    {
+      "symptom": "chronic loneliness despair",
+      "specialty": "Psychiatry & Mental Health",
+      "urgency": "Low",
+      "aliases": [
+        "chronic-loneliness-despair",
+        "mental_extra chronic loneliness despair"
+      ]
+    },
+    {
+      "symptom": "morning drink eye opener",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "morning-drink-eye-opener",
+        "addiction_extra morning drink eye opener"
+      ]
+    },
+    {
+      "symptom": "gambling compulsion urges",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "gambling-compulsion-urges",
+        "addiction_extra gambling compulsion urges"
+      ]
+    },
+    {
+      "symptom": "prescription sleeping pill dependence",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "prescription-sleeping-pill-dependence",
+        "addiction_extra prescription sleeping pill dependence"
+      ]
+    },
+    {
+      "symptom": "cough syrup abuse codeine",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "cough-syrup-abuse-codeine",
+        "addiction_extra cough syrup abuse codeine"
+      ]
+    },
+    {
+      "symptom": "inhalant sniffing glue",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "inhalant-sniffing-glue",
+        "addiction_extra inhalant sniffing glue"
+      ]
+    },
+    {
+      "symptom": "denial about addiction consequences",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "denial-about-addiction-consequences",
+        "addiction_extra denial about addiction consequences"
+      ]
+    },
+    {
+      "symptom": "financial ruin buying liquor",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "financial-ruin-buying-liquor",
+        "addiction_extra financial ruin buying liquor"
+      ]
+    },
+    {
+      "symptom": "violent temper when sober",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "violent-temper-when-sober",
+        "addiction_extra violent temper when sober"
+      ]
+    },
+    {
+      "symptom": "seeking multiple doctor prescriptions",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "seeking-multiple-doctor-prescriptions",
+        "addiction_extra seeking multiple doctor prescriptions"
+      ]
+    },
+    {
+      "symptom": "physical craving panic without substance",
+      "specialty": "De-addiction & Rehabilitation",
+      "urgency": "Low",
+      "aliases": [
+        "physical-craving-panic-without-substance",
+        "addiction_extra physical craving panic without substance"
+      ]
+    },
+    {
+      "symptom": "severe throbbing toothache",
+      "specialty": "Dentistry",
+      "urgency": "Medium",
+      "aliases": [
+        "severe-throbbing-toothache",
+        "dental severe throbbing toothache"
+      ]
+    },
+    {
+      "symptom": "bleeding gums brushing",
+      "specialty": "Dentistry",
+      "urgency": "Low",
+      "aliases": [
+        "bleeding-gums-brushing",
+        "dental bleeding gums brushing"
+      ]
+    },
+    {
+      "symptom": "sensitive teeth cold water",
+      "specialty": "Dentistry",
+      "urgency": "Low",
+      "aliases": [
+        "sensitive-teeth-cold-water",
+        "dental sensitive teeth cold water"
+      ]
+    },
+    {
+      "symptom": "jaw clicking pain opening",
+      "specialty": "Dentistry",
+      "urgency": "Medium",
+      "aliases": [
+        "jaw-clicking-pain-opening",
+        "dental jaw clicking pain opening"
+      ]
+    },
+    {
+      "symptom": "wisdom tooth swelling gum",
+      "specialty": "Dentistry",
+      "urgency": "Low",
+      "aliases": [
+        "wisdom-tooth-swelling-gum",
+        "dental wisdom tooth swelling gum"
+      ]
+    },
+    {
+      "symptom": "bad breath halitosis",
+      "specialty": "Dentistry",
+      "urgency": "Low",
+      "aliases": [
+        "bad-breath-halitosis",
+        "dental bad breath halitosis"
+      ]
+    },
+    {
+      "symptom": "cavity dark hole molar",
+      "specialty": "Dentistry",
+      "urgency": "Low",
+      "aliases": [
+        "cavity-dark-hole-molar",
+        "dental cavity dark hole molar"
+      ]
+    },
+    {
+      "symptom": "loose adult tooth",
+      "specialty": "Dentistry",
+      "urgency": "Low",
+      "aliases": [
+        "loose-adult-tooth",
+        "dental loose adult tooth"
+      ]
+    },
+    {
+      "symptom": "mouth ulcer canker sore",
+      "specialty": "Dentistry",
+      "urgency": "Low",
+      "aliases": [
+        "mouth-ulcer-canker-sore",
+        "dental mouth ulcer canker sore"
+      ]
+    },
+    {
+      "symptom": "swollen cheek dental abscess",
+      "specialty": "Dentistry",
+      "urgency": "Low",
+      "aliases": [
+        "swollen-cheek-dental-abscess",
+        "dental swollen cheek dental abscess"
+      ]
+    },
+    {
+      "symptom": "repetitive strain wrist typing",
+      "specialty": "Occupational Health",
+      "urgency": "Low",
+      "aliases": [
+        "repetitive-strain-wrist-typing",
+        "occupational repetitive strain wrist typing"
+      ]
+    },
+    {
+      "symptom": "chronic dust inhalation stone cutter",
+      "specialty": "Occupational Health",
+      "urgency": "Low",
+      "aliases": [
+        "chronic-dust-inhalation-stone-cutter",
+        "occupational chronic dust inhalation stone cutter"
+      ]
+    },
+    {
+      "symptom": "pesticide exposure farmer nausea",
+      "specialty": "Occupational Health",
+      "urgency": "Low",
+      "aliases": [
+        "pesticide-exposure-farmer-nausea",
+        "occupational pesticide exposure farmer nausea"
+      ]
+    },
+    {
+      "symptom": "hearing ringing factory noise",
+      "specialty": "Occupational Health",
+      "urgency": "Low",
+      "aliases": [
+        "hearing-ringing-factory-noise",
+        "occupational hearing ringing factory noise"
+      ]
+    },
+    {
+      "symptom": "welder flash eye burn",
+      "specialty": "Occupational Health",
+      "urgency": "Low",
+      "aliases": [
+        "welder-flash-eye-burn",
+        "occupational welder flash eye burn"
+      ]
+    },
+    {
+      "symptom": "chemical fumes throat burn",
+      "specialty": "Occupational Health",
+      "urgency": "Low",
+      "aliases": [
+        "chemical-fumes-throat-burn",
+        "occupational chemical fumes throat burn"
+      ]
+    },
+    {
+      "symptom": "shift worker chronic insomnia",
+      "specialty": "Occupational Health",
+      "urgency": "Low",
+      "aliases": [
+        "shift-worker-chronic-insomnia",
+        "occupational shift worker chronic insomnia"
+      ]
+    },
+    {
+      "symptom": "standing long hours varicose veins",
+      "specialty": "Occupational Health",
+      "urgency": "Low",
+      "aliases": [
+        "standing-long-hours-varicose-veins",
+        "occupational standing long hours varicose veins"
+      ]
+    },
+    {
+      "symptom": "heavy lifting hernia pain",
+      "specialty": "Occupational Health",
+      "urgency": "Medium",
+      "aliases": [
+        "heavy-lifting-hernia-pain",
+        "occupational heavy lifting hernia pain"
+      ]
+    },
+    {
+      "symptom": "lead battery toxic headache",
+      "specialty": "Occupational Health",
+      "urgency": "Low",
+      "aliases": [
+        "lead-battery-toxic-headache",
+        "occupational lead battery toxic headache"
+      ]
+    },
+    {
+      "symptom": "severe anemia fatigue pallor",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Medium",
+      "aliases": [
+        "severe-anemia-fatigue-pallor",
+        "nutrition severe anemia fatigue pallor"
+      ]
+    },
+    {
+      "symptom": "scurvy bleeding hair follicles",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Low",
+      "aliases": [
+        "scurvy-bleeding-hair-follicles",
+        "nutrition scurvy bleeding hair follicles"
+      ]
+    },
+    {
+      "symptom": "vitamin d bone softening rickets",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Low",
+      "aliases": [
+        "vitamin-d-bone-softening-rickets",
+        "nutrition vitamin d bone softening rickets"
+      ]
+    },
+    {
+      "symptom": "b12 neuropathy tingling feet",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Low",
+      "aliases": [
+        "b12-neuropathy-tingling-feet",
+        "nutrition b12 neuropathy tingling feet"
+      ]
+    },
+    {
+      "symptom": "calcium deficiency muscle cramps",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Low",
+      "aliases": [
+        "calcium-deficiency-muscle-cramps",
+        "nutrition calcium deficiency muscle cramps"
+      ]
+    },
+    {
+      "symptom": "protein malnutrition muscle loss",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Low",
+      "aliases": [
+        "protein-malnutrition-muscle-loss",
+        "nutrition protein malnutrition muscle loss"
+      ]
+    },
+    {
+      "symptom": "zinc deficiency taste loss",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Low",
+      "aliases": [
+        "zinc-deficiency-taste-loss",
+        "nutrition zinc deficiency taste loss"
+      ]
+    },
+    {
+      "symptom": "electrolyte imbalance dehydration",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Low",
+      "aliases": [
+        "electrolyte-imbalance-dehydration",
+        "nutrition electrolyte imbalance dehydration"
+      ]
+    },
+    {
+      "symptom": "folate deficiency tongue redness",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Low",
+      "aliases": [
+        "folate-deficiency-tongue-redness",
+        "nutrition folate deficiency tongue redness"
+      ]
+    },
+    {
+      "symptom": "iodine deficiency sluggishness",
+      "specialty": "Clinical Nutrition",
+      "urgency": "Low",
+      "aliases": [
+        "iodine-deficiency-sluggishness",
+        "nutrition iodine deficiency sluggishness"
+      ]
+    },
+    {
+      "symptom": "chronic acidity vata pitta imbalance",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "chronic-acidity-vata-pitta-imbalance",
+        "ayurveda chronic acidity vata pitta imbalance"
+      ]
+    },
+    {
+      "symptom": "joint stiffness seasonal winter",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "joint-stiffness-seasonal-winter",
+        "ayurveda joint stiffness seasonal winter"
+      ]
+    },
+    {
+      "symptom": "chronic fatigue rasayana need",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "chronic-fatigue-rasayana-need",
+        "ayurveda chronic fatigue rasayana need"
+      ]
+    },
+    {
+      "symptom": "stress rejuvenation panchakarma",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "stress-rejuvenation-panchakarma",
+        "ayurveda stress rejuvenation panchakarma"
+      ]
+    },
+    {
+      "symptom": "sluggish digestion agni mandya",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "sluggish-digestion-agni-mandya",
+        "ayurveda sluggish digestion agni mandya"
+      ]
+    },
+    {
+      "symptom": "sleep disturbance vata aggravation",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "sleep-disturbance-vata-aggravation",
+        "ayurveda sleep disturbance vata aggravation"
+      ]
+    },
+    {
+      "symptom": "chronic sinusitis nasya therapy",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "chronic-sinusitis-nasya-therapy",
+        "ayurveda chronic sinusitis nasya therapy"
+      ]
+    },
+    {
+      "symptom": "skin detox consultation",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "skin-detox-consultation",
+        "ayurveda skin detox consultation"
+      ]
+    },
+    {
+      "symptom": "herbal immunity boost",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "herbal-immunity-boost",
+        "ayurveda herbal immunity boost"
+      ]
+    },
+    {
+      "symptom": "post viral recuperation",
+      "specialty": "Ayurveda & Integrative Medicine",
+      "urgency": "Low",
+      "aliases": [
+        "post-viral-recuperation",
+        "ayurveda post viral recuperation"
+      ]
+    }
+  ]
+}

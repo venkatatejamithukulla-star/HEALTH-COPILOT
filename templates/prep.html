@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Preparation Pack — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .prep-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+        @media (max-width: 768px) { .prep-grid { grid-template-columns: 1fr; } }
+        .summary-sheet { background: #ffffff; border: 2px dashed #94a3b8; border-radius: 12px; padding: 2rem; }
+        .summary-header { border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; margin-bottom: 1rem; }
+        @media print {
+            .app-header, .emergency-strip, .btn, .no-print { display: none !important; }
+            .summary-sheet { border: 1px solid #000; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">ఆరోగ్య సహచరి • Personal Health Copilot</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+                <a href="{{ url_for('logout_page') }}" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca;">🚪 Sign Out</a>
+            </div>
+        </div>
+    </header>
+    {% set active_page = 'prep' %}
+    {% include "nav_shared.html" %}
+
+    <!-- Emergency Hotline Banner -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong>Emergency Medical Helplines:</strong>
+                <span>Call immediately for chest pain, stroke, or severe breathlessness</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill"><strong>108</strong> Ambulance</a>
+                <a href="tel:112" class="hotline-pill"><strong>112</strong> National Helpline</a>
+                <a href="tel:104" class="hotline-pill"><strong>104</strong> Health Advice</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <main class="main-wrapper container" style="padding: 2rem 1rem;">
+        <div style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.75rem; color: #1e3a8a; margin-bottom: 0.25rem;">📋 Doctor Appointment Preparation Pack</h2>
+            <p style="color: #64748b;">Never forget what to tell or ask your doctor. Fill in your details below to generate a concise summary sheet to take to your clinic visit.</p>
+        </div>
+
+        <div class="prep-grid">
+            <!-- Left: Input Form -->
+            <div class="card no-print" style="padding: 1.5rem; background: #ffffff; border-radius: 12px; box-shadow: var(--shadow-sm);">
+                <h3 style="margin-top: 0; color: #1e293b;">Visit Details</h3>
+                <form id="prepPackForm">
+                    <input type="hidden" name="_csrf" id="csrfToken" value="{{ csrf_token }}">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label class="form-label" for="prepPatient">Patient Name</label>
+                        <input type="text" id="prepPatient" name="patient_name" class="form-input" value="Grandpa Rao" required>
+                    </div>
+
+                    <div class="form-row" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label" for="prepDoctor">Doctor / Clinic</label>
+                            <input type="text" id="prepDoctor" name="doctor_name" class="form-input" value="Dr. Ramesh Kumar (Cardiology)" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label" for="prepDate">Date & Time</label>
+                            <input type="text" id="prepDate" name="visit_date" class="form-input" value="Tomorrow, 10:30 AM" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label class="form-label" for="prepPurpose">Reason for Visit / Main Complaints</label>
+                        <textarea id="prepPurpose" name="purpose" rows="3" class="form-textarea" placeholder="e.g. Mild chest heaviness when climbing stairs, routine BP checkup...">Routine Blood Pressure checkup and follow-up on recent lipid test.</textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label class="form-label" for="prepMeds">Current Medicines (from prescription)</label>
+                        <textarea id="prepMeds" name="medicines" rows="2" class="form-textarea" placeholder="e.g. Metformin 500mg (Morning), Amlodipine 5mg (Night)">Metformin 500mg (1 tablet after breakfast), Amlodipine 5mg (1 tablet at bedtime)</textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label class="form-label" for="prepQuestions">Questions to Ask the Doctor</label>
+                        <textarea id="prepQuestions" name="questions" rows="3" class="form-textarea">1. Is my current BP target well-controlled?
+2. Are there low-cost generic versions available for these medicines?
+3. Do I need to repeat my blood test next month?</textarea>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" id="btnUpdatePack" style="width: 100%;">⚡ Update Summary Sheet</button>
+                </form>
+            </div>
+
+            <!-- Right: Printable Summary Sheet -->
+            <div class="summary-sheet" id="summaryPrintArea">
+                <div class="summary-header">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: 700; color: #1e3a8a; font-size: 1.1rem;">🏥 HEALTHMATE AI APPOINTMENT PACK</span>
+                        <span style="font-size: 0.85rem; color: #64748b;">Confidential Patient Copy</span>
+                    </div>
+                    <h3 id="dispDoctor" style="margin: 0.5rem 0 0.25rem 0; color: #0f172a;">Dr. Ramesh Kumar (Cardiology)</h3>
+                    <p style="margin: 0; color: #475569; font-size: 0.9rem;">
+                        <strong>Patient:</strong> <span id="dispPatient">Grandpa Rao</span> | 
+                        <strong>Date:</strong> <span id="dispDate">Tomorrow, 10:30 AM</span>
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <h4 style="margin: 0 0 0.25rem 0; color: #0369a1; font-size: 0.95rem;">1. Reason for Visit</h4>
+                    <p id="dispPurpose" style="margin: 0; color: #334155; font-size: 0.9rem; background: #f0f9ff; padding: 0.5rem; border-radius: 6px;">Routine Blood Pressure checkup and follow-up on recent lipid test.</p>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <h4 style="margin: 0 0 0.25rem 0; color: #047857; font-size: 0.95rem;">2. Current Medicines (Prescribed)</h4>
+                    <p id="dispMeds" style="margin: 0; color: #334155; font-size: 0.9rem; background: #ecfdf5; padding: 0.5rem; border-radius: 6px;">Metformin 500mg (1 tablet after breakfast), Amlodipine 5mg (1 tablet at bedtime)</p>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <h4 style="margin: 0 0 0.25rem 0; color: #b45309; font-size: 0.95rem;">3. Questions for My Doctor</h4>
+                    <div id="dispQuestions" style="margin: 0; color: #334155; font-size: 0.9rem; background: #fffbeb; padding: 0.5rem; border-radius: 6px; white-space: pre-line;">1. Is my current BP target well-controlled?
+2. Are there low-cost generic versions available for these medicines?
+3. Do I need to repeat my blood test next month?</div>
+                </div>
+
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 0.75rem; font-size: 0.8rem; color: #64748b;">
+                    <p style="margin: 0;"><strong>Doctor's Notes & Advice (For Clinic Use):</strong></p>
+                    <div style="height: 60px; border-bottom: 1px dotted #cbd5e1; margin-top: 0.5rem;"></div>
+                </div>
+
+                <div style="margin-top: 1rem; font-size: 0.75rem; color: #94a3b8; text-align: center;">
+                    HealthMate AI • Educational Prototype • In case of emergency, call 108 / 112
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById("btnUpdatePack").addEventListener("click", () => {
+            document.getElementById("dispPatient").textContent = document.getElementById("prepPatient").value || "Patient";
+            document.getElementById("dispDoctor").textContent = document.getElementById("prepDoctor").value || "Doctor";
+            document.getElementById("dispDate").textContent = document.getElementById("prepDate").value || "Scheduled Date";
+            document.getElementById("dispPurpose").textContent = document.getElementById("prepPurpose").value || "None specified";
+            document.getElementById("dispMeds").textContent = document.getElementById("prepMeds").value || "No active medicines noted";
+            document.getElementById("dispQuestions").textContent = document.getElementById("prepQuestions").value || "None";
+        });
+    </script>
+</body>
+</html>

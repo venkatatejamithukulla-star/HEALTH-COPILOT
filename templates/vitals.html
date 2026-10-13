@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Vitals Tracker & Prescription Scanner — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nirmala+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --vitals-primary: #0d9488;
+            --vitals-primary-dark: #0f766e;
+            --vitals-bp: #3b82f6;
+            --vitals-glucose: #f59e0b;
+            --vitals-pulse: #f43f5e;
+            --vitals-spo2: #0284c7;
+            --vitals-temp: #ea580c;
+            --vitals-bmi: #8b5cf6;
+            --card-radius: 16px;
+            --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; }
+        .hero-banner-vitals {
+            background: linear-gradient(135deg, #0f172a 0%, #115e59 50%, #0d9488 100%);
+            color: #ffffff; padding: 2rem 1.5rem; border-radius: 20px; margin-bottom: 1.5rem;
+            position: relative; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+        }
+        .hero-banner-vitals::after {
+            content: ''; position: absolute; right: -30px; top: -30px; width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(45, 212, 191, 0.25) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .vitals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .vital-card {
+            background: #ffffff; border-radius: var(--card-radius); padding: 1.25rem;
+            border: 1px solid #e2e8f0; box-shadow: var(--shadow-subtle); position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .vital-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08); }
+        .vital-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+        .vital-icon-box {
+            width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; font-size: 1.25rem; color: #ffffff; font-weight: 700;
+        }
+        .vital-value { font-size: 1.85rem; font-weight: 800; color: #0f172a; line-height: 1.1; margin: 0.25rem 0; }
+        .vital-unit { font-size: 0.9rem; font-weight: 600; color: #64748b; margin-left: 0.25rem; }
+        .vital-subtext { font-size: 0.8rem; color: #64748b; margin-top: 0.35rem; }
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem 0.65rem;
+            border-radius: 9999px; font-size: 0.75rem; font-weight: 700;
+        }
+        .status-normal { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .status-elevated { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .status-stage1 { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+        .status-stage2 { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .status-crisis { background: #991b1b; color: #ffffff; border: 1px solid #7f1d1d; animation: pulseRed 1.5s infinite; }
+        @keyframes pulseRed { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+
+        .nav-tabs-vitals { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1.25rem; border-bottom: 2px solid #e2e8f0; }
+        .tab-btn-v {
+            background: transparent; border: none; padding: 0.75rem 1.25rem; font-size: 0.95rem; font-weight: 700;
+            color: #64748b; cursor: pointer; border-radius: 10px 10px 0 0; border-bottom: 3px solid transparent;
+            transition: all 0.2s ease; white-space: nowrap;
+        }
+        .tab-btn-v.active { color: #0d9488; border-bottom-color: #0d9488; background: rgba(13, 148, 136, 0.08); }
+        .tab-panel-v { display: none; }
+        .tab-panel-v.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        .content-card-v { background: #ffffff; border-radius: var(--card-radius); border: 1px solid #e2e8f0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-subtle); }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
+        .form-group-v { display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-group-v label { font-size: 0.85rem; font-weight: 700; color: #334155; }
+        .form-control-v {
+            padding: 0.65rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem;
+            color: #0f172a; background: #ffffff; font-family: inherit; transition: border-color 0.2s;
+        }
+        .form-control-v:focus { border-color: #0d9488; outline: none; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15); }
+        .btn-v-primary {
+            background: #0d9488; color: #ffffff; border: none; padding: 0.75rem 1.5rem; border-radius: 10px;
+            font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.15s, transform 0.1s;
+        }
+        .btn-v-primary:hover { background: #0f766e; transform: translateY(-1px); }
+        .btn-v-secondary {
+            background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.65rem 1.25rem;
+            border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+        }
+        .btn-v-secondary:hover { background: #e2e8f0; }
+
+        /* Chart Styles */
+        .chart-container-svg { width: 100%; height: 260px; position: relative; margin: 1rem 0; background: #fafafa; border-radius: 12px; border: 1px solid #f1f5f9; }
+        .chart-controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1rem; }
+        .pill-group { display: flex; gap: 0.35rem; background: #f1f5f9; padding: 0.25rem; border-radius: 8px; }
+        .pill-btn {
+            background: transparent; border: none; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.8rem;
+            font-weight: 700; color: #64748b; cursor: pointer;
+        }
+        .pill-btn.active { background: #ffffff; color: #0d9488; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+        /* Scanner Dropzone */
+        .dropzone-box {
+            border: 2px dashed #0d9488; border-radius: 16px; padding: 2.5rem 1.5rem; text-align: center;
+            background: #f0fdfa; cursor: pointer; transition: background 0.2s, border-color 0.2s;
+        }
+        .dropzone-box:hover { background: #ccfbf1; border-color: #0f766e; }
+
+        /* Tables */
+        .v-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 0.75rem; }
+        .v-table th { background: #f8fafc; padding: 0.75rem 0.85rem; text-align: left; font-weight: 700; color: #475569; border-bottom: 2px solid #e2e8f0; }
+        .v-table td { padding: 0.75rem 0.85rem; border-bottom: 1px solid #f1f5f9; color: #1e293b; }
+        .v-table tr:hover { background: #f8fafc; }
+
+        /* Acute Warning Card */
+        .crisis-alert-banner {
+            background: #fef2f2; border: 2px solid #fca5a5; border-left: 6px solid #dc2626; border-radius: 14px;
+            padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem; flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">Vitals Tracker & Prescription Scanner</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-controls">
+                <a href="{{ url_for('logout_page') }}" class="tool-btn" style="text-decoration: none; padding: 0.35rem 0.65rem; font-size: 0.85rem; font-weight: 600; color: #dc2626; border-color: #fecaca;">🚪 Sign Out</a>
+            </div>
+        </div>
+    </header>
+    {% set active_page = 'vitals' %}
+    {% include "nav_shared.html" %}
+
+    <!-- Emergency Hotline Banner -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong>Emergency Medical Helplines:</strong>
+                <span>Instant help for chest pain, acute hypoxia, or diabetic coma</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill"><strong>108</strong> Ambulance</a>
+                <a href="tel:112" class="hotline-pill"><strong>112</strong> National Helpline</a>
+                <a href="tel:104" class="hotline-pill"><strong>104</strong> Health Advice</a>
+                <span class="hotline-pill" id="headerBloodGroupBadge" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;">🩸 <span id="bloodGroupText">O+</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <main class="container" style="max-width: 1100px; margin: 1.5rem auto; padding: 0 1rem;">
+
+        <!-- Active Family Profile Selector -->
+        <div class="card" style="margin-bottom: 1.25rem; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; background: #ffffff; border-left: 4px solid #0d9488; border-radius: 12px; box-shadow: var(--shadow-subtle);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <span style="font-size: 1.25rem;">👥</span>
+                <span style="font-weight: 700; color: #1e293b; font-size: 0.95rem;">Active Family Member:</span>
+                <select id="vitalsProfileSelect" style="padding: 0.4rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; color: #0f172a; background: #f8fafc; font-size: 0.9rem;">
+                    <option value="1">Grandpa Rao (Grandparent - 72y)</option>
+                    <option value="2">Sita Devi (Mother - 48y)</option>
+                    <option value="3">Ramesh (Father - 52y)</option>
+                    <option value="4">Ananya (Student - 19y)</option>
+                </select>
+                <span id="profileSummaryBadge" style="font-size: 0.85rem; color: #64748b;">(Age: 72 • Male • 🩸 O+)</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="/emergency-card" class="btn-v-secondary" style="font-size: 0.85rem; padding: 0.4rem 0.85rem; text-decoration: none;">🪪 View Emergency Card</a>
+            </div>
+        </div>
+
+        <!-- Hero Banner -->
+        <div class="hero-banner-vitals">
+            <div style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.15); border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem;">
+                SPEC 12a & 12b Clinical Vitals Engine
+            </div>
+            <h2 style="font-size: 1.85rem; margin: 0 0 0.5rem 0; font-weight: 800;">Daily Vitals Tracker & Prescription Scanner</h2>
+            <p style="margin: 0; opacity: 0.92; font-size: 0.95rem; max-width: 650px;">
+                Monitor blood pressure, blood glucose, heart rate, SpO2, and BMI with clinical reference ranges. Scan doctor prescriptions with OCR to auto-log medications and vitals in one tap.
+            </p>
+        </div>
+
+        <!-- Acute Alert Callout Container (shown only when reading is in crisis) -->
+        <div id="acuteCrisisContainer" style="display: none;"></div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs-vitals">
+            <button type="button" class="tab-btn-v {% if active_tab == 'dashboard' or not active_tab %}active{% endif %}" id="tabBtnDashboard" onclick="switchTab('dashboard')">
+                📊 Dashboard & Trends
+            </button>
+            <button type="button" class="tab-btn-v" id="tabBtnLog" onclick="switchTab('log')">
+                ➕ Log New Reading
+            </button>
+            <button type="button" class="tab-btn-v {% if active_tab == 'scanner' %}active{% endif %}" id="tabBtnScanner" onclick="switchTab('scanner')">
+                📷 Prescription & Report Scanner (OCR)
+            </button>
+            <button type="button" class="tab-btn-v" id="tabBtnRanges" onclick="switchTab('ranges')">
+                📖 Clinical Reference Ranges
+            </button>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- TAB 1: DASHBOARD & TREND CHARTS -->
+        <!-- ================================================================== -->
+        <div class="tab-panel-v {% if active_tab == 'dashboard' or not active_tab %}active{% endif %}" id="panelDashboard">
+            
+            <!-- Latest Vitals Cards Grid -->
+            <div class="vitals-grid" id="latestVitalsGrid">
+                <!-- Injected dynamically via loadVitalsSummary() -->
+            </div>
+
+            <!-- Dynamic SVG Trend Chart Card -->
+            <div class="content-card-v">
+                <div class="chart-controls">
+                    <div>
+                        <h3 style="margin: 0 0 0.25rem 0; font-size: 1.15rem; font-weight: 800; color: #0f172a;">📈 Historical Trend & Patterns</h3>
+                        <p style="margin: 0; font-size: 0.85rem; color: #64748b;" id="chartSubtitle">Visualizing Blood Pressure (Systolic & Diastolic)</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <div class="pill-group" id="vitalTypePills">
+                            <button type="button" class="pill-btn active" onclick="changeChartMetric('bp')">BP</button>
+                            <button type="button" class="pill-btn" onclick="changeChartMetric('glucose')">Glucose</button>
+                            <button type="button" class="pill-btn" onclick="changeChartMetric('heart_rate')">Pulse</button>
+                            <button type="button" class="pill-btn" onclick="changeChartMetric('spo2')">SpO2</button>
+                            <button type="button" class="pill-btn" onclick="changeChartMetric('temperature')">Temp</button>
+                            <button type="button" class="pill-btn" onclick="changeChartMetric('bmi')">Weight/BMI</button>
+                        </div>
+                        <div class="pill-group" id="daysFilterPills">
+                            <button type="button" class="pill-btn" onclick="changeChartDays(7)">7 Days</button>
+                            <button type="button" class="pill-btn active" onclick="changeChartDays(30)">30 Days</button>
+                            <button type="button" class="pill-btn" onclick="changeChartDays(90)">90 Days</button>
+                            <button type="button" class="pill-btn" onclick="changeChartDays('all')">All</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats summary strip -->
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem; background: #f8fafc; padding: 0.6rem 1rem; border-radius: 10px;">
+                    <div style="font-size: 0.85rem;"><span style="color: #64748b;">Readings:</span> <strong id="statCount">0</strong></div>
+                    <div style="font-size: 0.85rem;"><span style="color: #64748b;">Average:</span> <strong id="statAvg">--</strong></div>
+                    <div style="font-size: 0.85rem;"><span style="color: #64748b;">Lowest:</span> <strong id="statMin">--</strong></div>
+                    <div style="font-size: 0.85rem;"><span style="color: #64748b;">Highest:</span> <strong id="statMax">--</strong></div>
+                    <div style="font-size: 0.85rem;"><span style="color: #64748b;">Latest:</span> <strong id="statLatest" style="color: #0d9488;">--</strong></div>
+                </div>
+
+                <!-- Interactive SVG Chart Canvas -->
+                <div class="chart-container-svg" id="chartSvgWrapper">
+                    <svg id="trendSvg" width="100%" height="100%" style="overflow: visible;"></svg>
+                </div>
+            </div>
+
+            <!-- Recent Log History Table -->
+            <div class="content-card-v">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h3 style="margin: 0 0 0.25rem 0; font-size: 1.15rem; font-weight: 800; color: #0f172a;">📋 Recent Vitals History</h3>
+                        <p style="margin: 0; font-size: 0.85rem; color: #64748b;">Chronological log of clinical parameters</p>
+                    </div>
+                    <button type="button" class="btn-v-primary" style="padding: 0.45rem 0.95rem; font-size: 0.85rem;" onclick="switchTab('log')">
+                        ➕ Log Reading
+                    </button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="v-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Vital Type</th>
+                                <th>Measurement</th>
+                                <th>Clinical Status</th>
+                                <th>Meal / Context</th>
+                                <th>Notes</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vitalsTableBody">
+                            <tr><td colspan="7" style="text-align: center; color: #64748b; padding: 2rem;">Loading vitals records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- TAB 2: LOG NEW VITAL READING -->
+        <!-- ================================================================== -->
+        <div class="tab-panel-v" id="panelLog">
+            <div class="content-card-v" style="max-width: 680px; margin: 0 auto;">
+                <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem; font-weight: 800; color: #0f172a;">➕ Record Clinical Vital Measurement</h3>
+                <p style="margin: 0 0 1.25rem 0; font-size: 0.9rem; color: #64748b;">
+                    Enter current reading. The clinical engine evaluates your input in real time.
+                </p>
+
+                <form id="formLogVital" onsubmit="handleLogVitalSubmit(event)">
+                    <!-- Vital Type Selector -->
+                    <div class="form-group-v" style="margin-bottom: 1.25rem;">
+                        <label for="inputVitalType">Parameter to Record:</label>
+                        <select id="inputVitalType" class="form-control-v" onchange="updateFormFieldsForVitalType()" required>
+                            <option value="bp">Blood Pressure (Systolic / Diastolic mmHg)</option>
+                            <option value="glucose">Blood Glucose / Sugar (mg/dL)</option>
+                            <option value="heart_rate">Heart Rate / Pulse (bpm)</option>
+                            <option value="spo2">Oxygen Saturation (SpO2 %)</option>
+                            <option value="temperature">Body Temperature (°F)</option>
+                            <option value="bmi">Weight & Height (BMI kg/m²)</option>
+                            <option value="respiratory_rate">Respiratory Rate (breaths/min)</option>
+                        </select>
+                    </div>
+
+                    <!-- Dynamic Input Fields Container -->
+                    <div id="dynamicFieldsContainer">
+                        <!-- Default BP inputs -->
+                        <div class="form-row">
+                            <div class="form-group-v">
+                                <label for="valPrimary">Systolic Pressure (mmHg) *</label>
+                                <input type="number" id="valPrimary" class="form-control-v" placeholder="e.g. 120" min="40" max="300" step="1" oninput="calculateLivePreview()" required>
+                            </div>
+                            <div class="form-group-v">
+                                <label for="valSecondary">Diastolic Pressure (mmHg) *</label>
+                                <input type="number" id="valSecondary" class="form-control-v" placeholder="e.g. 80" min="30" max="200" step="1" oninput="calculateLivePreview()" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Clinical Preview Banner -->
+                    <div id="livePreviewBox" style="margin-bottom: 1.25rem; padding: 0.85rem 1.15rem; border-radius: 10px; background: #f8fafc; border: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #64748b;">Automated Clinical Assessment:</span>
+                            <div id="liveStatusText" style="font-weight: 800; font-size: 1rem; color: #0f172a; margin-top: 0.2rem;">Optimal Normal</div>
+                        </div>
+                        <span id="liveStatusPill" class="status-pill status-normal">✓ Normal</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group-v">
+                            <label for="inputRecordedAt">Date & Time of Reading:</label>
+                            <input type="datetime-local" id="inputRecordedAt" class="form-control-v">
+                        </div>
+                        <div class="form-group-v">
+                            <label for="inputNotes">Personal Notes / Symptoms (Encrypted):</label>
+                            <input type="text" id="inputNotes" class="form-control-v" placeholder="e.g. Feeling slight headache, took after walk">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+                        <button type="button" class="btn-v-secondary" onclick="switchTab('dashboard')">Cancel</button>
+                        <button type="submit" class="btn-v-primary" id="btnSubmitVital">💾 Save Vital Reading</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- TAB 3: PRESCRIPTION & REPORT SCANNER (OCR) -->
+        <!-- ================================================================== -->
+        <div class="tab-panel-v {% if active_tab == 'scanner' %}active{% endif %}" id="panelScanner">
+            <div class="content-card-v">
+                <div style="margin-bottom: 1.25rem;">
+                    <h3 style="margin: 0 0 0.35rem 0; font-size: 1.25rem; font-weight: 800; color: #0f172a;">📷 Prescription & Lab Report Scanner (OCR)</h3>
+                    <p style="margin: 0; font-size: 0.9rem; color: #64748b;">
+                        Upload a prescription (.pdf, .png, .jpg, .txt) or click a real sample prescription to instantly extract medications and vitals into your profile.
+                    </p>
+                </div>
+
+                <!-- Instant Real Samples Strip for 1-Click Verification -->
+                <div style="margin-bottom: 1.25rem; background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 0.9rem 1.15rem;">
+                    <div style="font-weight: 700; color: #166534; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                        ⚡ Real Sample Prescriptions (1-Click Instant Testing):
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <button type="button" class="btn-v-secondary" style="background: #ffffff; font-size: 0.85rem;" onclick="loadSamplePrescription('diabetes')">
+                            📋 Dr. Sharma Diabetes Prescription
+                        </button>
+                        <button type="button" class="btn-v-secondary" style="background: #ffffff; font-size: 0.85rem;" onclick="loadSamplePrescription('cardiology')">
+                            📋 Apollo Clinic Cardiology Rx
+                        </button>
+                        <button type="button" class="btn-v-secondary" style="background: #ffffff; font-size: 0.85rem;" onclick="loadSamplePrescription('blood_test')">
+                            📋 Complete Blood Count Lab Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dropzone / File Upload -->
+                <div class="dropzone-box" onclick="document.getElementById('scannerFileInput').click()">
+                    <input type="file" id="scannerFileInput" style="display: none;" accept=".pdf,.png,.jpg,.jpeg,.txt" onchange="handleFileSelected(event)">
+                    <div style="font-size: 2.25rem; margin-bottom: 0.5rem;">📄</div>
+                    <strong style="color: #0f766e; font-size: 1.05rem;">Drag & drop prescription PDF or image, or click to browse</strong>
+                    <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.35rem;">Supports PDF (multi-page text), PNG, JPG, and TXT files (Max 10MB)</div>
+                    <div id="selectedFileNameDisplay" style="margin-top: 0.75rem; font-weight: 700; color: #0f172a;"></div>
+                </div>
+
+                <!-- Or Paste Prescription Text Directly -->
+                <div style="margin-top: 1.25rem;">
+                    <label for="scannerTextInput" style="font-weight: 700; font-size: 0.85rem; color: #334155; display: block; margin-bottom: 0.35rem;">
+                        Or Review / Paste Prescription Text:
+                    </label>
+                    <textarea id="scannerTextInput" rows="6" class="form-control-v" style="width: 100%; box-sizing: border-box; font-family: monospace; font-size: 0.85rem;" placeholder="Paste doctor's consultation notes, Rx medications, or lab report values here..."></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button type="button" class="btn-v-primary" id="btnRunScanner" onclick="runDocumentScanner()">
+                        ⚡ Scan & Extract Clinical Entities
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scanner Extraction Results Container -->
+            <div id="scannerResultsCard" class="content-card-v" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 0.75rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <h3 style="margin: 0 0 0.2rem 0; font-size: 1.2rem; font-weight: 800; color: #0f172a;">✅ Extracted Clinical Findings</h3>
+                        <span id="scannedMetaDoc" style="font-size: 0.85rem; color: #64748b;">Dr. Ramesh Kumar • 2026-10-12</span>
+                    </div>
+                    <span class="status-pill status-normal">OCR Processed</span>
+                </div>
+
+                <!-- Doctor & Patient Summary Strip -->
+                <div style="background: #f8fafc; border-radius: 12px; padding: 0.85rem 1.15rem; margin-bottom: 1.25rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    <div><span style="color: #64748b; font-size: 0.8rem;">Doctor:</span> <strong id="resDoctorName">Dr. Prescribing Physician</strong></div>
+                    <div><span style="color: #64748b; font-size: 0.8rem;">Clinic:</span> <strong id="resClinicName">Hospital / Clinic</strong></div>
+                    <div><span style="color: #64748b; font-size: 0.8rem;">Date:</span> <strong id="resDocDate">2026-10-12</strong></div>
+                    <div><span style="color: #64748b; font-size: 0.8rem;">Patient:</span> <strong id="resPatientName">Grandpa Rao</strong></div>
+                </div>
+
+                <!-- Extracted Medications Table -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: #0f172a;">💊 Prescribed Medications (<span id="resMedCount">0</span>)</h4>
+                        <button type="button" class="btn-v-primary" style="padding: 0.35rem 0.85rem; font-size: 0.85rem;" onclick="confirmSaveMedicines()">
+                            ➕ Save Selected to Medicine Tracker
+                        </button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="v-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"><input type="checkbox" id="checkAllMeds" checked onchange="toggleAllCheckboxes('checkMedItem', this.checked)"></th>
+                                    <th>Medicine Name</th>
+                                    <th>Dosage</th>
+                                    <th>Frequency</th>
+                                    <th>Timing</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody id="extractedMedsTbody">
+                                <!-- Injected -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Extracted Vitals Table -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: #0f172a;">📊 Extracted Vitals & Lab Metrics (<span id="resVitalCount">0</span>)</h4>
+                        <button type="button" class="btn-v-primary" style="padding: 0.35rem 0.85rem; font-size: 0.85rem;" onclick="confirmSaveVitals()">
+                            ➕ Save Selected to Vitals Tracker
+                        </button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="v-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"><input type="checkbox" id="checkAllVitals" checked onchange="toggleAllCheckboxes('checkVitalItem', this.checked)"></th>
+                                    <th>Parameter</th>
+                                    <th>Measurement</th>
+                                    <th>Clinical Status</th>
+                                    <th>Clinical Alert / Guidance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="extractedVitalsTbody">
+                                <!-- Injected -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Extracted Clinical Advice & Instructions -->
+                <div style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 0.85rem 1.15rem; border-radius: 8px;">
+                    <strong style="color: #15803d; font-size: 0.85rem;">📋 Clinical Impression & Doctor's Advice:</strong>
+                    <div id="resAdviceText" style="font-size: 0.9rem; color: #1e293b; margin-top: 0.35rem;">Follow doctor's instructions.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- TAB 4: CLINICAL REFERENCE RANGES -->
+        <!-- ================================================================== -->
+        <div class="tab-panel-v" id="panelRanges">
+            <div class="content-card-v">
+                <h3 style="margin: 0 0 0.35rem 0; font-size: 1.25rem; font-weight: 800; color: #0f172a;">📖 Medical Reference Ranges (SPEC 12a)</h3>
+                <p style="margin: 0 0 1.25rem 0; font-size: 0.9rem; color: #64748b;">
+                    Evidence-based physiological reference ranges compiled from AHA, WHO, and Indian clinical guidelines.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+                    
+                    <!-- BP Card -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.15rem; background: #fafafa;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #1e40af;">🩸 Blood Pressure (mmHg)</h4>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; line-height: 1.6; color: #334155;">
+                            <li><strong>Optimal Normal:</strong> &lt; 120 / &lt; 80 mmHg</li>
+                            <li><strong>Elevated:</strong> 120–129 / &lt; 80 mmHg</li>
+                            <li><strong>Stage 1 Hypertension:</strong> 130–139 or 80–89 mmHg</li>
+                            <li><strong>Stage 2 Hypertension:</strong> &ge; 140 or &ge; 90 mmHg</li>
+                            <li><strong style="color: #dc2626;">Hypertensive Crisis:</strong> &ge; 180 or &ge; 120 mmHg (Call 108)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Glucose Card -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.15rem; background: #fafafa;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #b45309;">🍬 Blood Glucose (mg/dL)</h4>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; line-height: 1.6; color: #334155;">
+                            <li><strong style="color: #dc2626;">Hypoglycemia (Danger):</strong> &lt; 70 mg/dL (15g sugar alert)</li>
+                            <li><strong>Normal Fasting:</strong> 70–99 mg/dL</li>
+                            <li><strong>Prediabetes Fasting:</strong> 100–125 mg/dL</li>
+                            <li><strong>Diabetes Fasting:</strong> &ge; 126 mg/dL</li>
+                            <li><strong>Normal Post-Meal:</strong> &lt; 140 mg/dL (&ge;200 is diabetic)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Pulse & SpO2 -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.15rem; background: #fafafa;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #0369a1;">🫀 Heart Rate & Oxygen</h4>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; line-height: 1.6; color: #334155;">
+                            <li><strong>Normal Pulse:</strong> 60–100 bpm (Bradycardia &lt;60, Tachycardia &gt;100)</li>
+                            <li><strong style="color: #dc2626;">Severe Tachycardia:</strong> &gt; 140 bpm (Emergency)</li>
+                            <li><strong>Optimal SpO2:</strong> 95–100%</li>
+                            <li><strong>Mild Hypoxia:</strong> 90–94%</li>
+                            <li><strong style="color: #dc2626;">Severe Hypoxia:</strong> &lt; 90% (Call 108 Emergency)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Temperature & BMI -->
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.15rem; background: #fafafa;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #6d28d9;">🌡️ Temperature & BMI</h4>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.85rem; line-height: 1.6; color: #334155;">
+                            <li><strong>Normal Body Temp:</strong> 97.0–99.0 °F</li>
+                            <li><strong>Fever:</strong> &gt; 100.4 °F (&gt; 103 °F is severe)</li>
+                            <li><strong>Normal BMI:</strong> 18.5–24.9 kg/m²</li>
+                            <li><strong>Overweight:</strong> 25.0–29.9 kg/m²</li>
+                            <li><strong>Obese:</strong> &ge; 30.0 kg/m²</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        let activeProfileId = 1;
+        let activeChartMetric = 'bp';
+        let activeChartDays = 30;
+        let lastExtractedData = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectProf = document.getElementById('vitalsProfileSelect');
+            if (selectProf) {
+                selectProf.value = activeProfileId;
+                selectProf.addEventListener('change', (e) => {
+                    activeProfileId = parseInt(e.target.value);
+                    loadVitalsSummary();
+                    loadVitalsTrend();
+                });
+            }
+
+            // Set default date picker
+            const now = new Date();
+            const localIso = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+            const dtInput = document.getElementById('inputRecordedAt');
+            if (dtInput) dtInput.value = localIso;
+
+            loadVitalsSummary();
+            loadVitalsTrend();
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn-v').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel-v').forEach(p => p.classList.remove('active'));
+
+            if (tabId === 'dashboard') {
+                document.getElementById('tabBtnDashboard').classList.add('active');
+                document.getElementById('panelDashboard').classList.add('active');
+                loadVitalsSummary();
+                loadVitalsTrend();
+            } else if (tabId === 'log') {
+                document.getElementById('tabBtnLog').classList.add('active');
+                document.getElementById('panelLog').classList.add('active');
+            } else if (tabId === 'scanner') {
+                document.getElementById('tabBtnScanner').classList.add('active');
+                document.getElementById('panelScanner').classList.add('active');
+            } else if (tabId === 'ranges') {
+                document.getElementById('tabBtnRanges').classList.add('active');
+                document.getElementById('panelRanges').classList.add('active');
+            }
+        }
+
+        async function loadVitalsSummary() {
+            try {
+                const res = await fetch(`/api/vitals?profile_id=${activeProfileId}`);
+                const data = await res.json();
+                if (!data.success) return;
+
+                // Update profile summary badge
+                if (data.profile) {
+                    const p = data.profile;
+                    document.getElementById('profileSummaryBadge').innerText = `(Age: ${p.age || '--'} • ${p.gender || ''} • 🩸 ${p.blood_group || 'O+'})`;
+                    const hBadge = document.getElementById('bloodGroupText');
+                    if (hBadge && p.blood_group) hBadge.innerText = p.blood_group;
+                }
+
+                renderLatestCards(data.latest || {});
+                renderRecentHistoryTable(data.recent_logs || []);
+                checkAcuteCrisisAlerts(data.latest || {});
+            } catch (err) {
+                console.error("Error loading vitals summary:", err);
+            }
+        }
+
+        function checkAcuteCrisisAlerts(latestMap) {
+            const crisisContainer = document.getElementById('acuteCrisisContainer');
+            if (!crisisContainer) return;
+
+            let crisisHtml = '';
+            for (const [k, vital] of Object.entries(latestMap)) {
+                if (vital.evaluation && vital.evaluation.is_crisis) {
+                    crisisHtml += `
+                        <div class="crisis-alert-banner">
+                            <div>
+                                <strong style="color: #991b1b; font-size: 1.05rem;">🚨 CRITICAL HEALTH ALERT DETECTED:</strong>
+                                <div style="color: #7f1d1d; margin-top: 0.25rem; font-size: 0.95rem;">${vital.evaluation.alert_message}</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="tel:108" class="btn-v-primary" style="background: #dc2626; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                    📞 Call 108 Ambulance
+                                </a>
+                                <a href="tel:112" class="btn-v-secondary" style="text-decoration: none;">
+                                    📞 Call 112
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            if (crisisHtml) {
+                crisisContainer.innerHTML = crisisHtml;
+                crisisContainer.style.display = 'block';
+            } else {
+                crisisContainer.style.display = 'none';
+            }
+        }
+
+        function renderLatestCards(latest) {
+            const container = document.getElementById('latestVitalsGrid');
+            if (!container) return;
+
+            const configs = [
+                { key: 'bp', title: 'Blood Pressure', icon: '🩸', bg: '#3b82f6', defaultUnit: 'mmHg', defaultVal: '--/--' },
+                { key: 'glucose', title: 'Blood Glucose', icon: '🍬', bg: '#f59e0b', defaultUnit: 'mg/dL', defaultVal: '--' },
+                { key: 'heart_rate', title: 'Heart Rate', icon: '🫀', bg: '#f43f5e', defaultUnit: 'bpm', defaultVal: '--' },
+                { key: 'spo2', title: 'Oxygen (SpO2)', icon: '🫁', bg: '#0284c7', defaultUnit: '%', defaultVal: '--' },
+                { key: 'temperature', title: 'Temperature', icon: '🌡️', bg: '#ea580c', defaultUnit: '°F', defaultVal: '--' },
+                { key: 'bmi', title: 'Weight & BMI', icon: '⚖️', bg: '#8b5cf6', defaultUnit: 'kg', defaultVal: '--' }
+            ];
+
+            container.innerHTML = configs.map(c => {
+                const item = latest[c.key];
+                let valStr = c.defaultVal;
+                let statusBadge = '<span class="status-pill status-normal">No logs yet</span>';
+                let timeStr = 'Tap to log reading';
+
+                if (item) {
+                    if (c.key === 'bp' && item.value_secondary) {
+                        valStr = `${Math.round(item.value_primary)}/${Math.round(item.value_secondary)}`;
+                    } else if (c.key === 'bmi' && item.value_secondary) {
+                        const hM = item.value_secondary / 100.0;
+                        const bmi = (item.value_primary / (hM * hM)).toFixed(1);
+                        valStr = `${item.value_primary} kg (${bmi})`;
+                    } else {
+                        valStr = `${item.value_primary}`;
+                    }
+
+                    const st = item.evaluation?.status || item.status || 'normal';
+                    const stLbl = item.evaluation?.status_label || st;
+                    const stClass = st === 'crisis' ? 'status-crisis' : (st.includes('stage2') || st.includes('high') ? 'status-stage2' : (st.includes('stage1') || st.includes('elevated') ? 'status-elevated' : 'status-normal'));
+                    statusBadge = `<span class="status-pill ${stClass}">${stLbl}</span>`;
+                    timeStr = `Logged: ${item.recorded_at.slice(0, 16)}`;
+                }
+
+                return `
+                    <div class="vital-card">
+                        <div class="vital-card-header">
+                            <span style="font-weight: 700; color: #475569; font-size: 0.9rem;">${c.title}</span>
+                            <div class="vital-icon-box" style="background: ${c.bg};">${c.icon}</div>
+                        </div>
+                        <div class="vital-value">${valStr} <span class="vital-unit">${c.defaultUnit}</span></div>
+                        <div style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                            ${statusBadge}
+                            <span class="vital-subtext">${timeStr}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderRecentHistoryTable(logs) {
+            const tbody = document.getElementById('vitalsTableBody');
+            if (!tbody) return;
+
+            if (!logs || logs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #64748b; padding: 2rem;">No vital measurements logged yet. Click "Log Reading" or use Scanner!</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = logs.map(row => {
+                let displayVal = `${row.value_primary} ${row.unit}`;
+                if (row.vital_type === 'bp' && row.value_secondary) {
+                    displayVal = `${Math.round(row.value_primary)}/${Math.round(row.value_secondary)} mmHg`;
+                }
+
+                const st = row.status || 'normal';
+                const stClass = st === 'crisis' ? 'status-crisis' : (st.includes('stage2') || st.includes('high') ? 'status-stage2' : (st.includes('stage1') || st.includes('elevated') ? 'status-elevated' : 'status-normal'));
+
+                return `
+                    <tr>
+                        <td style="font-weight: 600; white-space: nowrap;">${row.recorded_at}</td>
+                        <td style="text-transform: uppercase; font-weight: 700; color: #0f766e;">${row.vital_type}</td>
+                        <td style="font-weight: 800;">${displayVal}</td>
+                        <td><span class="status-pill ${stClass}">${st}</span></td>
+                        <td>${row.meal_context || '—'}</td>
+                        <td style="color: #64748b; font-size: 0.85rem;">${row.notes || '—'}</td>
+                        <td style="text-align: right;">
+                            <button type="button" class="btn-v-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; color: #dc2626;" onclick="deleteVitalRecord(${row.id})">
+                                🗑️
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function deleteVitalRecord(vitalId) {
+            if (!confirm('Are you sure you want to delete this vital record?')) return;
+            try {
+                const res = await fetch(`/api/vitals/${vitalId}?profile_id=${activeProfileId}`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-Token': CSRF_TOKEN }
+                });
+                const d = await res.json();
+                if (d.success) {
+                    loadVitalsSummary();
+                    loadVitalsTrend();
+                }
+            } catch (err) {
+                alert('Failed to delete vital record.');
+            }
+        }
+
+        // =====================================================================
+        // CHART RENDERING (Pure responsive dynamic SVG)
+        // =====================================================================
+        function changeChartMetric(metric) {
+            activeChartMetric = metric;
+            document.querySelectorAll('#vitalTypePills .pill-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            loadVitalsTrend();
+        }
+
+        function changeChartDays(days) {
+            activeChartDays = days;
+            document.querySelectorAll('#daysFilterPills .pill-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            loadVitalsTrend();
+        }
+
+        async function loadVitalsTrend() {
+            try {
+                const res = await fetch(`/api/vitals/history?profile_id=${activeProfileId}&vital_type=${activeChartMetric}&days=${activeChartDays}`);
+                const data = await res.json();
+                if (!data.success) return;
+
+                // Update stats strip
+                document.getElementById('statCount').innerText = data.stats.count;
+                document.getElementById('statAvg').innerText = data.stats.avg;
+                document.getElementById('statMin').innerText = data.stats.min;
+                document.getElementById('statMax').innerText = data.stats.max;
+                document.getElementById('statLatest').innerText = data.stats.latest;
+
+                const titles = {
+                    'bp': 'Blood Pressure (Systolic & Diastolic mmHg)',
+                    'glucose': 'Blood Glucose / Sugar (mg/dL)',
+                    'heart_rate': 'Resting Heart Rate (bpm)',
+                    'spo2': 'Oxygen Saturation SpO2 (%)',
+                    'temperature': 'Body Temperature (°F)',
+                    'bmi': 'Weight & Body Mass Index (kg)'
+                };
+                document.getElementById('chartSubtitle').innerText = titles[activeChartMetric] || activeChartMetric;
+
+                renderSvgChart(data.points || []);
+            } catch (err) {
+                console.error("Error loading vitals trend:", err);
+            }
+        }
+
+        function renderSvgChart(points) {
+            const svg = document.getElementById('trendSvg');
+            if (!svg) return;
+
+            const w = svg.clientWidth || 800;
+            const h = svg.clientHeight || 240;
+            const padding = { top: 25, right: 30, bottom: 35, left: 45 };
+
+            if (!points || points.length === 0) {
+                svg.innerHTML = `
+                    <text x="${w / 2}" y="${h / 2}" text-anchor="middle" fill="#94a3b8" font-size="14" font-weight="600">
+                        No trend data available for ${activeChartMetric.toUpperCase()} in this timeframe. Log a reading to begin!
+                    </text>
+                `;
+                return;
+            }
+
+            const isBp = activeChartMetric === 'bp';
+            let allVals = points.map(p => p.val);
+            if (isBp) {
+                points.forEach(p => { if (p.val_sec) allVals.push(p.val_sec); });
+            }
+
+            let minVal = Math.min(...allVals);
+            let maxVal = Math.max(...allVals);
+            if (minVal === maxVal) { minVal -= 10; maxVal += 10; }
+            minVal = Math.floor(minVal * 0.9);
+            maxVal = Math.ceil(maxVal * 1.1);
+
+            const plotW = w - padding.left - padding.right;
+            const plotH = h - padding.top - padding.bottom;
+
+            const getX = (idx) => padding.left + (points.length === 1 ? plotW / 2 : (idx / (points.length - 1)) * plotW);
+            const getY = (val) => padding.top + plotH - ((val - minVal) / (maxVal - minVal)) * plotH;
+
+            // Generate Path Coordinates
+            let dPrimary = '';
+            let dSecondary = '';
+
+            points.forEach((p, i) => {
+                const x = getX(i);
+                const y1 = getY(p.val);
+                dPrimary += (i === 0 ? `M ${x} ${y1}` : ` L ${x} ${y1}`);
+
+                if (isBp && p.val_sec) {
+                    const y2 = getY(p.val_sec);
+                    dSecondary += (i === 0 ? `M ${x} ${y2}` : ` L ${x} ${y2}`);
+                }
+            });
+
+            // Gridlines & Labels
+            let gridHtml = '';
+            for (let step = 0; step <= 4; step++) {
+                const v = minVal + (step / 4) * (maxVal - minVal);
+                const y = getY(v);
+                gridHtml += `
+                    <line x1="${padding.left}" y1="${y}" x2="${w - padding.right}" y2="${y}" stroke="#e2e8f0" stroke-dasharray="3 3" />
+                    <text x="${padding.left - 8}" y="${y + 4}" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="600">${Math.round(v)}</text>
+                `;
+            }
+
+            // Circle Points
+            let circlesHtml = '';
+            points.forEach((p, i) => {
+                const x = getX(i);
+                const y1 = getY(p.val);
+                circlesHtml += `
+                    <circle cx="${x}" cy="${y1}" r="5" fill="#0d9488" stroke="#ffffff" stroke-width="2">
+                        <title>${p.date}: ${p.val} (${p.status_label || ''})</title>
+                    </circle>
+                `;
+                if (isBp && p.val_sec) {
+                    const y2 = getY(p.val_sec);
+                    circlesHtml += `
+                        <circle cx="${x}" cy="${y2}" r="5" fill="#3b82f6" stroke="#ffffff" stroke-width="2">
+                            <title>${p.date}: ${p.val_sec} Diastolic</title>
+                        </circle>
+                    `;
+                }
+            });
+
+            svg.innerHTML = `
+                ${gridHtml}
+                ${isBp ? `<path d="${dSecondary}" fill="none" stroke="#3b82f6" stroke-width="2.5" stroke-dasharray="4 2" />` : ''}
+                <path d="${dPrimary}" fill="none" stroke="#0d9488" stroke-width="3" stroke-linecap="round" />
+                ${circlesHtml}
+            `;
+        }
+
+        // =====================================================================
+        // LOG FORM DYNAMIC FIELDS & LIVE CLINICAL PREVIEW
+        // =====================================================================
+        function updateFormFieldsForVitalType() {
+            const vt = document.getElementById('inputVitalType').value;
+            const container = document.getElementById('dynamicFieldsContainer');
+
+            if (vt === 'bp') {
+                container.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group-v">
+                            <label for="valPrimary">Systolic Pressure (mmHg) *</label>
+                            <input type="number" id="valPrimary" class="form-control-v" placeholder="e.g. 120" min="40" max="300" oninput="calculateLivePreview()" required>
+                        </div>
+                        <div class="form-group-v">
+                            <label for="valSecondary">Diastolic Pressure (mmHg) *</label>
+                            <input type="number" id="valSecondary" class="form-control-v" placeholder="e.g. 80" min="30" max="200" oninput="calculateLivePreview()" required>
+                        </div>
+                    </div>
+                `;
+            } else if (vt === 'glucose') {
+                container.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group-v">
+                            <label for="valPrimary">Blood Sugar Reading (mg/dL) *</label>
+                            <input type="number" id="valPrimary" class="form-control-v" placeholder="e.g. 95" min="20" max="700" oninput="calculateLivePreview()" required>
+                        </div>
+                        <div class="form-group-v">
+                            <label for="mealContext">Meal Context / Timing *</label>
+                            <select id="mealContext" class="form-control-v" onchange="calculateLivePreview()">
+                                <option value="fasting">Fasting (8–10 hours overnight)</option>
+                                <option value="postprandial">Post-Meal (2 hours after start of food)</option>
+                                <option value="random">Random / Bedtime</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            } else if (vt === 'heart_rate') {
+                container.innerHTML = `
+                    <div class="form-group-v">
+                        <label for="valPrimary">Resting Pulse Rate (bpm) *</label>
+                        <input type="number" id="valPrimary" class="form-control-v" placeholder="e.g. 72" min="30" max="240" oninput="calculateLivePreview()" required>
+                    </div>
+                `;
+            } else if (vt === 'spo2') {
+                container.innerHTML = `
+                    <div class="form-group-v">
+                        <label for="valPrimary">Blood Oxygen Saturation (%) *</label>
+                        <input type="number" id="valPrimary" class="form-control-v" placeholder="e.g. 98" min="50" max="100" oninput="calculateLivePreview()" required>
+                    </div>
+                `;
+            } else if (vt === 'temperature') {
+                container.innerHTML = `
+                    <div class="form-group-v">
+                        <label for="valPrimary">Body Temperature (°F) *</label>
+                        <input type="number" id="valPrimary" class="form-control-v" placeholder="e.g. 98.6" step="0.1" min="90" max="110" oninput="calculateLivePreview()" required>
+                    </div>
+                `;
+            } else if (vt === 'bmi') {
+                container.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group-v">
+                            <label for="valPrimary">Weight (kg) *</label>
+                            <input type="number" id="valPrimary" class="form-control-v" placeholder="e.g. 68.0" step="0.1" min="10" max="300" oninput="calculateLivePreview()" required>
+                        </div>
+                        <div class="form-group-v">
+                            <label for="valSecondary">Height (cm) *</label>
+                            <input type="number" id="valSecondary" class="form-control-v" placeholder="e.g. 170" min="50" max="250" oninput="calculateLivePreview()" required>
+                        </div>
+                    </div>
+                `;
+            } else if (vt === 'respiratory_rate') {
+                container.innerHTML = `
+                    <div class="form-group-v">
+                        <label for="valPrimary">Breathing Rate (breaths/min) *</label>
+                        <input type="number" id="valPrimary" class="form-control-v" placeholder="e.g. 16" min="5" max="60" oninput="calculateLivePreview()" required>
+                    </div>
+                `;
+            }
+            calculateLivePreview();
+        }
+
+        function calculateLivePreview() {
+            const vt = document.getElementById('inputVitalType').value;
+            const val1 = parseFloat(document.getElementById('valPrimary')?.value || '0');
+            const val2Input = document.getElementById('valSecondary');
+            const val2 = val2Input ? parseFloat(val2Input.value || '0') : null;
+            const ctx = document.getElementById('mealContext')?.value || 'fasting';
+
+            const pill = document.getElementById('liveStatusPill');
+            const text = document.getElementById('liveStatusText');
+
+            if (!val1) {
+                pill.className = 'status-pill status-normal';
+                pill.innerText = 'Enter values';
+                text.innerText = 'Waiting for input...';
+                return;
+            }
+
+            if (vt === 'bp') {
+                const dia = val2 || 80;
+                if (val1 >= 180 || dia >= 120) {
+                    pill.className = 'status-pill status-crisis';
+                    pill.innerText = '🚨 CRISIS ALERT (Call 108)';
+                    text.innerText = 'Hypertensive Crisis (>=180/120 mmHg)';
+                } else if (val1 >= 140 || dia >= 90) {
+                    pill.className = 'status-pill status-stage2';
+                    pill.innerText = 'Stage 2 Hypertension';
+                    text.innerText = 'Significantly elevated blood pressure';
+                } else if (val1 >= 130 || dia >= 80) {
+                    pill.className = 'status-pill status-stage1';
+                    pill.innerText = 'Stage 1 Hypertension';
+                    text.innerText = 'Mildly elevated blood pressure';
+                } else if (val1 >= 120 && dia < 80) {
+                    pill.className = 'status-pill status-elevated';
+                    pill.innerText = 'Elevated BP';
+                    text.innerText = 'Slightly above normal limits';
+                } else {
+                    pill.className = 'status-pill status-normal';
+                    pill.innerText = '✓ Optimal Normal';
+                    text.innerText = 'Healthy blood pressure range';
+                }
+            } else if (vt === 'glucose') {
+                if (val1 < 70) {
+                    pill.className = 'status-pill status-crisis';
+                    pill.innerText = '🚨 Hypoglycemia Alert';
+                    text.innerText = 'Dangerously low glucose (<70 mg/dL)! Consume 15g sugar now.';
+                } else if (ctx === 'fasting') {
+                    if (val1 >= 126) {
+                        pill.className = 'status-pill status-stage2';
+                        pill.innerText = 'Diabetic Fasting';
+                        text.innerText = 'Fasting glucose >=126 mg/dL';
+                    } else if (val1 >= 100) {
+                        pill.className = 'status-pill status-elevated';
+                        pill.innerText = 'Prediabetes Range';
+                        text.innerText = 'Fasting glucose 100–125 mg/dL';
+                    } else {
+                        pill.className = 'status-pill status-normal';
+                        pill.innerText = '✓ Normal Fasting';
+                        text.innerText = 'Healthy fasting sugar (70–99 mg/dL)';
+                    }
+                } else {
+                    if (val1 >= 200) {
+                        pill.className = 'status-pill status-stage2';
+                        pill.innerText = 'High Sugar';
+                        text.innerText = 'Post-meal glucose >=200 mg/dL';
+                    } else if (val1 >= 140) {
+                        pill.className = 'status-pill status-elevated';
+                        pill.innerText = 'Elevated Sugar';
+                        text.innerText = 'Prediabetes range (140–199 mg/dL)';
+                    } else {
+                        pill.className = 'status-pill status-normal';
+                        pill.innerText = '✓ Normal Post-Meal';
+                        text.innerText = 'Optimal sugar (<140 mg/dL)';
+                    }
+                }
+            } else if (vt === 'spo2') {
+                if (val1 < 90) {
+                    pill.className = 'status-pill status-crisis';
+                    pill.innerText = '🚨 Severe Hypoxia (Call 108)';
+                    text.innerText = 'Critical oxygen desaturation (<90%)!';
+                } else if (val1 < 95) {
+                    pill.className = 'status-pill status-elevated';
+                    pill.innerText = 'Mild Hypoxia';
+                    text.innerText = 'Oxygen is slightly low (90–94%)';
+                } else {
+                    pill.className = 'status-pill status-normal';
+                    pill.innerText = '✓ Healthy Oxygen';
+                    text.innerText = 'Optimal saturation (95–100%)';
+                }
+            } else {
+                pill.className = 'status-pill status-normal';
+                pill.innerText = 'Evaluating';
+                text.innerText = 'Ready to save';
+            }
+        }
+
+        async function handleLogVitalSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitVital');
+            btn.disabled = true;
+            btn.innerText = 'Saving...';
+
+            const vt = document.getElementById('inputVitalType').value;
+            const val1 = parseFloat(document.getElementById('valPrimary').value);
+            const val2 = document.getElementById('valSecondary') ? parseFloat(document.getElementById('valSecondary').value) : null;
+            const ctx = document.getElementById('mealContext') ? document.getElementById('mealContext').value : '';
+            const dt = document.getElementById('inputRecordedAt').value;
+            const notes = document.getElementById('inputNotes').value;
+
+            try {
+                const res = await fetch('/api/vitals', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({
+                        profile_id: activeProfileId,
+                        vital_type: vt,
+                        value_primary: val1,
+                        value_secondary: val2,
+                        meal_context: ctx,
+                        recorded_at: dt,
+                        notes: notes
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    alert('✓ Vital reading saved successfully!');
+                    switchTab('dashboard');
+                } else {
+                    alert(`Error: ${data.error || 'Failed to save vital'}`);
+                }
+            } catch (err) {
+                alert('Connection error saving vital reading.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '💾 Save Vital Reading';
+            }
+        }
+
+        // =====================================================================
+        // SCANNER OCR & CLINICAL ENTITY PARSING (SPEC 12b)
+        // =====================================================================
+        function loadSamplePrescription(type) {
+            const txtArea = document.getElementById('scannerTextInput');
+            if (type === 'diabetes') {
+                txtArea.value = `CITY HEALTH CLINIC
+Dr. Anita Sharma, MBBS, MD (Diabetologist) - Reg No: TS-39218
+Date: 2026-10-12
+Patient: Grandpa Rao | Age: 72 Y | Male
+BP: 132/84 mmHg | Pulse: 74 bpm
+Fasting Glucose: 114 mg/dL | HbA1c: 6.9% | SpO2: 98%
+
+Rx (Prescription):
+1. Tab. Metformin 500mg - 1-0-1 - After food - 30 days
+2. Tab. Glimepiride 1mg - 1-0-0 - Before breakfast - 30 days
+3. Tab. Telmisartan 40mg - 1-0-0 - Before food - 30 days
+4. Tab. Atorvastatin 10mg - 0-0-1 - At bedtime - 30 days
+
+Advice:
+Strict diabetic meal plan, 30 min brisk walk, review in 1 month.`;
+            } else if (type === 'cardiology') {
+                txtArea.value = `APOLLO HEART & MULTISPECIALTY CENTRE
+Dr. Ramesh Kumar, MBBS, MD, DM (Cardiology) - Reg No: AP-48291
+Date: 2026-10-10
+Patient: Grandpa Rao | Age: 72 Y | Male
+BP: 136/86 mmHg | Pulse: 78 bpm | SpO2: 97% | Temp: 98.4 F
+
+Rx (Prescription):
+1. Tab. Amlodipine 5mg - 0-0-1 - At bedtime - 30 days
+2. Tab. Telmisartan 40mg - 1-0-0 - Morning - 30 days
+3. Tab. Ecosprin 75mg - 0-1-0 - After lunch - 30 days
+4. Tab. Pantoprazole 40mg - 1-0-0 - Empty stomach - 15 days
+
+Advice:
+Low sodium diet, maintain daily BP chart, call 108 if chest discomfort arises.`;
+            } else if (type === 'blood_test') {
+                txtArea.value = `THYROCARE DIAGNOSTIC LAB REPORT
+Date: 2026-10-08
+Patient: Ananya | Age: 19 Y | Female
+Pulse: 70 bpm | SpO2: 99% | Temp: 98.6 F
+BP: 115/75 mmHg
+
+Diagnostic Parameters:
+Hemoglobin: 12.8 g/dL
+Fasting Blood Sugar: 88 mg/dL
+HbA1c: 5.4%
+Serum Creatinine: 0.8 mg/dL
+Total Cholesterol: 165 mg/dL
+
+Impression:
+All parameters normal and within healthy reference intervals.`;
+            }
+            document.getElementById('selectedFileNameDisplay').innerText = `Loaded template: ${type.toUpperCase()}`;
+        }
+
+        function handleFileSelected(e) {
+            const f = e.target.files[0];
+            if (f) {
+                document.getElementById('selectedFileNameDisplay').innerText = `Selected: ${f.name} (${(f.size / 1024).toFixed(1)} KB)`;
+            }
+        }
+
+        async function runDocumentScanner() {
+            const btn = document.getElementById('btnRunScanner');
+            btn.disabled = true;
+            btn.innerText = 'Scanning & Extracting...';
+
+            const fileInput = document.getElementById('scannerFileInput');
+            const rawText = document.getElementById('scannerTextInput').value;
+
+            const formData = new FormData();
+            formData.append('profile_id', activeProfileId);
+            formData.append('raw_text', rawText);
+            formData.append('_csrf', CSRF_TOKEN);
+            if (fileInput.files.length > 0) {
+                formData.append('file', fileInput.files[0]);
+            }
+
+            try {
+                const res = await fetch('/api/scanner/upload', {
+                    method: 'POST',
+                    headers: { 'X-CSRF-Token': CSRF_TOKEN },
+                    body: formData
+                });
+                const data = await res.json();
+                if (!data.success) {
+                    alert(`Scanner error: ${data.error || 'Failed to process document'}`);
+                    return;
+                }
+
+                lastExtractedData = data.extracted;
+                renderScannerResults(data.extracted);
+            } catch (err) {
+                alert('Scanner communication error.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '⚡ Scan & Extract Clinical Entities';
+            }
+        }
+
+        function renderScannerResults(ext) {
+            const card = document.getElementById('scannerResultsCard');
+            card.style.display = 'block';
+
+            document.getElementById('scannedMetaDoc').innerText = `${ext.doctor_name} • ${ext.date}`;
+            document.getElementById('resDoctorName').innerText = ext.doctor_name;
+            document.getElementById('resClinicName').innerText = ext.clinic_name;
+            document.getElementById('resDocDate').innerText = ext.date;
+            document.getElementById('resPatientName').innerText = ext.patient_name;
+            document.getElementById('resAdviceText').innerText = ext.advice || 'Follow prescription.';
+
+            // Render Medications Table
+            const medsTbody = document.getElementById('extractedMedsTbody');
+            document.getElementById('resMedCount').innerText = ext.medicines?.length || 0;
+            if (!ext.medicines || ext.medicines.length === 0) {
+                medsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #64748b;">No prescription medications detected.</td></tr>';
+            } else {
+                medsTbody.innerHTML = ext.medicines.map((m, i) => `
+                    <tr>
+                        <td><input type="checkbox" class="checkMedItem" data-idx="${i}" checked></td>
+                        <td><strong>${m.medicine_name}</strong></td>
+                        <td>${m.prescribed_dosage}</td>
+                        <td><span class="status-pill status-normal">${m.frequency}</span></td>
+                        <td>${m.timing_slot}</td>
+                        <td>${m.duration}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Render Vitals Table
+            const vitalsTbody = document.getElementById('extractedVitalsTbody');
+            document.getElementById('resVitalCount').innerText = ext.vitals?.length || 0;
+            if (!ext.vitals || ext.vitals.length === 0) {
+                vitalsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748b;">No clinical vitals detected.</td></tr>';
+            } else {
+                vitalsTbody.innerHTML = ext.vitals.map((v, i) => {
+                    const stClass = v.is_crisis ? 'status-crisis' : (v.status.includes('stage2') || v.status.includes('high') ? 'status-stage2' : (v.status.includes('stage1') || v.status.includes('elevated') ? 'status-elevated' : 'status-normal'));
+                    return `
+                        <tr>
+                            <td><input type="checkbox" class="checkVitalItem" data-idx="${i}" checked></td>
+                            <td><strong>${v.vital_name}</strong></td>
+                            <td style="font-weight: 800;">${v.display_value}</td>
+                            <td><span class="status-pill ${stClass}">${v.status_label}</span></td>
+                            <td style="font-size: 0.85rem; color: #475569;">${v.alert_message || 'Normal physiological value'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            card.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleAllCheckboxes(className, isChecked) {
+            document.querySelectorAll('.' + className).forEach(cb => cb.checked = isChecked);
+        }
+
+        async function confirmSaveMedicines() {
+            if (!lastExtractedData || !lastExtractedData.medicines) return;
+            const checkedBoxes = document.querySelectorAll('.checkMedItem:checked');
+            if (checkedBoxes.length === 0) {
+                alert('Please select at least one medication to save.');
+                return;
+            }
+
+            const selectedMeds = [];
+            checkedBoxes.forEach(cb => {
+                const idx = parseInt(cb.getAttribute('data-idx'));
+                selectedMeds.push(lastExtractedData.medicines[idx]);
+            });
+
+            try {
+                const res = await fetch('/api/scanner/save-medicines', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({
+                        profile_id: activeProfileId,
+                        medicines: selectedMeds
+                    })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    alert(`✓ ${d.message}`);
+                } else {
+                    alert(`Error: ${d.error}`);
+                }
+            } catch (err) {
+                alert('Connection error saving medications.');
+            }
+        }
+
+        async function confirmSaveVitals() {
+            if (!lastExtractedData || !lastExtractedData.vitals) return;
+            const checkedBoxes = document.querySelectorAll('.checkVitalItem:checked');
+            if (checkedBoxes.length === 0) {
+                alert('Please select at least one vital parameter to save.');
+                return;
+            }
+
+            const selectedVitals = [];
+            checkedBoxes.forEach(cb => {
+                const idx = parseInt(cb.getAttribute('data-idx'));
+                selectedVitals.push(lastExtractedData.vitals[idx]);
+            });
+
+            try {
+                const res = await fetch('/api/scanner/save-vitals', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({
+                        profile_id: activeProfileId,
+                        vitals: selectedVitals
+                    })
+                });
+                const d = await res.json();
+                if (d.success) {
+                    alert(`✓ ${d.message}`);
+                    loadVitalsSummary();
+                } else {
+                    alert(`Error: ${d.error}`);
+                }
+            } catch (err) {
+                alert('Connection error saving vitals.');
+            }
+        }
+    </script>
+</body>
+</html>

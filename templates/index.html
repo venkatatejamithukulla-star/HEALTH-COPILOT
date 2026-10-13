@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>HealthMate AI — AI-Powered Personal Health Copilot</title>
+    <meta name="description" content="Beginner-friendly, accessible AI-powered personal health copilot with English and Telugu support, doctor appointments, medicine schedule tracker, and medical report summarizer.">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+    <!-- Top Accessibility & Utility Bar -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" class="brand-link" id="headerBrandLink" title="HealthMate AI — Personal Health Copilot">
+                    <div class="brand-logo-container">
+                        <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Personal Health Copilot Logo" class="brand-logo-svg header-heart-beat" width="46" height="40">
+                    </div>
+                    <div class="brand-wordmark-wrap">
+                        <span class="wordmark-personal">PERSONAL</span>
+                        <span class="wordmark-copilot">HEALTH COPILOT</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Accessibility & Language Controls -->
+            <div class="header-actions">
+                <a href="{{ url_for('logout_page') }}" class="tool-btn" id="btnNavLogout" title="Sign Out of HealthMate AI" style="text-decoration: none; padding: 0.35rem 0.65rem; font-size: 0.85rem; font-weight: 600; color: #dc2626; border-color: #fecaca;">🚪 Sign Out</a>
+
+                <!-- AI Status Indicator Badge -->
+                <div class="ai-status-badge" id="aiStatusBadge" title="AI Status">
+                    <span class="status-dot"></span>
+                    <span id="aiStatusText">Checking AI...</span>
+                </div>
+
+                <!-- Font Size Zoom Controls -->
+                <div class="font-zoom-group" aria-label="Text Size Controls">
+                    <button type="button" class="tool-btn" id="btnFontSmall" title="Normal Font Size">A</button>
+                    <button type="button" class="tool-btn" id="btnFontMedium" title="Large Font Size">A+</button>
+                    <button type="button" class="tool-btn" id="btnFontLarge" title="Extra Large Font Size">A++</button>
+                </div>
+
+                <!-- High Contrast Toggle -->
+                <button type="button" class="tool-btn" id="btnHighContrast" title="Toggle High Contrast for Elderly / Low Vision">
+                    <span class="btn-icon">👁️</span>
+                    <span class="btn-label" id="lblHighContrast">Contrast</span>
+                </button>
+
+                <!-- Privacy Mode (Masks personal names in public) -->
+                <button type="button" class="tool-btn" id="btnPrivacyMode" title="Privacy Mode (Hide Personal Names in Public)">
+                    <span class="btn-icon">🔒</span>
+                    <span class="btn-label" id="lblPrivacy">Privacy</span>
+                </button>
+
+                <!-- Blood Group Badge in Header (SPEC.md Phase 2 Section 2) -->
+                <span class="blood-group-badge" id="headerBloodGroupBadge" title="Active Profile Blood Group" style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; border-radius: 20px; font-weight: 700; font-size: 0.85rem; background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca;">
+                    🩸 <span id="headerBloodGroupText">O+</span>
+                </span>
+
+                <!-- 23 Official Scheduled Languages + English Searchable Dropdown (Phase 2 Section 1) -->
+                <div class="lang-dropdown-wrapper" style="position: relative; display: inline-flex; align-items: center;">
+                    <select id="allLanguagesSelect" class="tool-btn" style="padding: 0.35rem 0.5rem; font-size: 0.85rem; font-weight: 600; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer;" title="Select from all 22 Indian scheduled languages + English">
+                        <option value="en">🌐 English</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                        <option value="te">తెలుగు (Telugu)</option>
+                        <option value="ta">தமிழ் (Tamil)</option>
+                        <option value="ur">اردو (Urdu - RTL)</option>
+                        <option value="bn">বাংলা (Bengali)</option>
+                        <option value="mr">मराठी (Marathi)</option>
+                        <option value="gu">ગુજરાતી (Gujarati)</option>
+                        <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                        <option value="ml">മലയാളം (Malayalam)</option>
+                        <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="or">ଓଡ଼ିଆ (Odia)</option>
+                        <option value="as">অসমীয়া (Assamese)</option>
+                        <option value="mai">मैथिली (Maithili)</option>
+                        <option value="sat">ᱥᱟᱱᱛᱟᱲᱤ (Santali)</option>
+                        <option value="ks">کٲشُر (Kashmiri - RTL)</option>
+                        <option value="ne">नेपाली (Nepali)</option>
+                        <option value="kok">कोंकणी (Konkani)</option>
+                        <option value="sd">سنڌي (Sindhi - RTL)</option>
+                        <option value="doi">डोगरी (Dogri)</option>
+                        <option value="mni">মৈতৈলোন্ (Manipuri)</option>
+                        <option value="brx">बर’ (Bodo)</option>
+                        <option value="sa">संस्कृतम् (Sanskrit)</option>
+                    </select>
+                </div>
+
+                <!-- Language Quick Toggles -->
+                <div class="lang-switcher">
+                    <button type="button" class="lang-btn active" id="btnLangEn" data-lang="en">EN</button>
+                    <button type="button" class="lang-btn" id="btnLangTe" data-lang="te">తెలుగు</button>
+                    <button type="button" class="lang-btn" id="btnLangHi" data-lang="hi">हिन्दी</button>
+                    <button type="button" class="lang-btn" id="btnLangTa" data-lang="ta">தமிழ்</button>
+                    <button type="button" class="lang-btn" id="btnLangUr" data-lang="ur">اردو</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    {% set active_page = 'home' %}
+    {% include "nav_shared.html" %}
+
+    <!-- Emergency Hotline Banner (SPEC.md Phase 3 Section 8: 108, 112, 104, 14416, share-location, blood group) -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong id="emergencyAlertHead">Emergency Medical Helplines:</strong>
+                <span id="emergencyAlertSub">Call instantly in case of chest pain, stroke, or severe breathlessness</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill" id="hotline108"><strong>108</strong> <span id="lblAmbulance">Ambulance</span></a>
+                <a href="tel:112" class="hotline-pill" id="hotline112"><strong>112</strong> <span id="lblNational">National Helpline</span></a>
+                <a href="tel:104" class="hotline-pill" id="hotline104"><strong>104</strong> <span id="lblHealthAdvice">Health Advice</span></a>
+                <a href="tel:14416" class="hotline-pill" id="hotline14416" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;"><strong>14416</strong> <span id="lblTeleManas">Tele-MANAS (Mental Health)</span></a>
+                <button type="button" class="hotline-pill" id="btnEmergencyShareLoc" style="cursor: pointer; background: #fef3c7; color: #92400e; border: 1px solid #fde68a;">📍 <span id="lblShareLocation">Share Location</span></button>
+                <span class="hotline-pill" id="emergencyBloodGroupPill" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;">🩸 <span id="emergencyBloodGroupText">O+</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main App Container -->
+    <main class="main-wrapper container">
+
+        <!-- Family Member Profile Switcher (SPEC.md Phase 2 Section 2) -->
+        <div class="card" style="margin-bottom: 1.5rem; padding: 0.9rem 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; background: #ffffff; border-left: 4px solid #0d9488; border-radius: 12px; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <span style="font-size: 1.25rem;">👥</span>
+                <span style="font-weight: 700; color: #1e293b; font-size: 0.95rem;" id="lblFamilyProfile">Family Profile:</span>
+                <select id="selectActiveProfile" style="padding: 0.4rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; color: #0f172a; background: #f8fafc; font-size: 0.9rem;">
+                    <option value="1">Grandpa Rao (Grandparent)</option>
+                </select>
+                <span id="activeProfileDetails" style="font-size: 0.85rem; color: #64748b;">(Age: 72 • Male • O+)</span>
+                <span id="profileTooltip" class="profile-tooltip-btn" title="Health records are kept strictly organized per family member on this device." style="cursor: help; background: #e2e8f0; color: #475569; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700;">ℹ️</span>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <a href="/timeline" class="btn btn-secondary btn-sm" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">
+                    📁 View Timeline
+                </a>
+                <a href="/timeline" class="btn btn-primary btn-sm" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">
+                    + Manage Profiles
+                </a>
+            </div>
+        </div>
+
+        <!-- Accessible Navigation Dashboard (Large Cards for Elderly & Beginners) -->
+        <nav class="dashboard-nav" aria-label="Main Navigation">
+            <button type="button" class="nav-card active" data-target="section-appointments" id="navCardAppointments">
+                <div class="nav-icon-box bg-blue">📅</div>
+                <div class="nav-card-info">
+                    <h3 class="nav-title" id="navTitleAppt">Doctor Appointments</h3>
+                    <p class="nav-desc" id="navDescAppt">Schedule and track clinic visits</p>
+                </div>
+            </button>
+
+            <button type="button" class="nav-card" data-target="section-medicines" id="navCardMedicines">
+                <div class="nav-icon-box bg-emerald">💊</div>
+                <div class="nav-card-info">
+                    <h3 class="nav-title" id="navTitleMed">Medicine Tracker</h3>
+                    <p class="nav-desc" id="navDescMed">Daily dose times & refill alerts</p>
+                </div>
+            </button>
+
+            <button type="button" class="nav-card" data-target="section-reports" id="navCardReports">
+                <div class="nav-icon-box bg-purple">📑</div>
+                <div class="nav-card-info">
+                    <h3 class="nav-title" id="navTitleRep">Report Summarizer</h3>
+                    <p class="nav-desc" id="navDescRep">Lab tests explained in simple words</p>
+                </div>
+            </button>
+
+            <button type="button" class="nav-card" data-target="section-assistant" id="navCardAssistant">
+                <div class="nav-icon-box bg-amber">💬</div>
+                <div class="nav-card-info">
+                    <h3 class="nav-title" id="navTitleChat">Health Assistant</h3>
+                    <p class="nav-desc" id="navDescChat">Safe medical Q&A copilot</p>
+                </div>
+            </button>
+
+            <button type="button" class="nav-card" data-target="section-glossary" id="navCardGlossary">
+                <div class="nav-icon-box bg-teal">📖</div>
+                <div class="nav-card-info">
+                    <h3 class="nav-title" id="navTitleGloss">Medical Glossary</h3>
+                    <p class="nav-desc" id="navDescGloss">Telugu & English health dictionary</p>
+                </div>
+            </button>
+        </nav>
+
+        <!-- ================================================================== -->
+        <!-- SECTION 1: DOCTOR APPOINTMENTS -->
+        <!-- ================================================================== -->
+        <section id="section-appointments" class="app-section active">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title" id="titleAppointments">📅 Doctor Appointments & Clinic Visits</h2>
+                    <p class="section-lead" id="subAppointments">Never miss a follow-up or routine health checkup.</p>
+                </div>
+                <button type="button" class="btn btn-primary" id="btnOpenNewApptModal">
+                    <span class="btn-icon">➕</span>
+                    <span id="btnTextNewAppt">Schedule Appointment</span>
+                </button>
+            </div>
+
+            <!-- Stats Bar & Filter Tabs -->
+            <div class="toolbar-card">
+                <div class="filter-tabs" id="apptFilterTabs">
+                    <button type="button" class="tab-btn active" data-filter="">All (<span id="countAllAppt">0</span>)</button>
+                    <button type="button" class="tab-btn" data-filter="Upcoming">Upcoming (<span id="countUpcomingAppt">0</span>)</button>
+                    <button type="button" class="tab-btn" data-filter="Completed">Completed (<span id="countCompletedAppt">0</span>)</button>
+                    <button type="button" class="tab-btn" data-filter="Cancelled">Cancelled (<span id="countCancelledAppt">0</span>)</button>
+                </div>
+            </div>
+
+            <!-- Appointments List Grid -->
+            <div class="appointments-grid" id="appointmentsContainer">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p id="msgLoadingAppts">Loading appointments from SQLite database...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================== -->
+        <!-- SECTION 2: MEDICINE SCHEDULE TRACKER -->
+        <!-- ================================================================== -->
+        <section id="section-medicines" class="app-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title" id="titleMedicines">💊 Prescribed Medicine Schedule</h2>
+                    <p class="section-lead" id="subMedicines">Track daily doses prescribed by your registered doctor.</p>
+                </div>
+                <button type="button" class="btn btn-primary" id="btnOpenNewMedModal">
+                    <span class="btn-icon">➕</span>
+                    <span id="btnTextNewMed">Add Prescribed Medicine</span>
+                </button>
+            </div>
+
+            <!-- Critical Medical Safety Guardrail Banner -->
+            <div class="safety-alert-banner">
+                <div class="alert-icon">⚠️</div>
+                <div class="alert-content">
+                    <strong id="medDisclaimerHead">Important Safety Guardrail:</strong>
+                    <span id="medDisclaimerBody">
+                        HealthMate AI is strictly a reminder and tracking tool. It does <strong>NOT</strong> independently prescribe medicines, change dosages, or offer medical treatments. Take medicines only in accordance with your registered doctor's prescription.
+                    </span>
+                </div>
+            </div>
+
+            <!-- Timing Slot Filter Buttons -->
+            <div class="toolbar-card">
+                <div class="filter-tabs" id="medSlotFilterTabs">
+                    <button type="button" class="tab-btn active" data-slot="">All Times</button>
+                    <button type="button" class="tab-btn" data-slot="Morning">🌅 Morning (ఉదయం)</button>
+                    <button type="button" class="tab-btn" data-slot="Afternoon">☀️ Afternoon (మధ్యాహ్నం)</button>
+                    <button type="button" class="tab-btn" data-slot="Night">🌙 Night (రాత్రి)</button>
+                </div>
+            </div>
+
+            <!-- Medicines List Grid -->
+            <div class="medicines-grid" id="medicinesContainer">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p id="msgLoadingMeds">Loading prescribed medicines...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================== -->
+        <!-- SECTION 3: MEDICAL REPORT SUMMARIZER -->
+        <!-- ================================================================== -->
+        <section id="section-reports" class="app-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title" id="titleReports">📑 Medical Report Summarizer & Term Explainer</h2>
+                    <p class="section-lead" id="subReports">Upload or paste blood tests, prescriptions, and lab reports for simple English & Telugu explanations.</p>
+                </div>
+                <button type="button" class="btn btn-secondary" id="btnLoadSampleReport">
+                    <span class="btn-icon">📋</span>
+                    <span id="btnTextLoadSample">Load Sample Blood Test Report</span>
+                </button>
+            </div>
+
+            <div class="report-analyzer-layout">
+                <!-- Left: Upload & Input Card -->
+                <div class="card analyzer-input-card">
+                    <h3 class="card-title" id="reportInputTitle">Upload or Paste Medical Report</h3>
+                    <form id="reportForm" enctype="multipart/form-data">
+                        <div class="form-row">
+                            <div class="form-group flex-1">
+                                <label for="repPatientName" class="form-label" id="lblRepPatientName">Patient Name</label>
+                                <input type="text" id="repPatientName" name="patient_name" class="form-input" placeholder="e.g. Grandpa Rao / Ananya" value="Grandpa Rao" required>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="repTitle" class="form-label" id="lblRepTitle">Report Title</label>
+                                <input type="text" id="repTitle" name="report_title" class="form-input" placeholder="e.g. Annual Blood Sugar & Lipid Profile" value="Annual Routine Blood & Lipid Profile" required>
+                            </div>
+                        </div>
+
+                        <!-- File Drop Zone -->
+                        <div class="file-dropzone" id="fileDropzone">
+                            <input type="file" id="reportFileInput" name="report_file" accept=".pdf,.txt,.png,.jpg,.jpeg" class="file-input-hidden">
+                            <div class="dropzone-content">
+                                <div class="dropzone-icon">📁</div>
+                                <h4 id="dropzoneText">Drag and drop report PDF, TXT, or Image</h4>
+                                <p class="dropzone-sub" id="dropzoneSub">Or click to browse your computer (Max 5MB)</p>
+                                <span class="file-name-badge" id="selectedFileBadge" style="display: none;"></span>
+                            </div>
+                        </div>
+
+                        <div class="divider-text">
+                            <span id="lblOrPaste">OR PASTE REPORT TEXT DIRECTLY</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="repPastedText" class="form-label" id="lblRepPastedText">Medical Report Text / Doctor Notes</label>
+                            <textarea id="repPastedText" name="pasted_text" rows="6" class="form-textarea" placeholder="Paste your lab test report or prescription text here..."></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-lg" id="btnAnalyzeReport">
+                                <span class="btn-icon">⚡</span>
+                                <span id="btnTextAnalyze">Analyze & Summarize Report</span>
+                            </button>
+                            <button type="button" class="btn btn-ghost" id="btnClearReportForm">Clear</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right: Summary Output Card -->
+                <div class="card analyzer-output-card" id="reportOutputCard">
+                    <div class="output-header">
+                        <h3 class="card-title" id="outputReportTitle">Report Summary & Insights</h3>
+                        <div class="output-actions" id="outputActions" style="display: none;">
+                            <button type="button" class="tool-btn" id="btnSpeakSummary" title="Read Aloud in Voice">
+                                <span class="btn-icon">🔊</span>
+                                <span id="lblReadAloud">Read Aloud</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Output Content Box -->
+                    <div class="output-body" id="reportOutputBody">
+                        <div class="empty-state">
+                            <div class="empty-icon">🩺</div>
+                            <h4 id="emptySummaryTitle">No report analyzed yet</h4>
+                            <p id="emptySummaryDesc">Click "Load Sample Blood Test Report" or upload your own lab document to view a plain English & Telugu breakdown.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saved Reports Archive -->
+            <div class="saved-reports-section mt-4">
+                <h3 class="subheading" id="titleSavedReports">📁 Saved Report History in SQLite</h3>
+                <div class="saved-reports-grid" id="savedReportsContainer">
+                    <p class="text-muted">Loading saved reports...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================================================================== -->
+        <!-- SECTION 4: HEALTH ASSISTANT (CHAT COPILOT) -->
+        <!-- ================================================================== -->
+        <section id="section-assistant" class="app-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title" id="titleAssistant">💬 HealthMate AI Assistant</h2>
+                    <p class="section-lead" id="subAssistant">Ask questions about medical terms, lab results, and everyday wellness in English or Telugu.</p>
+                </div>
+                <div class="assistant-engine-badge" id="chatEngineBadge">
+                    <span class="status-dot"></span>
+                    <span id="chatEngineText">Safe Local Knowledge Mode</span>
+                </div>
+            </div>
+
+            <div class="chat-container card">
+                <!-- Quick Suggestion Chips -->
+                <div class="quick-prompts-bar">
+                    <span class="chips-label" id="lblQuickQuestions">Quick Questions:</span>
+                    <div class="chips-list">
+                        <button type="button" class="chip-btn" data-query="What is HbA1c test and what is normal?">What is HbA1c?</button>
+                        <button type="button" class="chip-btn" data-query="Explain LDL bad cholesterol in simple words">Explain LDL Cholesterol</button>
+                        <button type="button" class="chip-btn" data-query="Home care tips for seasonal cold and cough">Seasonal Cold Tips</button>
+                        <button type="button" class="chip-btn" data-query="How much water should a senior person drink daily?">Daily Water Intake</button>
+                        <button type="button" class="chip-btn chip-telugu" data-query="రక్తపోటు (BP) నియంత్రించడానికి ఆహార సూత్రాలు ఏమిటి?">BP నియంత్రణ (తెలుగు)</button>
+                    </div>
+                </div>
+
+                <!-- Chat Messages Scroll Container -->
+                <div class="chat-messages" id="chatMessagesContainer">
+                    <!-- Initial Welcome Bot Message -->
+                    <div class="chat-message bot-message">
+                        <div class="message-avatar">🩺</div>
+                        <div class="message-content">
+                            <div class="message-sender">HealthMate Copilot</div>
+                            <div class="message-text" id="msgBotWelcome">
+                                Hello! I am your personal health copilot. I help explain doctor terms, lab numbers, and general wellness habits in plain English and Telugu.
+                                <br><br>
+                                ⚠️ <em>Please note: I cannot prescribe medicines or replace your doctor. In emergencies, call 108 or 112 immediately.</em>
+                            </div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Form -->
+                <form id="chatForm" class="chat-input-form">
+                    <div class="chat-input-wrap">
+                        <input type="text" id="chatInputText" class="chat-input" placeholder="Ask a health or lab test question in English or Telugu..." autocomplete="off" required>
+                        <button type="button" class="chat-tool-btn" id="btnVoiceInput" title="Voice Input (Speech to Text)">🎙️</button>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="btnSendChat">
+                        <span id="btnTextSend">Send</span>
+                        <span class="btn-icon">➤</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================================================================== -->
+        <!-- SECTION 5: BILINGUAL MEDICAL GLOSSARY -->
+        <!-- ================================================================== -->
+        <section id="section-glossary" class="app-section">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title" id="titleGlossary">📖 Bilingual Medical Glossary (వైద్య పదకోశం)</h2>
+                    <p class="section-lead" id="subGlossary">Understand complex medical report terminology with standard reference ranges and Telugu definitions.</p>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="card glossary-search-card">
+                <div class="search-input-wrap">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="glossarySearchInput" class="form-input search-input" placeholder="Search lab test (e.g. HbA1c, Hemoglobin, Creatinine, Cholesterol, BP, Thyroid)...">
+                    <button type="button" class="btn btn-ghost" id="btnClearGlossarySearch">Clear</button>
+                </div>
+            </div>
+
+            <!-- Glossary Cards Grid -->
+            <div class="glossary-grid" id="glossaryContainer">
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading medical terms...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================================================================== -->
+    <!-- MODALS -->
+    <!-- ================================================================== -->
+
+    <!-- Modal 1: New Appointment Modal -->
+    <div class="modal-overlay" id="modalAppointment">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitleAppt">Schedule Doctor Appointment</h3>
+                <button type="button" class="modal-close-btn" data-close="modalAppointment">✕</button>
+            </div>
+            <form id="formNewAppointment" class="modal-form">
+                <div class="form-group">
+                    <label for="aptPatientName" class="form-label" id="lblAptPatient">Patient Name *</label>
+                    <input type="text" id="aptPatientName" name="patient_name" class="form-input" placeholder="e.g. Grandpa Rao / Ananya" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="aptDoctorName" class="form-label" id="lblAptDoctor">Doctor Name *</label>
+                        <input type="text" id="aptDoctorName" name="doctor_name" class="form-input" placeholder="e.g. Dr. Ramesh Kumar" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="aptSpecialty" class="form-label" id="lblAptSpecialty">Specialty / Clinic Department</label>
+                        <select id="aptSpecialty" name="specialty" class="form-select">
+                            <option value="General Physician (సాధారణ వైద్యులు)">General Physician (సాధారణ వైద్యులు)</option>
+                            <option value="Cardiology (గుండె వైద్యులు)">Cardiology (గుండె వైద్యులు)</option>
+                            <option value="Ophthalmology (కంటి వైద్యులు)">Ophthalmology (కంటి వైద్యులు)</option>
+                            <option value="Orthopedic (ఎముకల వైద్యులు)">Orthopedic (ఎముకల వైద్యులు)</option>
+                            <option value="Diabetology (మధుమేహ వైద్యులు)">Diabetology (మధుమేహ వైద్యులు)</option>
+                            <option value="ENT (ముక్కు, చెవి, గొంతు)">ENT (ముక్కు, చెవి, గొంతు)</option>
+                            <option value="Dentistry (దంత వైద్యులు)">Dentistry (దంత వైద్యులు)</option>
+                            <option value="Other Specialist">Other Specialist</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="aptDate" class="form-label" id="lblAptDate">Appointment Date *</label>
+                        <input type="date" id="aptDate" name="appointment_date" class="form-input" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="aptTime" class="form-label" id="lblAptTime">Appointment Time *</label>
+                        <input type="time" id="aptTime" name="appointment_time" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="aptLocation" class="form-label" id="lblAptLoc">Hospital / Clinic Address</label>
+                    <input type="text" id="aptLocation" name="location_or_clinic" class="form-input" placeholder="e.g. Apollo Clinic, Main Road">
+                </div>
+                <div class="form-group">
+                    <label for="aptNotes" class="form-label" id="lblAptNotes">Reason / Symptoms / Notes</label>
+                    <textarea id="aptNotes" name="notes" rows="2" class="form-textarea" placeholder="e.g. 3-month sugar checkup and BP review"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" data-close="modalAppointment">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitAppt">Save Appointment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Add Medicine Modal -->
+    <div class="modal-overlay" id="modalMedicine">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitleMed">Add Prescribed Medicine</h3>
+                <button type="button" class="modal-close-btn" data-close="modalMedicine">✕</button>
+            </div>
+            <div class="modal-disclaimer">
+                <span>⚠️ Note: Enter medicines strictly as written on your doctor's prescription.</span>
+            </div>
+            <form id="formNewMedicine" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="medPatientName" class="form-label">Patient Name *</label>
+                        <input type="text" id="medPatientName" name="patient_name" class="form-input" placeholder="e.g. Grandpa Rao" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="medName" class="form-label">Medicine Name & Strength *</label>
+                        <input type="text" id="medName" name="medicine_name" class="form-input" placeholder="e.g. Metformin 500mg" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="medDosage" class="form-label">Prescribed Dosage *</label>
+                        <input type="text" id="medDosage" name="prescribed_dosage" class="form-input" placeholder="e.g. 1 tablet after food" required>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="medSlot" class="form-label">Timing Slot *</label>
+                        <select id="medSlot" name="timing_slot" class="form-select" required>
+                            <option value="Morning">🌅 Morning (ఉదయం)</option>
+                            <option value="Afternoon">☀️ Afternoon (మధ్యాహ్నం)</option>
+                            <option value="Night">🌙 Night (రాత్రి)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="medFrequency" class="form-label">Frequency</label>
+                        <select id="medFrequency" name="frequency" class="form-select">
+                            <option value="Daily">Daily (ప్రతిరోజూ)</option>
+                            <option value="Alternate days">Alternate days (రోజు విడిచి రోజు)</option>
+                            <option value="Weekly">Weekly (వారానికి ఒకసారి)</option>
+                        </select>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="medDoctor" class="form-label">Prescribing Doctor</label>
+                        <input type="text" id="medDoctor" name="doctor_prescribed" class="form-input" placeholder="e.g. Dr. Anita Sharma">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="medPillsLeft" class="form-label">Pills Remaining in Strip</label>
+                        <input type="number" id="medPillsLeft" name="pills_left" class="form-input" value="30" min="0" max="500">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="medInstructions" class="form-label">Doctor's Instructions</label>
+                        <input type="text" id="medInstructions" name="instructions" class="form-input" placeholder="e.g. Take with warm water">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" data-close="modalMedicine">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitMed">Save to Tracker</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: View Full Report Summary Details -->
+    <div class="modal-overlay" id="modalViewReport">
+        <div class="modal-box modal-box-lg">
+            <div class="modal-header">
+                <h3 class="modal-title" id="viewReportModalTitle">Saved Report Summary</h3>
+                <button type="button" class="modal-close-btn" data-close="modalViewReport">✕</button>
+            </div>
+            <div class="modal-body" id="viewReportModalBody">
+                <div class="spinner"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnSpeakSavedReport">🔊 Read Aloud</button>
+                <button type="button" class="btn btn-ghost" data-close="modalViewReport">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Element -->
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="container footer-content">
+            <div class="footer-left">
+                <p><strong>HealthMate AI</strong> — AI-Powered Personal Health Copilot</p>
+                <p class="footer-sub">Designed for CSE students, families, and elderly accessibility. Built with Flask, SQLite, and safe AI integration.</p>
+            </div>
+            <div class="footer-right">
+                <button type="button" class="btn btn-outline-sm" id="btnResetSampleData">🔄 Reset Sample Data</button>
+                <span class="footer-badge">Local SQLite • Private Data Safe</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App JavaScript -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

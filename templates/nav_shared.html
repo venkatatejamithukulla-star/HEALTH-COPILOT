@@ -1,0 +1,236 @@
+<!-- Shared Navigation Strip (Desktop & Tablet) -->
+<nav class="shared-nav-strip" aria-label="Shared Primary Navigation">
+    <div class="shared-nav-container">
+        <div class="shared-nav-links">
+            <a href="{{ url_for('index') }}" class="shared-nav-item {% if active_page == 'home' %}active{% endif %}" id="navLinkHome">
+                <span>🏠</span> <span>Home</span>
+            </a>
+            <a href="{{ url_for('vitals_page') }}" class="shared-nav-item {% if active_page == 'vitals' %}active{% endif %}" id="navLinkVitals">
+                <span>📊</span> <span>Vitals</span>
+            </a>
+            <a href="{{ url_for('scanner_page') }}" class="shared-nav-item {% if active_page == 'scanner' %}active{% endif %}" id="navLinkScanner">
+                <span>📄</span> <span>Scanner</span>
+            </a>
+            <a href="{{ url_for('emergency_card_manage_page') }}" class="shared-nav-item {% if active_page == 'emergency' %}active{% endif %}" id="navLinkEmerg">
+                <span>🪪</span> <span>Emergency Card</span>
+            </a>
+            <a href="{{ url_for('find_care_page') }}" class="shared-nav-item {% if active_page == 'find_care' %}active{% endif %}" id="navLinkCare">
+                <span>🏥</span> <span>Find Care</span>
+            </a>
+            <a href="{{ url_for('wellness_page') }}" class="shared-nav-item {% if active_page == 'wellness' %}active{% endif %}" id="navLinkWellness">
+                <span>🧘</span> <span>Wellness</span>
+            </a>
+            <a href="{{ url_for('timeline_page') }}" class="shared-nav-item {% if active_page == 'timeline' %}active{% endif %}" id="navLinkTimeline">
+                <span>📁</span> <span>Timeline</span>
+            </a>
+        </div>
+
+        <!-- "More" Dropdown Wrapper -->
+        <div class="nav-more-wrapper">
+            <button type="button" class="nav-more-btn" id="btnToggleNavMore" onclick="toggleNavMore(event)" aria-expanded="false" aria-haspopup="true">
+                <span>☰</span>
+                <span>More</span>
+                <span style="font-size: 0.7rem;">▼</span>
+            </button>
+            <div class="nav-more-dropdown" id="navMoreDropdown">
+                <div class="nav-dropdown-group-title">Patient Tools</div>
+                <a href="{{ url_for('index') }}#section-medicines" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>💊</span> <span>Medicine Tracker</span>
+                </a>
+                <a href="{{ url_for('index') }}#section-appointments" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>📅</span> <span>Doctor Appointments</span>
+                </a>
+                <a href="{{ url_for('index') }}#section-assistant" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>💬</span> <span>Health Assistant</span>
+                </a>
+                <a href="{{ url_for('diseases_page') }}" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>📚</span> <span>Disease Library</span>
+                </a>
+
+                <div class="nav-dropdown-divider"></div>
+                <div class="nav-dropdown-group-title">Specialized Care</div>
+                <a href="{{ url_for('timeline_page') }}#vaccines" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>💉</span> <span>Vaccines & Immunization</span>
+                </a>
+                <a href="{{ url_for('diseases_page') }}#womens-health" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>🌸</span> <span>Women's & Maternal Health</span>
+                </a>
+                <a href="{{ url_for('find_care_page') }}#schemes" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>🏛️</span> <span>Government Schemes</span>
+                </a>
+                <a href="{{ url_for('prep_page') }}" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>📋</span> <span>Appointment Prep Pack</span>
+                </a>
+                <a href="{{ url_for('explainer_page') }}" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>📖</span> <span>Medical Term Explainer</span>
+                </a>
+
+                <div class="nav-dropdown-divider"></div>
+                <a href="{{ url_for('privacy_page') }}" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>🔒</span> <span>Privacy & Data Control</span>
+                </a>
+                <a href="{{ url_for('doctor_portal_entry') }}" class="nav-dropdown-item" onclick="closeNavMore()">
+                    <span>🩺</span> <span>Doctor Portal</span>
+                </a>
+                <a href="{{ url_for('logout_page') }}" class="nav-dropdown-item" style="color: #dc2626;" onclick="closeNavMore()">
+                    <span>🚪</span> <span>Sign Out</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Fixed Bottom Navigation Bar (Phones <= 768px) -->
+<nav class="mobile-bottom-bar" aria-label="Mobile Bottom Navigation">
+    <a href="{{ url_for('index') }}" class="mobile-bottom-item {% if active_page == 'home' %}active{% endif %}" id="mbNavHome">
+        <span class="mb-icon">🏠</span>
+        <span>Home</span>
+    </a>
+    <a href="{{ url_for('vitals_page') }}" class="mobile-bottom-item {% if active_page == 'vitals' %}active{% endif %}" id="mbNavVitals">
+        <span class="mb-icon">📊</span>
+        <span>Vitals</span>
+    </a>
+    <a href="{{ url_for('scanner_page') }}" class="mobile-bottom-item {% if active_page == 'scanner' %}active{% endif %}" id="mbNavScanner">
+        <span class="mb-icon">📄</span>
+        <span>Scanner</span>
+    </a>
+    <a href="{{ url_for('emergency_card_manage_page') }}" class="mobile-bottom-item {% if active_page == 'emergency' %}active{% endif %}" id="mbNavEmerg">
+        <span class="mb-icon">🪪</span>
+        <span>Emergency</span>
+    </a>
+    <button type="button" class="mobile-bottom-item" id="mbNavMore" onclick="toggleMobileDrawer()">
+        <span class="mb-icon">☰</span>
+        <span>More</span>
+    </button>
+</nav>
+
+<!-- Mobile Slide-Up More Drawer -->
+<div class="mobile-drawer-overlay" id="mobileDrawerOverlay" onclick="closeMobileDrawerOnOverlay(event)">
+    <div class="mobile-drawer-panel" id="mobileDrawerPanel">
+        <div class="mobile-drawer-header">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.25rem;">✚</span>
+                <strong style="font-size: 1.05rem; color: #0f172a;">All Health Modules</strong>
+            </div>
+            <button type="button" onclick="toggleMobileDrawer()" style="background: transparent; border: none; font-size: 1.35rem; cursor: pointer; color: #64748b; padding: 0.25rem 0.5rem;">✕</button>
+        </div>
+
+        <div class="mobile-drawer-grid">
+            <a href="{{ url_for('index') }}" class="mobile-drawer-card">
+                <span class="md-icon">🏠</span>
+                <span>Home Dashboard</span>
+            </a>
+            <a href="{{ url_for('vitals_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">📊</span>
+                <span>Vitals Tracker</span>
+            </a>
+            <a href="{{ url_for('scanner_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">📄</span>
+                <span>Rx Scanner</span>
+            </a>
+            <a href="{{ url_for('emergency_card_manage_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">🪪</span>
+                <span>Emergency Card</span>
+            </a>
+            <a href="{{ url_for('index') }}#section-medicines" class="mobile-drawer-card">
+                <span class="md-icon">💊</span>
+                <span>Medicine Schedule</span>
+            </a>
+            <a href="{{ url_for('index') }}#section-appointments" class="mobile-drawer-card">
+                <span class="md-icon">📅</span>
+                <span>Appointments</span>
+            </a>
+            <a href="{{ url_for('index') }}#section-assistant" class="mobile-drawer-card">
+                <span class="md-icon">💬</span>
+                <span>AI Assistant</span>
+            </a>
+            <a href="{{ url_for('wellness_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">🧘</span>
+                <span>Mental Health</span>
+            </a>
+            <a href="{{ url_for('find_care_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">🏥</span>
+                <span>Find Low-Cost Care</span>
+            </a>
+            <a href="{{ url_for('diseases_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">📚</span>
+                <span>Disease Library</span>
+            </a>
+            <a href="{{ url_for('timeline_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">📁</span>
+                <span>Patient Timeline</span>
+            </a>
+            <a href="{{ url_for('timeline_page') }}#vaccines" class="mobile-drawer-card">
+                <span class="md-icon">💉</span>
+                <span>Vaccines</span>
+            </a>
+            <a href="{{ url_for('diseases_page') }}#womens-health" class="mobile-drawer-card">
+                <span class="md-icon">🌸</span>
+                <span>Women's Health</span>
+            </a>
+            <a href="{{ url_for('find_care_page') }}#schemes" class="mobile-drawer-card">
+                <span class="md-icon">🏛️</span>
+                <span>Govt Schemes</span>
+            </a>
+            <a href="{{ url_for('prep_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">📋</span>
+                <span>Prep Pack</span>
+            </a>
+            <a href="{{ url_for('explainer_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">📖</span>
+                <span>Term Explainer</span>
+            </a>
+            <a href="{{ url_for('privacy_page') }}" class="mobile-drawer-card">
+                <span class="md-icon">🔒</span>
+                <span>Privacy & Security</span>
+            </a>
+            <a href="{{ url_for('doctor_portal_entry') }}" class="mobile-drawer-card">
+                <span class="md-icon">🩺</span>
+                <span>Doctor Portal</span>
+            </a>
+            <a href="{{ url_for('logout_page') }}" class="mobile-drawer-card" style="background: #fef2f2; color: #dc2626; border-color: #fecaca; grid-column: span 2;">
+                <span class="md-icon">🚪</span>
+                <span>Sign Out of HealthMate AI</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleNavMore(e) {
+        if (e) e.stopPropagation();
+        const d = document.getElementById('navMoreDropdown');
+        if (d) {
+            d.classList.toggle('show');
+            const btn = document.getElementById('btnToggleNavMore');
+            if (btn) btn.setAttribute('aria-expanded', d.classList.contains('show'));
+        }
+    }
+
+    function closeNavMore() {
+        const d = document.getElementById('navMoreDropdown');
+        if (d) {
+            d.classList.remove('show');
+            const btn = document.getElementById('btnToggleNavMore');
+            if (btn) btn.setAttribute('aria-expanded', 'false');
+        }
+    }
+
+    function toggleMobileDrawer() {
+        const o = document.getElementById('mobileDrawerOverlay');
+        if (o) o.classList.toggle('show');
+    }
+
+    function closeMobileDrawerOnOverlay(e) {
+        if (e.target.id === 'mobileDrawerOverlay') {
+            toggleMobileDrawer();
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        const wrapper = document.querySelector('.nav-more-wrapper');
+        if (wrapper && !wrapper.contains(e.target)) {
+            closeNavMore();
+        }
+    });
+</script>

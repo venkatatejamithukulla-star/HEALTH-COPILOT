@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Doctor Clinical Dashboard — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nirmala+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .doc-header { background: #ffffff; border-radius: 16px; padding: 1.75rem 2rem; border: 1px solid #e2e8f0; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .doc-badge { background: #ecfdf5; color: #047857; font-weight: 700; font-size: 0.85rem; padding: 0.35rem 0.85rem; border-radius: 20px; border: 1px solid #a7f3d0; }
+        .access-card { background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 2rem; box-shadow: var(--shadow-sm); margin-bottom: 2rem; }
+        .tab-select-bar { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+        .tab-select-btn { background: none; border: none; font-size: 0.95rem; font-weight: 700; color: #64748b; padding: 0.5rem 1rem; cursor: pointer; border-radius: 8px; }
+        .tab-select-btn.active { color: #0369a1; background: #e0f2fe; }
+        .otp-step-box { background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 1.25rem; margin-top: 1.25rem; display: none; }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="/doctor/dashboard" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">Clinical Practitioner Portal • Doctor Dashboard</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <span class="doc-badge">✓ Verified License: {{ doctor.medical_reg_no if doctor else 'NMC-Active' }}</span>
+                <a href="/api/auth/logout" class="btn btn-secondary btn-sm">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper container" style="padding: 2rem 1rem;">
+        <div class="doc-header">
+            <div>
+                <h2 style="margin: 0 0 0.35rem 0; color: #0f172a; font-size: 1.6rem;">
+                    Welcome, {{ doctor.doctor_name if doctor else 'Dr. Registered Physician' }}
+                </h2>
+                <div style="color: #64748b; font-size: 0.95rem;">
+                    Speciality: <strong>{{ doctor.speciality if doctor else 'General Medicine' }}</strong> |
+                    Hospital / Clinic: <strong>{{ doctor.hospital if doctor else 'Apollo / Govt CHC' }}</strong>
+                </div>
+            </div>
+            <div style="background: #f1f5f9; padding: 0.65rem 1rem; border-radius: 10px; font-size: 0.85rem; color: #334155;">
+                ⏱️ <strong>Session Policy:</strong> Patient consultation views auto-expire in <strong>30 minutes</strong> and are revocable by the patient at any time.
+            </div>
+        </div>
+
+        <!-- Patient Lookup Card (Prescription Code, Mobile + OTP, or Aadhaar + OTP) -->
+        <div class="access-card">
+            <h3 style="color: #1e3a8a; margin-top: 0; margin-bottom: 0.5rem;">
+                🔍 Patient Record Consultation Access
+            </h3>
+            <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                Select access method approved by your patient. Patient receives an instant 6-digit OTP to authorize your 30-minute read-only clinical session.
+            </p>
+
+            <div class="tab-select-bar">
+                <button type="button" class="tab-select-btn active" id="tabBtnRx" onclick="switchMethod('rx')">
+                    📋 Prescription Code
+                </button>
+                <button type="button" class="tab-select-btn" id="tabBtnMobile" onclick="switchMethod('mobile')">
+                    📱 Patient Mobile + OTP
+                </button>
+                <button type="button" class="tab-select-btn" id="tabBtnAadhaar" onclick="switchMethod('aadhaar')">
+                    🛡️ Patient Aadhaar + OTP
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form id="accessRequestForm">
+                <div id="fieldRx">
+                    <label class="form-label" style="font-weight:700; color:#1e293b; display:block; margin-bottom:0.35rem;">
+                        Patient Prescription Code (e.g., RX-482019):
+                    </label>
+                    <input type="text" id="rxCodeInput" class="form-input" placeholder="e.g. RX-948201 or HM-4820" style="padding:0.75rem 1rem; width:100%; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
+                </div>
+
+                <div id="fieldMobile" style="display: none;">
+                    <label class="form-label" style="font-weight:700; color:#1e293b; display:block; margin-bottom:0.35rem;">
+                        Patient 10-Digit Mobile Number:
+                    </label>
+                    <input type="tel" id="mobileInput" class="form-input" placeholder="e.g. 9876543210" style="padding:0.75rem 1rem; width:100%; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
+                </div>
+
+                <div id="fieldAadhaar" style="display: none;">
+                    <label class="form-label" style="font-weight:700; color:#1e293b; display:block; margin-bottom:0.35rem;">
+                        Patient 12-Digit Aadhaar Number (SHA-256 Hashed with Pepper):
+                    </label>
+                    <input type="text" id="aadhaarInput" class="form-input" placeholder="e.g. 5482 9102 3847" maxlength="14" style="padding:0.75rem 1rem; width:100%; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
+                    <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.35rem;">
+                        ℹ️ Privacy Guardrail: Aadhaar is never saved in plaintext; only the SHA-256 hash verifies identity and sends patient approval OTP.
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.25rem;">
+                    <button type="submit" class="btn btn-primary" id="btnRequestAccess" style="padding: 0.85rem 1.75rem; font-size: 0.95rem; font-weight: 700;">
+                        Request Patient Access & Send OTP →
+                    </button>
+                </div>
+            </form>
+
+            <!-- Step 2: Patient OTP Verification Box -->
+            <div id="otpStepBox" class="otp-step-box">
+                <h4 style="margin: 0 0 0.5rem 0; color: #0369a1;">🔐 Enter Patient Authorization OTP</h4>
+                <p style="margin: 0 0 1rem 0; font-size: 0.9rem; color: #475569;">
+                    The patient has received a 6-digit approval code. Ask the patient for the code to grant 30-minute read-only access.
+                    <span id="demoOtpBadge" style="display:inline-block; margin-left:0.5rem; background:#dcfce7; color:#15803d; padding:0.2rem 0.5rem; border-radius:6px; font-weight:700; font-size:0.8rem;"></span>
+                </p>
+
+                <div style="display: flex; gap: 0.75rem; max-width: 400px;">
+                    <input type="text" id="patientOtpInput" class="form-input" placeholder="6-digit OTP" maxlength="6" style="letter-spacing: 3px; font-size: 1.1rem; text-align: center; padding: 0.65rem;">
+                    <button type="button" class="btn btn-primary" id="btnVerifyPatientOtp" style="padding: 0.65rem 1.25rem; font-weight: 700; white-space: nowrap;">
+                        Verify & Open Consultation →
+                    </button>
+                </div>
+            </div>
+
+            <div id="statusAlert" style="margin-top: 1rem; display: none; padding: 0.75rem 1rem; border-radius: 8px;"></div>
+        </div>
+    </main>
+
+    <script>
+        let currentMethod = 'rx';
+        let pendingIdentifier = '';
+        let pendingProfileId = 1;
+
+        function switchMethod(method) {
+            currentMethod = method;
+            document.querySelectorAll('.tab-select-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('fieldRx').style.display = (method === 'rx') ? 'block' : 'none';
+            document.getElementById('fieldMobile').style.display = (method === 'mobile') ? 'block' : 'none';
+            document.getElementById('fieldAadhaar').style.display = (method === 'aadhaar') ? 'block' : 'none';
+            if (method === 'rx') document.getElementById('tabBtnRx').classList.add('active');
+            if (method === 'mobile') document.getElementById('tabBtnMobile').classList.add('active');
+            if (method === 'aadhaar') document.getElementById('tabBtnAadhaar').classList.add('active');
+            document.getElementById('otpStepBox').style.display = 'none';
+        }
+
+        document.getElementById('accessRequestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertBox = document.getElementById('statusAlert');
+            alertBox.style.display = 'none';
+
+            let val = '';
+            if (currentMethod === 'rx') val = document.getElementById('rxCodeInput').value.trim();
+            if (currentMethod === 'mobile') val = document.getElementById('mobileInput').value.trim();
+            if (currentMethod === 'aadhaar') val = document.getElementById('aadhaarInput').value.trim();
+
+            if (!val) {
+                alertBox.style.display = 'block';
+                alertBox.style.background = '#fef2f2';
+                alertBox.style.color = '#b91c1c';
+                alertBox.textContent = 'Please enter patient identifier.';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/doctor/request-patient-access', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ method: currentMethod, value: val })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    pendingIdentifier = val;
+                    pendingProfileId = data.profile_id || 1;
+                    document.getElementById('otpStepBox').style.display = 'block';
+                    if (data.demo_otp) {
+                        document.getElementById('demoOtpBadge').textContent = 'Demo OTP: ' + data.demo_otp;
+                    }
+                    alertBox.style.display = 'block';
+                    alertBox.style.background = '#f0fdf4';
+                    alertBox.style.color = '#166534';
+                    alertBox.textContent = 'OTP sent to patient! Enter code below to confirm.';
+                } else {
+                    alertBox.style.display = 'block';
+                    alertBox.style.background = '#fef2f2';
+                    alertBox.style.color = '#b91c1c';
+                    alertBox.textContent = data.error || 'Failed to locate patient record.';
+                }
+            } catch (err) {
+                alertBox.style.display = 'block';
+                alertBox.style.background = '#fef2f2';
+                alertBox.style.color = '#b91c1c';
+                alertBox.textContent = 'Network error: ' + err;
+            }
+        });
+
+        document.getElementById('btnVerifyPatientOtp').addEventListener('click', async () => {
+            const otp = document.getElementById('patientOtpInput').value.trim();
+            const alertBox = document.getElementById('statusAlert');
+            if (!otp) {
+                alert('Please enter 6-digit OTP provided by patient');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/doctor/verify-patient-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        method: currentMethod,
+                        identifier: pendingIdentifier,
+                        profile_id: pendingProfileId,
+                        otp: otp
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = '/doctor/patient-view/' + data.session_token;
+                } else {
+                    alertBox.style.display = 'block';
+                    alertBox.style.background = '#fef2f2';
+                    alertBox.style.color = '#b91c1c';
+                    alertBox.textContent = data.error || 'Invalid OTP. Please check with patient.';
+                }
+            } catch (err) {
+                alert('Error verifying OTP: ' + err);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+{
+  "last_verified": "2026-10-13",
+  "verified_by": "HealthMate AI Regulatory & Emergency Medical Verification",
+  "country": "India",
+  "emergency_helplines": [
+    {
+      "id": "national_emergency",
+      "number": "112",
+      "title": "National Emergency Number (All-in-One)",
+      "category": "Immediate Emergency (Ambulance, Police, Fire)",
+      "toll_free": true,
+      "hours": "24x7",
+      "languages": ["Hindi", "English", "Telugu", "Tamil", "All Official State Languages"],
+      "description": "Unified pan-India emergency number for immediate life-safety emergencies, accidents, and urgent medical assistance.",
+      "authority": "Ministry of Home Affairs (MHA), Government of India"
+    },
+    {
+      "id": "medical_ambulance",
+      "number": "108",
+      "title": "National Medical Ambulance Service",
+      "category": "Medical Transport & Trauma Response",
+      "toll_free": true,
+      "hours": "24x7",
+      "languages": ["English", "Hindi", "Telugu", "Tamil", "Regional State Dialects"],
+      "description": "Immediate emergency ambulance dispatch for acute medical trauma, heart emergencies, stroke, respiratory distress, and pregnancy care.",
+      "authority": "Emergency Management and Research Institute (EMRI) / State Health Departments"
+    },
+    {
+      "id": "health_advice",
+      "number": "104",
+      "title": "Medical Advice & Health Information Helpline",
+      "category": "Non-emergency Health Advice & Grievances",
+      "toll_free": true,
+      "hours": "24x7",
+      "languages": ["English", "Hindi", "Telugu", "Tamil", "Regional State Languages"],
+      "description": "Round-the-clock medical triage advice, health schemes consultation, blood bank availability, and health grievance redressal.",
+      "authority": "National Health Mission (NHM) / State Health & Family Welfare"
+    },
+    {
+      "id": "mental_health_tele_manas",
+      "number": "14416",
+      "alternate_number": "1800-891-4416",
+      "title": "Tele-MANAS (National Tele Mental Health Programme)",
+      "category": "Mental Health & Psychological Counseling",
+      "toll_free": true,
+      "hours": "24x7",
+      "languages": ["English", "Hindi", "Telugu", "Tamil", "20+ Regional Languages"],
+      "description": "Free, confidential psychological first-aid, crisis support, psychiatric guidance, and mental wellness counseling across India.",
+      "authority": "NIMHANS & Ministry of Health and Family Welfare (MoHFW)"
+    },
+    {
+      "id": "women_helpline",
+      "number": "1091",
+      "alternate_number": "181",
+      "title": "National Women in Distress & Domestic Safety Helpline",
+      "category": "Women Safety & Medical Crisis",
+      "toll_free": true,
+      "hours": "24x7",
+      "languages": ["English", "Hindi", "Regional Languages"],
+      "description": "Emergency response, safe shelter, legal counsel, and immediate rescue for women facing violence or distress.",
+      "authority": "Ministry of Women and Child Development (MWCD)"
+    },
+    {
+      "id": "senior_citizen_elderline",
+      "number": "14567",
+      "title": "Elder Line (Senior Citizen National Helpline)",
+      "category": "Geriatric Care & Senior Protection",
+      "toll_free": true,
+      "hours": "8:00 AM - 8:00 PM (Everyday)",
+      "languages": ["English", "Hindi", "Telugu", "Tamil", "Regional Languages"],
+      "description": "Emotional support, medical information, elder abuse rescue, and pension guidance for senior citizens.",
+      "authority": "Ministry of Social Justice and Empowerment"
+    },
+    {
+      "id": "childline",
+      "number": "1098",
+      "title": "Childline (National Emergency Service for Children)",
+      "category": "Child Protection & Pediatric Emergency",
+      "toll_free": true,
+      "hours": "24x7",
+      "languages": ["English", "Hindi", "All Regional Languages"],
+      "description": "Free emergency phone outreach service for children in need of care, protection, and medical attention.",
+      "authority": "Mission Vatsalya, MWCD"
+    },
+    {
+      "id": "ayushman_bharat_pmjay",
+      "number": "14555",
+      "alternate_number": "1800-111-565",
+      "title": "Ayushman Bharat PM-JAY Beneficiary Helpline",
+      "category": "Government Health Scheme Coverage",
+      "toll_free": true,
+      "hours": "24x7",
+      "languages": ["English", "Hindi", "Regional Languages"],
+      "description": "Inquire about PM-JAY golden card status, empanelled public and private hospitals, and Rs 5 lakh annual hospital coverage.",
+      "authority": "National Health Authority (NHA)"
+    },
+    {
+      "id": "esanjeevani_telemedicine",
+      "number": "1075",
+      "title": "eSanjeevani National Teleconsultation Helpline",
+      "category": "Telemedicine & Doctor Consultation",
+      "toll_free": true,
+      "hours": "8:00 AM - 8:00 PM",
+      "languages": ["English", "Hindi", "Regional Languages"],
+      "description": "Guidance on connecting with government doctors and specialists for free video medical consultations.",
+      "authority": "Centre for Development of Advanced Computing (C-DAC) & MoHFW"
+    },
+    {
+      "id": "national_poison_centre",
+      "number": "1800-116-117",
+      "alternate_number": "011-26589391",
+      "title": "National Poisons Information Centre (AIIMS)",
+      "category": "Toxicology & Poison Emergency",
+      "toll_free": true,
+      "hours": "24x7",
+      "languages": ["English", "Hindi"],
+      "description": "Urgent toxicological advice for accidental poisoning, pesticide exposure, snake bites, and chemical ingestion.",
+      "authority": "All India Institute of Medical Sciences (AIIMS), New Delhi"
+    },
+    {
+      "id": "eraktkosh_blood_bank",
+      "number": "011-23359338",
+      "alternate_number": "104",
+      "title": "e-RaktKosh National Blood Bank Network",
+      "category": "Blood Bank & Component Availability",
+      "toll_free": false,
+      "hours": "24x7",
+      "languages": ["English", "Hindi"],
+      "description": "Check live blood component availability (RBC, platelets, plasma) in nearby government and licensed blood banks.",
+      "authority": "Ministry of Health and Family Welfare (MoHFW)"
+    }
+  ]
+}

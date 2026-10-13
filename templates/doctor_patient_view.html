@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Patient Clinical Consultation View (Read-Only) — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nirmala+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .consult-banner { background: #1e3a8a; color: #ffffff; padding: 1.25rem 2rem; border-radius: 14px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .session-timer { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); padding: 0.4rem 0.85rem; border-radius: 8px; font-weight: 700; font-size: 0.95rem; }
+        .read-only-badge { background: #fef3c7; color: #92400e; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700; border: 1px solid #fde68a; }
+        .patient-card { background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); }
+        .record-section { background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm); }
+        .table-custom { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+        .table-custom th, .table-custom td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        .table-custom th { background: #f8fafc; font-weight: 700; color: #334155; }
+        .privacy-filter-alert { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="/doctor/dashboard" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">Clinical Consultation Portal • Read-Only Patient Record</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <span class="read-only-badge">🔒 Read-Only Clinical Access</span>
+                <a href="/doctor/dashboard" class="btn btn-secondary btn-sm">← Back to Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper container" style="padding: 1.5rem 1rem;">
+        <!-- Consultation Session Banner -->
+        <div class="consult-banner">
+            <div>
+                <div style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.9;">
+                    Active Consultation Session
+                </div>
+                <h2 style="margin: 0.25rem 0 0 0; font-size: 1.4rem;">
+                    Patient: {{ patient.name }} ({{ patient.relationship }})
+                </h2>
+                <div style="font-size: 0.85rem; opacity: 0.85; margin-top: 0.25rem;">
+                    Authorized for: <strong>{{ access.doctor_name }}</strong> (Reg: {{ access.doctor_reg_no }}) via {{ access.access_method }}
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <div class="session-timer" id="timerDisplay">
+                    ⏱️ Expires in: 29m 59s
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" id="btnRevokeAccess" style="background:#fee2e2; color:#b91c1c; border-color:#fca5a5; font-weight:700;">
+                    Revoke / End Session
+                </button>
+            </div>
+        </div>
+
+        <!-- Privacy Filter Banner (SPEC 7 & 14d) -->
+        <div class="privacy-filter-alert">
+            🛡️ <strong>SPEC 7 Privacy Guardrail Active:</strong> Sensitive mental health and substance use records are masked by default unless explicit patient opt-in is granted. Aadhaar is strictly excluded from all logs.
+        </div>
+
+        <!-- Patient Demographics -->
+        <div class="patient-card">
+            <h3 style="margin-top: 0; margin-bottom: 0.75rem; color: #1e3a8a; font-size: 1.15rem;">
+                👤 Patient Demographics & Profile Summary
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; font-size: 0.95rem;">
+                <div><span style="color:#64748b;">Full Name:</span> <strong>{{ patient.name }}</strong></div>
+                <div><span style="color:#64748b;">Age / Gender:</span> <strong>{{ patient.age }}y / {{ patient.gender }}</strong></div>
+                <div><span style="color:#64748b;">Blood Group:</span> <strong style="color:#dc2626;">🩸 {{ patient.blood_group or 'Not Recorded' }}</strong></div>
+                <div><span style="color:#64748b;">Known Allergies:</span> <strong style="color:#b91c1c;">{{ patient.allergies or 'None Reported' }}</strong></div>
+                <div><span style="color:#64748b;">Chronic Conditions:</span> <strong>{{ patient.conditions or 'None Reported' }}</strong></div>
+            </div>
+        </div>
+
+        <!-- Prescribed Medicines Schedule -->
+        <div class="record-section">
+            <h3 style="margin-top: 0; color: #1e3a8a; font-size: 1.15rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>💊 Active Prescribed Medicines ({{ medicines|length }})</span>
+                <span style="font-size: 0.8rem; font-weight: normal; color: #64748b;">Read-Only View</span>
+            </h3>
+            {% if medicines and medicines|length > 0 %}
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Medicine & Strength</th>
+                        <th>Dosage & Frequency</th>
+                        <th>Timing Slot</th>
+                        <th>Prescribing Doctor</th>
+                        <th>Instructions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in medicines %}
+                    <tr>
+                        <td><strong>{{ m.medicine_name }}</strong></td>
+                        <td>{{ m.prescribed_dosage }} ({{ m.frequency }})</td>
+                        <td><span style="background:#e0f2fe; color:#0369a1; padding:0.2rem 0.5rem; border-radius:4px; font-weight:600;">{{ m.timing_slot }}</span></td>
+                        <td>{{ m.doctor_prescribed or 'Prescribed' }}</td>
+                        <td>{{ m.instructions or 'As directed' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 0.5rem;">No active medicines currently recorded for this profile.</p>
+            {% endif %}
+        </div>
+
+        <!-- Diagnostic Reports -->
+        <div class="record-section">
+            <h3 style="margin-top: 0; color: #1e3a8a; font-size: 1.15rem;">
+                📑 Diagnostic Lab & Clinical Reports ({{ reports|length }})
+            </h3>
+            {% if reports and reports|length > 0 %}
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Report Title</th>
+                        <th>Type</th>
+                        <th>Clinical Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reports %}
+                    <tr>
+                        <td>{{ r.report_date }}</td>
+                        <td><strong>{{ r.report_title }}</strong></td>
+                        <td><span style="background:#f1f5f9; padding:0.2rem 0.5rem; border-radius:4px;">{{ r.record_type }}</span></td>
+                        <td style="line-height: 1.5; color: #334155;">{{ r.summary_english }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="color: #64748b; font-size: 0.9rem; margin-top: 0.5rem;">No diagnostic reports recorded or visible under current privacy filters.</p>
+            {% endif %}
+        </div>
+    </main>
+
+    <script>
+        // 30-minute countdown timer simulation
+        let remainingSeconds = 1800;
+        const timerDisplay = document.getElementById('timerDisplay');
+        const token = "{{ access.session_token }}";
+
+        const interval = setInterval(() => {
+            if (remainingSeconds <= 0) {
+                clearInterval(interval);
+                timerDisplay.textContent = '⚠️ Session Expired';
+                alert('Your 30-minute doctor consultation session has expired. Please request renewed patient OTP.');
+                window.location.href = '/doctor/dashboard';
+                return;
+            }
+            remainingSeconds--;
+            const mins = Math.floor(remainingSeconds / 60);
+            const secs = remainingSeconds % 60;
+            timerDisplay.textContent = `⏱️ Expires in: ${mins}m ${secs < 10 ? '0' : ''}${secs}s`;
+        }, 1000);
+
+        // Revoke button
+        document.getElementById('btnRevokeAccess').addEventListener('click', async () => {
+            if (confirm('Are you sure you want to end this clinical review session immediately?')) {
+                try {
+                    const res = await fetch('/api/doctor-access/revoke', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_token: token })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert('Session ended and logged.');
+                        window.location.href = '/doctor/dashboard';
+                    }
+                } catch(e) {
+                    alert('Error: ' + e);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

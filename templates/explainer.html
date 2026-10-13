@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Medical Term Explainer — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .explainer-hero {
+            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+        .ai-fallback-badge {
+            display: inline-block;
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            border: 1px solid #fde68a;
+        }
+        .chip-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .quick-chip {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            padding: 0.4rem 0.85rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-chip:hover {
+            background: #0d9488;
+            color: #ffffff;
+            border-color: #0d9488;
+        }
+        .result-card {
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            padding: 1.75rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .telugu-block {
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .lifestyle-block {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .doctor-qa-block {
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">ఆరోగ్య సహచరి • Personal Health Copilot</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('logout_page') }}" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca;">🚪 Sign Out</a>
+            </div>
+        </div>
+    </header>
+    {% set active_page = 'explainer' %}
+    {% include "nav_shared.html" %}
+
+    <!-- Emergency Hotline Banner (Mandatory 112/108/104) -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong>Emergency Medical Helplines:</strong>
+                <span>Call immediately for chest pain, stroke, or severe breathlessness</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill"><strong>108</strong> Ambulance</a>
+                <a href="tel:112" class="hotline-pill"><strong>112</strong> National Helpline</a>
+                <a href="tel:104" class="hotline-pill"><strong>104</strong> Health Advice</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 2rem 1rem; max-width: 900px;">
+        <div class="explainer-hero">
+            <span class="ai-fallback-badge">Educational fallback (not AI)</span>
+            <h2 style="margin: 0 0 0.5rem 0; font-size: 1.85rem; font-weight: 700; color: #ffffff;">
+                📖 Medical Term & Lab Explainer
+            </h2>
+            <p style="margin: 0; color: #ccfbf1; font-size: 0.95rem; line-height: 1.5;">
+                Confused by complex terms on your hospital papers or blood test results? Type or paste any test name below for a plain-language English & Telugu explanation.
+            </p>
+        </div>
+
+        <!-- Input Card -->
+        <div class="card" style="padding: 1.5rem; margin-bottom: 2rem; background: #ffffff; border-radius: 12px; box-shadow: var(--shadow-sm);">
+            <form id="explainerForm">
+                <label for="explainerInput" style="display: block; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; font-size: 1rem;">
+                    Enter Medical Term or Paste Lab Report Snippet:
+                </label>
+                <textarea id="explainerInput" class="form-input" rows="4" maxlength="2000" placeholder="Type a term like 'HbA1c', 'Creatinine', 'Platelet Count', 'Cholesterol' or paste text (up to 2000 characters)..." required style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 0.95rem; resize: vertical;"></textarea>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                    <span id="charCountDisplay" style="font-size: 0.8rem; color: #64748b;">0 / 2000 characters</span>
+                    <button type="submit" class="btn btn-primary" id="btnExplain">
+                        🔍 Explain in Simple Terms
+                    </button>
+                </div>
+            </form>
+
+            <!-- Quick Suggestions -->
+            <div style="margin-top: 1.25rem;">
+                <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Popular Terms to Explore:</span>
+                <div class="chip-bar">
+                    <button type="button" class="quick-chip" data-term="HbA1c">HbA1c (Diabetes)</button>
+                    <button type="button" class="quick-chip" data-term="Fasting Blood Sugar">Fasting Sugar</button>
+                    <button type="button" class="quick-chip" data-term="Platelet Count">Platelet Count</button>
+                    <button type="button" class="quick-chip" data-term="Total Cholesterol">Cholesterol</button>
+                    <button type="button" class="quick-chip" data-term="Hemoglobin">Hemoglobin (Hb)</button>
+                    <button type="button" class="quick-chip" data-term="WBC Count">WBC (Immune Cells)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Display Container -->
+        <div id="resultsContainer">
+            <!-- Results or empty state inserted here -->
+            <div style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 3rem 1.5rem; text-align: center; color: #64748b;">
+                <span style="font-size: 2.5rem; display: block; margin-bottom: 0.5rem;">💡</span>
+                <h4 style="margin: 0 0 0.5rem 0; color: #334155;">Ready to explain terms</h4>
+                <p style="margin: 0; font-size: 0.9rem;">Type any medical test name or click a popular term above to see standard ranges and Telugu explanations.</p>
+            </div>
+        </div>
+
+        <!-- Safety Notice -->
+        <div class="card" style="margin-top: 3rem; background: #fafaf9; border-left: 4px solid #f59e0b; padding: 1.25rem;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #0f172a; font-size: 0.95rem;">⚠️ Medical & AI Guardrail Notice</h4>
+            <p style="margin: 0; color: #475569; font-size: 0.85rem; line-height: 1.5;">
+                This term explainer operates strictly as an offline educational reference matching standardized medical glossaries. It does not provide medical diagnoses or modify drug dosages. In serious symptoms, consult a licensed healthcare practitioner or call 112 / 108.
+            </p>
+        </div>
+    </main>
+
+    <script>
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const inputArea = document.getElementById('explainerInput');
+        const charCount = document.getElementById('charCountDisplay');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        inputArea.addEventListener('input', () => {
+            charCount.textContent = `${inputArea.value.length} / 2000 characters`;
+        });
+
+        document.querySelectorAll('.quick-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                inputArea.value = chip.getAttribute('data-term');
+                charCount.textContent = `${inputArea.value.length} / 2000 characters`;
+                submitQuery(inputArea.value);
+            });
+        });
+
+        document.getElementById('explainerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = inputArea.value.trim();
+            if (text) submitQuery(text);
+        });
+
+        async function submitQuery(queryText) {
+            resultsContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: #0d9488;">Searching medical knowledge base...</div>';
+
+            try {
+                const res = await fetch('/api/explainer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify({
+                        _csrf: csrfToken,
+                        query: queryText
+                    })
+                });
+
+                const data = await res.json();
+                if (!data.success) {
+                    resultsContainer.innerHTML = `<div style="padding: 1.5rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #991b1b;">${data.error || 'Could not explain term.'}</div>`;
+                    return;
+                }
+
+                if (!data.matches || data.matches.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="result-card" style="text-align: center; color: #64748b;">
+                            <h4>No exact dictionary match found</h4>
+                            <p>We couldn't find an exact match for "<em>${data.query}</em>" in the offline glossary. Try searching for terms like "HbA1c", "Fasting Blood Sugar", "Platelets", or "Cholesterol".</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                resultsContainer.innerHTML = data.matches.map(m => `
+                    <div class="result-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
+                            <div>
+                                <span class="ai-fallback-badge">Educational fallback (not AI)</span>
+                                <h3 style="margin: 0.25rem 0; color: #0f172a; font-size: 1.35rem;">${m.term}</h3>
+                                <span style="color: #0284c7; font-size: 0.95rem; font-weight: 600;">${m.telugu_term}</span>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="speakExplanation('${m.term}', '${m.meaning_en}')">
+                                🔊 Read Aloud
+                            </button>
+                        </div>
+
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 0.9rem;">
+                            <strong>📏 Standard Normal Range:</strong> <span style="color: #0f766e; font-weight: 600;">${m.normal_range}</span>
+                        </div>
+
+                        <div style="margin-bottom: 1rem; font-size: 0.95rem; line-height: 1.6; color: #334155;">
+                            <strong>What it means:</strong> ${m.meaning_en}
+                        </div>
+
+                        <div class="telugu-block">
+                            <strong style="color: #0369a1;">తెలుగు వివరణ:</strong>
+                            <p style="margin: 0.25rem 0 0 0; color: #0f172a; line-height: 1.6;">${m.meaning_te}</p>
+                        </div>
+
+                        ${m.lifestyle_tip ? `
+                            <div class="lifestyle-block">
+                                <strong style="color: #065f46;">🥗 Healthy Lifestyle Advice:</strong>
+                                <p style="margin: 0.25rem 0 0 0; color: #065f46; line-height: 1.5;">${m.lifestyle_tip}</p>
+                            </div>
+                        ` : ''}
+
+                        ${m.doctor_question ? `
+                            <div class="doctor-qa-block">
+                                <strong style="color: #b45309;">🩺 Question to Ask Your Doctor:</strong>
+                                <p style="margin: 0.25rem 0 0 0; color: #92400e; font-style: italic;">"${m.doctor_question}"</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                resultsContainer.innerHTML = '<div style="padding: 1.5rem; color: #ef4444;">Network error while querying glossary.</div>';
+            }
+        }
+
+        function speakExplanation(term, text) {
+            if (!('speechSynthesis' in window)) {
+                alert('Text-to-speech is not supported in this browser.');
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(`${term}. ${text}`);
+            u.rate = 0.95;
+            window.speechSynthesis.speak(u);
+        }
+    </script>
+</body>
+</html>

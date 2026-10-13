@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Emergency Health Card & QR Code — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nirmala+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerg-red: #e11d48;
+            --emerg-red-dark: #9f1239;
+            --emerg-dark: #0f172a;
+            --card-radius: 16px;
+            --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; }
+        .hero-banner-emerg {
+            background: linear-gradient(135deg, #4c0519 0%, #9f1239 50%, #e11d48 100%);
+            color: #ffffff; padding: 2rem 1.5rem; border-radius: 20px; margin-bottom: 1.5rem;
+            position: relative; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.25);
+        }
+        .hero-banner-emerg::after {
+            content: ''; position: absolute; right: -30px; top: -30px; width: 220px; height: 220px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+
+        .split-grid-emerg { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 1.5rem; margin-bottom: 2rem; }
+        @media (max-width: 860px) { .split-grid-emerg { grid-template-columns: 1fr; } }
+
+        .content-card-e {
+            background: #ffffff; border-radius: var(--card-radius); border: 1px solid #e2e8f0;
+            padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-subtle);
+        }
+
+        /* Digital Card Live Preview */
+        .digital-id-card {
+            background: #ffffff; border-radius: 18px; border: 2.5px solid #e11d48;
+            box-shadow: 0 15px 35px -5px rgba(225, 29, 72, 0.15); overflow: hidden; position: sticky; top: 1.5rem;
+        }
+        .digital-id-header {
+            background: linear-gradient(135deg, #881337 0%, #e11d48 100%);
+            color: #ffffff; padding: 1.25rem; display: flex; align-items: center; justify-content: space-between;
+        }
+        .digital-id-body { padding: 1.25rem; }
+        .blood-badge-giant {
+            background: #ffe4e6; color: #9f1239; border: 2px solid #fecdd3;
+            font-size: 1.35rem; font-weight: 800; padding: 0.35rem 0.85rem; border-radius: 12px;
+            display: inline-flex; align-items: center; gap: 0.35rem;
+        }
+        .chip-tag {
+            display: inline-block; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.75rem;
+            font-weight: 700; margin: 0.15rem;
+        }
+        .chip-allergy { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .chip-condition { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .chip-med { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+
+        .form-row-e { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; margin-bottom: 0.85rem; }
+        .form-group-e { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.85rem; }
+        .form-group-e label { font-size: 0.85rem; font-weight: 700; color: #334155; }
+        .form-control-e {
+            padding: 0.6rem 0.85rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem;
+            color: #0f172a; background: #ffffff; font-family: inherit;
+        }
+        .form-control-e:focus { border-color: #e11d48; outline: none; box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.15); }
+
+        .btn-e-primary {
+            background: #e11d48; color: #ffffff; border: none; padding: 0.75rem 1.5rem; border-radius: 10px;
+            font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: background 0.15s;
+        }
+        .btn-e-primary:hover { background: #be123c; }
+        .btn-e-secondary {
+            background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 0.65rem 1.25rem;
+            border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+        }
+        .btn-e-secondary:hover { background: #e2e8f0; }
+
+        /* Wallet Printable Styles */
+        .printable-wallet-wrapper {
+            background: #ffffff; border: 2px dashed #94a3b8; border-radius: 12px; padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .wallet-card-fold {
+            display: flex; gap: 1rem; max-width: 650px; margin: 0 auto; border: 1px solid #cbd5e1;
+            border-radius: 12px; padding: 1rem; background: #fafafa;
+        }
+        @media (max-width: 640px) { .wallet-card-fold { flex-direction: column; } }
+        .wallet-card-half { flex: 1; padding: 0.75rem; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; }
+
+        /* Print Media Styles */
+        @media print {
+            body { background: #ffffff; color: #000000; }
+            .app-header, .emergency-strip, .hero-banner-emerg, .no-print, .split-grid-emerg > div:first-child, .header-controls {
+                display: none !important;
+            }
+            .printable-wallet-wrapper {
+                border: none; padding: 0; margin: 0;
+            }
+            .wallet-card-fold {
+                border: 2px solid #000000; box-shadow: none; max-width: 100%; margin: 0 auto;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">Emergency Health Card & Identity</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-controls">
+                <a href="{{ url_for('logout_page') }}" class="tool-btn" style="text-decoration: none; padding: 0.35rem 0.65rem; font-size: 0.85rem; font-weight: 600; color: #dc2626; border-color: #fecaca;">🚪 Sign Out</a>
+            </div>
+        </div>
+    </header>
+    {% set active_page = 'emergency' %}
+    {% include "nav_shared.html" %}
+
+    <!-- Emergency Hotline Banner -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong>Emergency Medical Helplines:</strong>
+                <span>One-tap dialing for paramedics & first responders</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill"><strong>108</strong> Ambulance</a>
+                <a href="tel:112" class="hotline-pill"><strong>112</strong> National Helpline</a>
+                <a href="tel:104" class="hotline-pill"><strong>104</strong> Health Advice</a>
+                <span class="hotline-pill" id="headerBloodGroupBadge" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca;">🩸 <span id="bloodGroupPill">O+</span></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <main class="container" style="max-width: 1100px; margin: 1.5rem auto; padding: 0 1rem;">
+
+        <!-- Active Family Profile Selector -->
+        <div class="card no-print" style="margin-bottom: 1.25rem; padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; background: #ffffff; border-left: 4px solid #e11d48; border-radius: 12px; box-shadow: var(--shadow-subtle);">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <span style="font-size: 1.25rem;">👥</span>
+                <span style="font-weight: 700; color: #1e293b; font-size: 0.95rem;">Active Family Member:</span>
+                <select id="emergProfileSelect" style="padding: 0.4rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; color: #0f172a; background: #f8fafc; font-size: 0.9rem;">
+                    <option value="1">Grandpa Rao (Grandparent - 72y)</option>
+                    <option value="2">Sita Devi (Mother - 48y)</option>
+                    <option value="3">Ramesh (Father - 52y)</option>
+                    <option value="4">Ananya (Student - 19y)</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="/vitals" class="btn-e-secondary" style="font-size: 0.85rem; padding: 0.4rem 0.85rem; text-decoration: none;">📊 Go to Vitals Tracker</a>
+            </div>
+        </div>
+
+        <!-- Hero Banner -->
+        <div class="hero-banner-emerg no-print">
+            <div style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.2); border-radius: 999px; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.5rem;">
+                SPEC 12c Paramedic Emergency Health Card & Lock-Screen Generator
+            </div>
+            <h2 style="font-size: 1.85rem; margin: 0 0 0.5rem 0; font-weight: 800;">Emergency Health Card, QR & Wallpaper</h2>
+            <p style="margin: 0; opacity: 0.92; font-size: 0.95rem; max-width: 650px;">
+                Critical life-saving medical data for first responders at accident or crisis scenes. Includes printable foldable wallet card, dynamic QR code, and lock-screen wallpaper generator.
+            </p>
+        </div>
+
+        <!-- Split Grid: Form Editor on Left, Live ID Card on Right -->
+        <div class="split-grid-emerg">
+            
+            <!-- LEFT: Edit Card Form -->
+            <div class="no-print">
+                <div class="content-card-e">
+                    <h3 style="margin: 0 0 0.5rem 0; font-size: 1.2rem; font-weight: 800; color: #0f172a;">✏️ Edit Emergency Information</h3>
+                    <p style="margin: 0 0 1.25rem 0; font-size: 0.85rem; color: #64748b;">
+                        Information updated here immediately syncs with your digital QR card and lock-screen wallpaper.
+                    </p>
+
+                    <form id="formEmergencyCard" onsubmit="handleEmergencyFormSubmit(event)">
+                        <div class="form-row-e">
+                            <div class="form-group-e">
+                                <label for="inputBloodGroup">Blood Group *</label>
+                                <select id="inputBloodGroup" class="form-control-e" required>
+                                    <option value="O+">O+ (Positive)</option>
+                                    <option value="O-">O- (Negative)</option>
+                                    <option value="A+">A+ (Positive)</option>
+                                    <option value="A-">A- (Negative)</option>
+                                    <option value="B+">B+ (Positive)</option>
+                                    <option value="B-">B- (Negative)</option>
+                                    <option value="AB+">AB+ (Positive)</option>
+                                    <option value="AB-">AB- (Negative)</option>
+                                    <option value="Bombay Blood Group">Bombay Blood Group (Rare)</option>
+                                </select>
+                            </div>
+                            <div class="form-group-e">
+                                <label for="inputOrganDonor">Organ Donor Status</label>
+                                <select id="inputOrganDonor" class="form-control-e">
+                                    <option value="1">🌱 Registered Organ Donor (Yes)</option>
+                                    <option value="0">Not Registered (No)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Primary Contact -->
+                        <h4 style="margin: 0.75rem 0 0.5rem 0; font-size: 0.95rem; font-weight: 800; color: #9f1239;">📞 Primary Emergency Contact</h4>
+                        <div class="form-row-e">
+                            <div class="form-group-e">
+                                <label for="inputPrimaryName">Contact Name *</label>
+                                <input type="text" id="inputPrimaryName" class="form-control-e" placeholder="e.g. Ramesh" required>
+                            </div>
+                            <div class="form-group-e">
+                                <label for="inputPrimaryRel">Relationship *</label>
+                                <input type="text" id="inputPrimaryRel" class="form-control-e" placeholder="e.g. Son, Spouse" required>
+                            </div>
+                            <div class="form-group-e">
+                                <label for="inputPrimaryPhone">Phone Number *</label>
+                                <input type="tel" id="inputPrimaryPhone" class="form-control-e" placeholder="+91 98765 43210" required>
+                            </div>
+                        </div>
+
+                        <!-- Secondary Contact -->
+                        <h4 style="margin: 0.75rem 0 0.5rem 0; font-size: 0.95rem; font-weight: 800; color: #475569;">📞 Secondary Emergency Contact (Optional)</h4>
+                        <div class="form-row-e">
+                            <div class="form-group-e">
+                                <label for="inputSecondaryName">Contact Name</label>
+                                <input type="text" id="inputSecondaryName" class="form-control-e" placeholder="e.g. Sita Devi">
+                            </div>
+                            <div class="form-group-e">
+                                <label for="inputSecondaryRel">Relationship</label>
+                                <input type="text" id="inputSecondaryRel" class="form-control-e" placeholder="e.g. Daughter-in-law">
+                            </div>
+                            <div class="form-group-e">
+                                <label for="inputSecondaryPhone">Phone Number</label>
+                                <input type="tel" id="inputSecondaryPhone" class="form-control-e" placeholder="+91 98765 43211">
+                            </div>
+                        </div>
+
+                        <!-- Allergies & Chronic Conditions -->
+                        <div class="form-group-e">
+                            <label for="inputAllergies">Known Allergies (Medications & Foods) *</label>
+                            <input type="text" id="inputAllergies" class="form-control-e" placeholder="e.g. Penicillin (rash), Sulfa, Peanuts">
+                        </div>
+
+                        <div class="form-group-e">
+                            <label for="inputConditions">Chronic Medical Conditions</label>
+                            <input type="text" id="inputConditions" class="form-control-e" placeholder="e.g. Type 2 Diabetes, Hypertension, Asthma">
+                        </div>
+
+                        <div class="form-group-e">
+                            <label for="inputMeds">Current Critical Regular Medications</label>
+                            <input type="text" id="inputMeds" class="form-control-e" placeholder="e.g. Metformin 500mg, Amlodipine 5mg, Insulin">
+                        </div>
+
+                        <div class="form-group-e">
+                            <label for="inputInstructions">Paramedic & First Responder Directives</label>
+                            <textarea id="inputInstructions" rows="3" class="form-control-e" placeholder="e.g. Diabetic: If found unconscious or sweating, test blood sugar immediately. Rescue glucose in bag."></textarea>
+                        </div>
+
+                        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                            <button type="submit" class="btn-e-primary" id="btnSaveEmergCard">💾 Save Emergency Card</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Export & Quick Actions Card -->
+                <div class="content-card-e">
+                    <h3 style="margin: 0 0 0.5rem 0; font-size: 1.15rem; font-weight: 800; color: #0f172a;">🖨️ Physical Cards & Wallpaper Export</h3>
+                    <p style="margin: 0 0 1rem 0; font-size: 0.85rem; color: #64748b;">
+                        Print your card to keep in your wallet, or download a 9:16 high-contrast mobile lock-screen wallpaper.
+                    </p>
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                        <button type="button" class="btn-e-secondary" onclick="window.print()">
+                            🖨️ Print Wallet Card
+                        </button>
+                        <button type="button" class="btn-e-primary" id="btnDownloadWallpaper" onclick="downloadLockScreenWallpaper()">
+                            📲 Download Lock Screen Wallpaper (PNG)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Digital ID Card Live Preview -->
+            <div>
+                <div class="digital-id-card" id="digitalIdCard">
+                    <div class="digital-id-header">
+                        <div>
+                            <span style="font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.9;">EMERGENCY MEDICAL ID</span>
+                            <h3 id="prevPatientName" style="margin: 0.2rem 0 0 0; font-size: 1.35rem; font-weight: 800;">Grandpa Rao</h3>
+                            <span id="prevAgeGender" style="font-size: 0.85rem; opacity: 0.9;">Age 72 • Male</span>
+                        </div>
+                        <div class="blood-badge-giant" id="prevBloodGroup">
+                            🩸 O+
+                        </div>
+                    </div>
+
+                    <div class="digital-id-body">
+                        <!-- Direct Call Buttons -->
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                            <a id="btnCallPrimary" href="tel:+919876543210" class="btn-e-primary" style="flex: 1; text-align: center; text-decoration: none; padding: 0.6rem 0.75rem; font-size: 0.85rem;">
+                                📞 Call Contact: <span id="prevPrimaryBtnText">Ramesh</span>
+                            </a>
+                            <a href="tel:108" class="btn-e-primary" style="background: #991b1b; text-decoration: none; padding: 0.6rem 0.85rem; font-size: 0.85rem;">
+                                🚑 Call 108
+                            </a>
+                        </div>
+
+                        <!-- Secondary Contact Strip -->
+                        <div id="prevSecondaryStrip" style="margin-bottom: 0.75rem; font-size: 0.85rem; background: #f8fafc; padding: 0.5rem 0.75rem; border-radius: 8px;">
+                            <span style="color: #64748b;">Secondary Contact:</span> <strong id="prevSecondaryText">Sita Devi (+91 98765 43211)</strong>
+                        </div>
+
+                        <!-- Allergies -->
+                        <div style="margin-bottom: 0.75rem;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #9f1239;">⚠️ ALLERGIES:</span>
+                            <div id="prevAllergiesContainer" style="margin-top: 0.25rem;">
+                                <span class="chip-tag chip-allergy">Penicillin (Rash)</span>
+                                <span class="chip-tag chip-allergy">Sulfa Drugs</span>
+                            </div>
+                        </div>
+
+                        <!-- Chronic Conditions -->
+                        <div style="margin-bottom: 0.75rem;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #0369a1;">🩺 CONDITIONS:</span>
+                            <div id="prevConditionsContainer" style="margin-top: 0.25rem;">
+                                <span class="chip-tag chip-condition">Type 2 Diabetes</span>
+                                <span class="chip-tag chip-condition">Hypertension</span>
+                            </div>
+                        </div>
+
+                        <!-- Current Critical Meds -->
+                        <div style="margin-bottom: 0.75rem;">
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #6b21a8;">💊 CRITICAL MEDICATIONS:</span>
+                            <div id="prevMedsContainer" style="margin-top: 0.25rem;">
+                                <span class="chip-tag chip-med">Metformin 500mg</span>
+                                <span class="chip-tag chip-med">Amlodipine 5mg</span>
+                            </div>
+                        </div>
+
+                        <!-- Directives -->
+                        <div style="background: #fff1f2; border-left: 3px solid #e11d48; padding: 0.65rem 0.85rem; border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem;">
+                            <strong style="color: #9f1239; font-size: 0.8rem;">PARAMEDIC DIRECTIVE:</strong>
+                            <div id="prevDirectiveText" style="margin-top: 0.2rem; color: #1e293b;">
+                                Diabetic patient. If found unresponsive or sweating, test blood sugar immediately.
+                            </div>
+                        </div>
+
+                        <!-- QR Code Container -->
+                        <div style="text-align: center; padding-top: 0.5rem; border-top: 1.5px solid #e2e8f0;">
+                            <div id="qrCodeWrapper" style="display: inline-block; padding: 0.5rem; background: #ffffff; border-radius: 12px; border: 1.5px solid #cbd5e1;">
+                                <img id="emergQrImage" src="" alt="Emergency QR Code" style="width: 150px; height: 150px; display: block;">
+                            </div>
+                            <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.35rem; font-weight: 600;">
+                                Scan QR for Full Verified First Responder Record
+                            </div>
+                            <div style="margin-top: 0.5rem;">
+                                <a id="linkPublicResponder" href="#" target="_blank" style="font-size: 0.8rem; color: #e11d48; font-weight: 700; text-decoration: none;">
+                                    🔗 Open First Responder Public View
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Organ Donor Badge -->
+                        <div id="prevOrganDonorBadge" style="text-align: center; margin-top: 0.75rem;">
+                            <span class="chip-tag" style="background: #ecfdf5; color: #047857; border: 1px solid #6ee7b7; font-weight: 800;">
+                                🌱 Registered Organ Donor
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================================================================== -->
+        <!-- PRINTABLE WALLET CARD FORMAT (SPEC 12c) -->
+        <!-- ================================================================== -->
+        <div class="printable-wallet-wrapper">
+            <div class="no-print" style="margin-bottom: 0.75rem;">
+                <h4 style="margin: 0; font-size: 1rem; font-weight: 800; color: #0f172a;">✂️ Foldable Wallet Card Print Layout (Fold on center line)</h4>
+                <p style="margin: 0.2rem 0 0 0; font-size: 0.8rem; color: #64748b;">
+                    Fits in credit card slot (85.6mm x 53.98mm). Click "Print Wallet Card" above to print directly.
+                </p>
+            </div>
+
+            <div class="wallet-card-fold">
+                <!-- Front Side -->
+                <div class="wallet-card-half">
+                    <div style="background: #881337; color: #ffffff; padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800; display: flex; justify-content: space-between;">
+                        <span>EMERGENCY ID</span>
+                        <span id="printBloodGroup">🩸 O+</span>
+                    </div>
+                    <div style="padding: 0.5rem 0;">
+                        <h4 id="printPatientName" style="margin: 0; font-size: 1rem; font-weight: 800;">Grandpa Rao</h4>
+                        <div id="printAgeGender" style="font-size: 0.75rem; color: #64748b;">Age 72 • Male</div>
+                        
+                        <div style="margin-top: 0.4rem; font-size: 0.75rem;">
+                            <div><strong>Primary:</strong> <span id="printPrimaryPhone">+91 98765 43210</span></div>
+                            <div><strong>Ambulance:</strong> 108 • <strong>Emergency:</strong> 112</div>
+                        </div>
+
+                        <div style="margin-top: 0.4rem; text-align: center;">
+                            <img id="printQrImg" src="" alt="QR" style="width: 75px; height: 75px; border: 1px solid #cbd5e1;">
+                            <div style="font-size: 0.65rem; color: #64748b;">Scan for directives</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Back Side -->
+                <div class="wallet-card-half">
+                    <div style="background: #1e293b; color: #ffffff; padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 800;">
+                        MEDICAL DIRECTIVES
+                    </div>
+                    <div style="padding: 0.5rem 0; font-size: 0.75rem; line-height: 1.4;">
+                        <div style="margin-bottom: 0.35rem;">
+                            <strong style="color: #9f1239;">Allergies:</strong>
+                            <div id="printAllergies">Penicillin, Sulfa</div>
+                        </div>
+                        <div style="margin-bottom: 0.35rem;">
+                            <strong style="color: #0369a1;">Conditions:</strong>
+                            <div id="printConditions">Type 2 Diabetes, Hypertension</div>
+                        </div>
+                        <div style="margin-bottom: 0.35rem;">
+                            <strong>Directive:</strong>
+                            <div id="printDirective">Diabetic patient. Test blood sugar if unconscious.</div>
+                        </div>
+                        <div style="margin-top: 0.5rem; text-align: center; font-size: 0.65rem; color: #64748b;">
+                            HealthMate AI • Verified Emergency Identity
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        let activeProfileId = 1;
+        let currentCardData = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectProf = document.getElementById('emergProfileSelect');
+            if (selectProf) {
+                selectProf.value = activeProfileId;
+                selectProf.addEventListener('change', (e) => {
+                    activeProfileId = parseInt(e.target.value);
+                    loadEmergencyCardData();
+                });
+            }
+            loadEmergencyCardData();
+        });
+
+        async function loadEmergencyCardData() {
+            try {
+                const res = await fetch(`/api/emergency-card/data?profile_id=${activeProfileId}`);
+                const data = await res.json();
+                if (!data.success) return;
+
+                currentCardData = data.card;
+                populateForm(data.card);
+                updateLiveCardPreview(data.card, data.public_url, data.qr_data_url);
+            } catch (err) {
+                console.error("Error loading emergency card data:", err);
+            }
+        }
+
+        function populateForm(card) {
+            document.getElementById('inputBloodGroup').value = card.blood_group || 'O+';
+            document.getElementById('inputOrganDonor').value = card.organ_donor ? '1' : '0';
+            document.getElementById('inputPrimaryName').value = card.primary_contact_name || '';
+            document.getElementById('inputPrimaryRel').value = card.primary_contact_relation || '';
+            document.getElementById('inputPrimaryPhone').value = card.primary_contact_phone || '';
+            document.getElementById('inputSecondaryName').value = card.secondary_contact_name || '';
+            document.getElementById('inputSecondaryRel').value = card.secondary_contact_relation || '';
+            document.getElementById('inputSecondaryPhone').value = card.secondary_contact_phone || '';
+            document.getElementById('inputAllergies').value = card.allergies || '';
+            document.getElementById('inputConditions').value = card.chronic_conditions || '';
+            document.getElementById('inputMeds').value = card.current_medications || '';
+            document.getElementById('inputInstructions').value = card.emergency_instructions || '';
+        }
+
+        function updateLiveCardPreview(card, publicUrl, qrDataUrl) {
+            // Patient details
+            document.getElementById('prevPatientName').innerText = card.patient_name || 'Patient';
+            document.getElementById('prevAgeGender').innerText = `Age ${card.age || '--'} • ${card.gender || ''}`;
+            document.getElementById('prevBloodGroup').innerText = `🩸 ${card.blood_group || 'O+'}`;
+            document.getElementById('bloodGroupPill').innerText = card.blood_group || 'O+';
+
+            // Primary Contact
+            const pName = card.primary_contact_name || 'Family';
+            const pPhone = card.primary_contact_phone || '108';
+            document.getElementById('prevPrimaryBtnText').innerText = pName;
+            document.getElementById('btnCallPrimary').href = `tel:${pPhone}`;
+
+            // Secondary Contact
+            const sName = card.secondary_contact_name;
+            const sPhone = card.secondary_contact_phone;
+            const secStrip = document.getElementById('prevSecondaryStrip');
+            if (sName && sPhone) {
+                secStrip.style.display = 'block';
+                document.getElementById('prevSecondaryText').innerText = `${sName} (${sPhone})`;
+            } else {
+                secStrip.style.display = 'none';
+            }
+
+            // Allergies
+            const algContainer = document.getElementById('prevAllergiesContainer');
+            const algList = (card.allergies || '').split(',').map(s => s.trim()).filter(Boolean);
+            algContainer.innerHTML = algList.length > 0
+                ? algList.map(a => `<span class="chip-tag chip-allergy">${a}</span>`).join('')
+                : '<span style="font-size: 0.8rem; color: #64748b;">None reported</span>';
+
+            // Conditions
+            const condContainer = document.getElementById('prevConditionsContainer');
+            const condList = (card.chronic_conditions || '').split(',').map(s => s.trim()).filter(Boolean);
+            condContainer.innerHTML = condList.length > 0
+                ? condList.map(c => `<span class="chip-tag chip-condition">${c}</span>`).join('')
+                : '<span style="font-size: 0.8rem; color: #64748b;">None reported</span>';
+
+            // Meds
+            const medContainer = document.getElementById('prevMedsContainer');
+            const medList = (card.current_medications || '').split(',').map(s => s.trim()).filter(Boolean);
+            medContainer.innerHTML = medList.length > 0
+                ? medList.map(m => `<span class="chip-tag chip-med">${m}</span>`).join('')
+                : '<span style="font-size: 0.8rem; color: #64748b;">None reported</span>';
+
+            // Directive
+            document.getElementById('prevDirectiveText').innerText = card.emergency_instructions || 'Standard emergency protocols apply.';
+
+            // QR image & links
+            document.getElementById('emergQrImage').src = qrDataUrl;
+            document.getElementById('linkPublicResponder').href = publicUrl;
+
+            // Organ Donor Badge
+            const donorBadge = document.getElementById('prevOrganDonorBadge');
+            donorBadge.style.display = card.organ_donor ? 'block' : 'none';
+
+            // Update Printable elements
+            document.getElementById('printBloodGroup').innerText = `🩸 ${card.blood_group || 'O+'}`;
+            document.getElementById('printPatientName').innerText = card.patient_name || 'Patient';
+            document.getElementById('printAgeGender').innerText = `Age ${card.age || '--'} • ${card.gender || ''}`;
+            document.getElementById('printPrimaryPhone').innerText = `${pName}: ${pPhone}`;
+            document.getElementById('printQrImg').src = qrDataUrl;
+            document.getElementById('printAllergies').innerText = card.allergies || 'None reported';
+            document.getElementById('printConditions').innerText = card.chronic_conditions || 'None reported';
+            document.getElementById('printDirective').innerText = card.emergency_instructions || 'Standard protocols.';
+        }
+
+        async function handleEmergencyFormSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSaveEmergCard');
+            btn.disabled = true;
+            btn.innerText = 'Saving...';
+
+            const payload = {
+                profile_id: activeProfileId,
+                blood_group: document.getElementById('inputBloodGroup').value,
+                organ_donor: document.getElementById('inputOrganDonor').value,
+                primary_contact_name: document.getElementById('inputPrimaryName').value,
+                primary_contact_relation: document.getElementById('inputPrimaryRel').value,
+                primary_contact_phone: document.getElementById('inputPrimaryPhone').value,
+                secondary_contact_name: document.getElementById('inputSecondaryName').value,
+                secondary_contact_relation: document.getElementById('inputSecondaryRel').value,
+                secondary_contact_phone: document.getElementById('inputSecondaryPhone').value,
+                allergies: document.getElementById('inputAllergies').value,
+                chronic_conditions: document.getElementById('inputConditions').value,
+                current_medications: document.getElementById('inputMeds').value,
+                emergency_instructions: document.getElementById('inputInstructions').value
+            };
+
+            try {
+                const res = await fetch('/api/emergency-card/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify(payload)
+                });
+                const d = await res.json();
+                if (d.success) {
+                    alert('✓ Emergency Health Card updated successfully!');
+                    loadEmergencyCardData();
+                } else {
+                    alert(`Error: ${d.error || 'Failed to update'}`);
+                }
+            } catch (err) {
+                alert('Connection error saving emergency card.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '💾 Save Emergency Card';
+            }
+        }
+
+        function downloadLockScreenWallpaper() {
+            if (!currentCardData || !currentCardData.emergency_token) {
+                alert('Card data not ready yet.');
+                return;
+            }
+            window.location.href = `/api/emergency-card/wallpaper/${currentCardData.emergency_token}`;
+        }
+    </script>
+</body>
+</html>

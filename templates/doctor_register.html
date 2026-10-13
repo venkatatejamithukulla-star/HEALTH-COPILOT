@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Doctor Portal Registration — HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nirmala+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .auth-card { max-width: 580px; margin: 2.5rem auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; padding: 2.5rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem; font-size: 0.9rem; }
+        .form-input, .form-select { width: 100%; padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; box-sizing: border-box; }
+        .form-input:focus, .form-select:focus { border-color: #0284c7; outline: none; box-shadow: 0 0 0 3px rgba(2,132,199,0.15); }
+        .role-badge { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 1rem; }
+        .alert-box { padding: 0.85rem 1rem; border-radius: 8px; margin-bottom: 1.25rem; font-size: 0.9rem; display: none; }
+        .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; }
+        .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">Clinical Portal • Doctor Registration</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="/doctor/login" class="btn btn-secondary">Doctor Login</a>
+                <a href="/" class="btn btn-secondary">Patient Home</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper container">
+        <div class="auth-card">
+            <span class="role-badge">🩺 Registered Medical Practitioner (RMP)</span>
+            <h2 style="color: #0f172a; margin-top: 0; margin-bottom: 0.5rem; font-size: 1.65rem;">Doctor Portal Registration</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                Licensed medical doctors can register to review patient records via OTP verification with strict 30-minute auto-expiring access.
+            </p>
+
+            <div id="alertBox" class="alert-box alert-error"></div>
+
+            <form id="doctorRegisterForm">
+                <div class="form-group">
+                    <label class="form-label" for="doctorName">Full Name (Dr.):</label>
+                    <input type="text" id="doctorName" class="form-input" placeholder="e.g. Dr. Ramesh Gupta" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="medicalRegNo">Medical Registration Number (NMC / State Council):</label>
+                    <input type="text" id="medicalRegNo" class="form-input" placeholder="e.g. TSMC-48291 or MCI-109283" required>
+                    <small style="color: #64748b; font-size: 0.8rem;">Mandatory for clinical audit logs & role separation</small>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="speciality">Speciality:</label>
+                        <select id="speciality" class="form-select" required>
+                            <option value="General Medicine">General Medicine</option>
+                            <option value="Cardiology">Cardiology</option>
+                            <option value="Diabetology / Endocrinology">Diabetology / Endocrinology</option>
+                            <option value="Pulmonology">Pulmonology</option>
+                            <option value="Neurology">Neurology</option>
+                            <option value="Psychiatry">Psychiatry</option>
+                            <option value="Pediatrics">Pediatrics</option>
+                            <option value="Orthopedics">Orthopedics</option>
+                            <option value="Other">Other Specialty</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="hospital">Clinic / Hospital Affiliation:</label>
+                        <input type="text" id="hospital" class="form-input" placeholder="e.g. Apollo / Govt CHC" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Official Email:</label>
+                        <input type="email" id="email" class="form-input" placeholder="doctor@hospital.org" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="mobile">Mobile Number (for 2FA):</label>
+                        <input type="tel" id="mobile" class="form-input" placeholder="9876543210" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password:</label>
+                    <input type="password" id="password" class="form-input" placeholder="At least 8 characters" minlength="8" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnSubmit" style="width: 100%; padding: 0.85rem; font-size: 1rem; font-weight: 700; margin-top: 0.5rem;">
+                    Register as Verified Doctor →
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: #64748b;">
+                Already registered? <a href="/doctor/login" style="color: #0284c7; font-weight: 700; text-decoration: none;">Login to Doctor Dashboard</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const form = document.getElementById('doctorRegisterForm');
+        const alertBox = document.getElementById('alertBox');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alertBox.style.display = 'none';
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Registering Doctor Account...';
+
+            const payload = {
+                doctor_name: document.getElementById('doctorName').value.trim(),
+                medical_reg_no: document.getElementById('medicalRegNo').value.trim(),
+                speciality: document.getElementById('speciality').value,
+                hospital: document.getElementById('hospital').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                mobile: document.getElementById('mobile').value.trim(),
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const res = await fetch('/api/doctor/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alertBox.className = 'alert-box alert-success';
+                    alertBox.textContent = 'Registration successful! Redirecting to Doctor Login...';
+                    alertBox.style.display = 'block';
+                    setTimeout(() => { window.location.href = '/doctor/login'; }, 1500);
+                } else {
+                    alertBox.className = 'alert-box alert-error';
+                    alertBox.textContent = data.error || 'Failed to register doctor.';
+                    alertBox.style.display = 'block';
+                    btnSubmit.disabled = false;
+                    btnSubmit.textContent = 'Register as Verified Doctor →';
+                }
+            } catch (err) {
+                alertBox.className = 'alert-box alert-error';
+                alertBox.textContent = 'Network error: ' + err;
+                alertBox.style.display = 'block';
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = 'Register as Verified Doctor →';
+            }
+        });
+    </script>
+</body>
+</html>

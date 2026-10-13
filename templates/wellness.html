@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title id="pageTitle">{% if discreet_mode %}Daily Reflection & Wellbeing — HealthMate AI{% else %}Mental Health, Wellness & Recovery — HealthMate AI{% endif %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nirmala+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --wellness-primary: #0284c7;
+            --wellness-secondary: #0d9488;
+            --wellness-accent: #6366f1;
+            --wellness-calm: #f0fdf4;
+            --card-radius: 16px;
+            --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.06);
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; color: #1e293b; margin: 0; }
+        .hero-banner { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%); color: #ffffff; padding: 2.25rem 1.5rem; border-radius: 20px; margin-bottom: 1.75rem; position: relative; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15); }
+        .hero-banner::after { content: ''; position: absolute; right: -40px; top: -40px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, transparent 70%); border-radius: 50%; pointer-events: none; }
+        .badge-pill { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); }
+        .nav-tabs-custom { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; }
+        .tab-btn-custom { background: transparent; border: none; padding: 0.75rem 1.25rem; font-size: 0.95rem; font-weight: 700; color: #64748b; cursor: pointer; border-radius: 10px 10px 0 0; border-bottom: 3px solid transparent; transition: all 0.2s ease; white-space: nowrap; }
+        .tab-btn-custom.active { color: #0284c7; border-bottom-color: #0284c7; background: rgba(2, 132, 199, 0.06); }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Overdose & Withdrawal Alert Card */
+        .alert-card-urgent { background: #fff1f2; border: 2px solid #fecdd3; border-left: 6px solid #e11d48; border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+        .emergency-pill-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 800; font-size: 0.9rem; text-decoration: none; color: #ffffff; transition: transform 0.15s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .emergency-pill-btn:hover { transform: translateY(-2px); color: #ffffff; }
+        .btn-call-108 { background: #dc2626; }
+        .btn-call-14446 { background: #059669; }
+        .btn-call-14416 { background: #4f46e5; }
+        .btn-call-112 { background: #ea580c; }
+        
+        /* Mood Selector */
+        .mood-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin: 1rem 0; }
+        .mood-btn { background: #ffffff; border: 2px solid #e2e8f0; border-radius: 14px; padding: 1rem 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s ease; }
+        .mood-btn:hover { border-color: #0284c7; transform: translateY(-3px); }
+        .mood-btn.selected { border-color: #0284c7; background: #f0f9ff; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
+        .mood-emoji { font-size: 2rem; display: block; margin-bottom: 0.35rem; }
+        
+        /* Days Clean Milestone Counter */
+        .streak-card { background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #ffffff; border-radius: 18px; padding: 2rem; text-align: center; box-shadow: 0 10px 25px -5px rgba(6, 95, 70, 0.25); margin-bottom: 1.5rem; }
+        .streak-counter { font-size: 3.5rem; font-weight: 800; line-height: 1; margin: 0.5rem 0; letter-spacing: -0.03em; }
+        .milestone-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.75rem; margin-top: 1.25rem; }
+        .milestone-badge { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.75rem 0.5rem; text-align: center; font-size: 0.8rem; font-weight: 700; color: #475569; }
+        .milestone-badge.achieved { background: #ecfdf5; border-color: #6ee7b7; color: #065f46; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15); }
+
+        /* Box Breathing Animated Circle */
+        .breathing-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2.5rem 1rem; background: #ffffff; border-radius: 18px; border: 1px solid #e2e8f0; margin-bottom: 1.5rem; }
+        .breath-circle { width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #38bdf8 0%, #0284c7 100%); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 1.15rem; transition: transform 4s ease-in-out; box-shadow: 0 0 25px rgba(2, 132, 199, 0.4); text-align: center; }
+        .breath-circle.inhale { transform: scale(1.4); }
+        .breath-circle.hold { transform: scale(1.4); box-shadow: 0 0 35px rgba(99, 102, 241, 0.6); }
+        .breath-circle.exhale { transform: scale(1.0); }
+        
+        /* PIN Lock Modal */
+        .pin-modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; }
+        .pin-modal-content { background: #ffffff; border-radius: 20px; max-width: 360px; width: 100%; padding: 2rem; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .pin-input { font-size: 2rem; letter-spacing: 0.75rem; text-align: center; width: 180px; padding: 0.5rem; border: 2px solid #cbd5e1; border-radius: 12px; margin: 1rem 0; font-family: monospace; }
+        .pin-input:focus { border-color: #0284c7; outline: none; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
+        
+        /* Form Card */
+        .content-card { background: #ffffff; border-radius: var(--card-radius); border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-subtle); }
+        .discreet-active .nondiscreet-text { display: none !important; }
+        .discreet-active .discreet-text { display: inline !important; }
+        .discreet-text { display: none; }
+        
+        /* Tag pills */
+        .tag-pill { display: inline-block; padding: 0.3rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; background: #f1f5f9; color: #475569; margin: 0.2rem; cursor: pointer; border: 1px solid #e2e8f0; }
+        .tag-pill.active { background: #0284c7; color: #ffffff; border-color: #0284c7; }
+    </style>
+</head>
+<body class="{% if discreet_mode %}discreet-active{% endif %}">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">
+                            <span class="nondiscreet-text">Mental Health, Wellness & Recovery Portal</span>
+                            <span class="discreet-text">Daily Reflection & Wellbeing Notes</span>
+                        </span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnToggleDiscreet" title="Toggle Discreet Mode">
+                    🕶️ <span id="discreetLabel">{% if discreet_mode %}Exit Discreet Mode{% else %}Discreet Mode{% endif %}</span>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btnManagePin" title="PIN Lock Security">
+                    🔒 <span id="pinBtnText">{% if has_pin %}Lock Now{% else %}Set 4-Digit PIN{% endif %}</span>
+                </button>
+                <a href="{{ url_for('logout_page') }}" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca;">🚪 Sign Out</a>
+            </div>
+        </div>
+    </header>
+    {% set active_page = 'wellness' %}
+    {% include "nav_shared.html" %}
+
+    <main class="main-wrapper container" style="max-width: 1040px; padding: 1.5rem 1rem;">
+        <!-- Hero Header -->
+        <div class="hero-banner">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span class="badge-pill">🛡️ SPEC 16 Clinical Guardrails Active</span>
+                    <span class="badge-pill" style="margin-left: 0.5rem;">🔒 AES-256-GCM Encrypted Notes</span>
+                    <h2 style="margin: 0.6rem 0 0.35rem 0; font-size: 1.85rem;" id="headerMainTitle">
+                        <span class="nondiscreet-text">Compassionate Mental Health & Recovery Companion</span>
+                        <span class="discreet-text">Personal Reflection & Daily Wellbeing Tracker</span>
+                    </h2>
+                    <p style="margin: 0; opacity: 0.9; font-size: 0.95rem; max-width: 720px;" id="headerSubtitle">
+                        <span class="nondiscreet-text">Evidence-based self-monitoring, shame-free recovery milestones, WHO AUDIT/PHQ-9 screening, and official Indian support helplines.</span>
+                        <span class="discreet-text">Private daily journal, breathing relaxation guides, and personal habits tracker.</span>
+                    </p>
+                </div>
+                <div>
+                    <span class="badge-pill" style="background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.5);">
+                        ✓ Hidden from Doctor & Family Views by Default
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- URGENT EMERGENCY & WITHDRAWAL RED FLAGS CARD (SPEC 16c & 16h) -->
+        <div class="alert-card-urgent" id="emergencyCard">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <div style="font-weight: 800; color: #9f1239; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>🚨</span> Acute Withdrawal Red Flags & Overdose Warning (SPEC 16c)
+                    </div>
+                    <p style="margin: 0.4rem 0 0.75rem 0; font-size: 0.88rem; color: #881337; line-height: 1.5;">
+                        <strong>Emergency Red Flags:</strong> Delirium tremens, seizures, hallucinations, severe confusion, unconsciousness, or blue/gray lips or nails.<br>
+                        <strong>Medically Unassisted Detox Warning:</strong> Never attempt cold-turkey unassisted withdrawal at home for heavy alcohol or sedative dependence. Proceed to a hospital immediately.
+                    </p>
+                    <div style="font-size: 0.82rem; color: #475569; margin-bottom: 0.5rem;">
+                        ℹ️ <em>Helpline 1933 is strictly to report illegal drug trafficking/activity to NCB, <strong>NOT for medical treatment</strong>.</em>
+                    </div>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+                    <a href="tel:108" class="emergency-pill-btn btn-call-108" title="Call 108 Ambulance">
+                        🚑 Call 108 (Ambulance)
+                    </a>
+                    <a href="tel:14446" class="emergency-pill-btn btn-call-14446" title="National Drug De-Addiction Helpline">
+                        📞 Call 14446 (De-Addiction 24x7)
+                    </a>
+                    <a href="tel:14416" class="emergency-pill-btn btn-call-14416" title="Tele-MANAS Free 24x7">
+                        🧠 Call 14416 (Tele-MANAS)
+                    </a>
+                    <a href="tel:112" class="emergency-pill-btn btn-call-112" title="National Emergency">
+                        🚨 Call 112
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs-custom" aria-label="Wellness Sections">
+            <button type="button" class="tab-btn-custom active" data-tab="tab-mood">📅 Daily Mood & Trend</button>
+            <button type="button" class="tab-btn-custom" data-tab="tab-screeners">📋 Self-Check Screeners (PHQ-9/GAD-7/AUDIT)</button>
+            <button type="button" class="tab-btn-custom" data-tab="tab-recovery">🌱 Recovery & Days Clean</button>
+            <button type="button" class="tab-btn-custom" data-tab="tab-tools">🧘 Wellness Tools & Grounding</button>
+            <button type="button" class="tab-btn-custom" data-tab="tab-family">👨‍👩‍👧 Family Guide & Official Groups</button>
+            <button type="button" class="tab-btn-custom" data-tab="tab-privacy">🔒 Privacy & Data Export</button>
+        </nav>
+
+        <!-- =================================================================== -->
+        <!-- TAB 1: DAILY MOOD CHECK-IN & TREND CHART (16b) -->
+        <!-- =================================================================== -->
+        <section id="tab-mood" class="tab-panel active">
+            <div class="content-card">
+                <h3 style="margin-top: 0; color: #1e3a8a; font-size: 1.25rem;">
+                    Daily Mood & Reflection Check-in
+                </h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.25rem;">
+                    Track how you feel each day. All notes are encrypted with AES-256-GCM and never shared with doctors or family members.
+                </p>
+
+                <label style="font-weight: 700; font-size: 0.95rem; color: #334155;">How are you feeling today?</label>
+                <div class="mood-grid">
+                    <button type="button" class="mood-btn" data-score="1" data-label="Terrible">
+                        <span class="mood-emoji">😢</span>
+                        <strong>1 - Terrible</strong>
+                    </button>
+                    <button type="button" class="mood-btn" data-score="2" data-label="Down">
+                        <span class="mood-emoji">🙁</span>
+                        <strong>2 - Down</strong>
+                    </button>
+                    <button type="button" class="mood-btn selected" data-score="3" data-label="Okay">
+                        <span class="mood-emoji">😐</span>
+                        <strong>3 - Okay</strong>
+                    </button>
+                    <button type="button" class="mood-btn" data-score="4" data-label="Good">
+                        <span class="mood-emoji">🙂</span>
+                        <strong>4 - Good</strong>
+                    </button>
+                    <button type="button" class="mood-btn" data-score="5" data-label="Great">
+                        <span class="mood-emoji">😄</span>
+                        <strong>5 - Great</strong>
+                    </button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.25rem 0;">
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.85rem; color: #475569;">Energy Level (1 to 5): <span id="energyVal">3</span>/5</label>
+                        <input type="range" id="inputEnergy" min="1" max="5" value="3" style="width: 100%; margin-top: 0.4rem;">
+                    </div>
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.85rem; color: #475569;">Sleep Hours (Last Night):</label>
+                        <input type="number" id="inputSleep" step="0.5" min="0" max="24" value="7.0" class="form-input" style="width: 100%; margin-top: 0.4rem; padding: 0.4rem 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="font-weight: 700; font-size: 0.85rem; color: #475569; display: block; margin-bottom: 0.4rem;">Influencing Factors / Tags:</label>
+                    <div id="tagContainer">
+                        <span class="tag-pill" data-tag="Work">💼 Work</span>
+                        <span class="tag-pill" data-tag="Family">👨‍👩‍👧 Family</span>
+                        <span class="tag-pill" data-tag="Health">🩺 Health</span>
+                        <span class="tag-pill" data-tag="Sleep">🌙 Sleep</span>
+                        <span class="tag-pill" data-tag="Finances">💰 Finances</span>
+                        <span class="tag-pill" data-tag="Loneliness">🫂 Loneliness</span>
+                        <span class="tag-pill" data-tag="Routine">🔄 Routine</span>
+                        <span class="tag-pill" data-tag="Craving Surfed">🌊 Craving Surfed</span>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="font-weight: 700; font-size: 0.85rem; color: #475569; display: block; margin-bottom: 0.4rem;">Encrypted Reflection Journal (Optional):</label>
+                    <textarea id="moodNotes" rows="3" class="form-input" placeholder="Write private reflections or thoughts here. They are AES-256-GCM encrypted..." style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 10px;"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+                    <button type="button" class="btn btn-primary" id="btnSaveMood">
+                        ✓ Save Today's Check-in
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mood Trend Chart & Statistics (SVG Visualization) -->
+            <div class="content-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+                    <h3 style="margin: 0; color: #1e3a8a; font-size: 1.25rem;">
+                        📈 30-Day Mood Trend & Insights
+                    </h3>
+                    <div style="font-size: 0.9rem; color: #64748b;">
+                        Average Mood: <strong id="avgMoodVal" style="color: #0284c7; font-size: 1.1rem;">0.0</strong> / 5.0
+                    </div>
+                </div>
+
+                <div id="trendChartContainer" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; text-align: center; min-height: 220px; display: flex; align-items: center; justify-content: center;">
+                    <p style="color: #94a3b8; font-size: 0.9rem;">Loading mood history...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- TAB 2: CLINICAL SCREENERS (PHQ-9, GAD-7, AUDIT) (16b) -->
+        <!-- =================================================================== -->
+        <section id="tab-screeners" class="tab-panel">
+            <div class="content-card">
+                <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <strong style="color: #1e40af;">⚠️ IMPORTANT NOTICE: NOT A CLINICAL DIAGNOSIS</strong>
+                    <p style="margin: 0.25rem 0 0 0; font-size: 0.88rem; color: #1e3a8a;">
+                        The self-screening tools below (PHQ-9, GAD-7, AUDIT) are evidence-based informational checks. 
+                        They do <strong>not</strong> substitute a medical or psychiatric diagnosis. If you are experiencing distress, please consult a qualified healthcare professional.
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-secondary screener-nav active" data-screener="PHQ-9">PHQ-9 (Depression)</button>
+                    <button type="button" class="btn btn-secondary screener-nav" data-screener="GAD-7">GAD-7 (Anxiety)</button>
+                    <button type="button" class="btn btn-secondary screener-nav" data-screener="AUDIT">WHO AUDIT (Alcohol Screening)</button>
+                </div>
+
+                <div id="screenerFormContainer">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- TAB 3: RECOVERY DASHBOARD & MILESTONE TRACKER (16b & 16h) -->
+        <!-- =================================================================== -->
+        <section id="tab-recovery" class="tab-panel">
+            <!-- Days Clean Counter -->
+            <div class="streak-card">
+                <span style="text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; opacity: 0.9;">
+                    Clean & Sober Milestone Tracker
+                </span>
+                <div class="streak-counter" id="displayDaysClean">0</div>
+                <div style="font-size: 1.15rem; font-weight: 700;" id="displayStreakHabit">Days Clean</div>
+                <div style="font-size: 0.85rem; opacity: 0.85; margin-top: 0.25rem;" id="displayHoursClean">
+                    0 hours of recovery
+                </div>
+
+                <div class="milestone-grid" id="milestonesContainer">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnConfigureHabit" style="background: rgba(255,255,255,0.2); color:#fff; border: 1px solid rgba(255,255,255,0.4);">
+                        ⚙️ Set Clean Date / Habit
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btnRelapseReset" style="background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; font-weight: 700;">
+                        🔄 Log Slip / Reset Counter (Shame-Free)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Craving Logger & Coping (NO pain-based coping) -->
+            <div class="content-card">
+                <h3 style="margin-top: 0; color: #1e3a8a; font-size: 1.25rem;">
+                    🌊 Urge Surfing & Craving Logger
+                </h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.25rem;">
+                    Cravings typically crest and subside within 15–20 minutes. Log the urge, surf the wave, and practice evidence-based somatic coping.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.85rem; color: #475569;">Craving Intensity: <span id="cravingIntensityVal">5</span>/10</label>
+                        <input type="range" id="inputCravingIntensity" min="1" max="10" value="5" style="width: 100%; margin-top: 0.4rem;">
+                    </div>
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.85rem; color: #475569;">Trigger / Context:</label>
+                        <input type="text" id="inputCravingTrigger" class="form-input" placeholder="e.g. Stress after meeting, Saw a wine glass..." style="width: 100%; margin-top: 0.4rem; padding: 0.4rem 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    </div>
+                    <div>
+                        <label style="font-weight: 700; font-size: 0.85rem; color: #475569;">Evidence-Based Coping Strategy:</label>
+                        <select id="selectCopingStrategy" class="form-input" style="width: 100%; margin-top: 0.4rem; padding: 0.4rem 0.6rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                            <option value="4-4-4-4 Box Breathing">4-4-4-4 Box Breathing (Somatic regulation)</option>
+                            <option value="5-4-3-2-1 Sensory Grounding">5-4-3-2-1 Sensory Grounding</option>
+                            <option value="Cold Water Splash & Hydration">Drank Ice Cold Water & Hydrated</option>
+                            <option value="15-Minute Brisk Walk">15-Minute Brisk Walk Outdoors</option>
+                            <option value="Called Support / Helpline 14446">Called a Friend or Helpline 14446</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end;">
+                    <button type="button" class="btn btn-primary" id="btnLogCraving">
+                        🌊 Log & Surf Craving
+                    </button>
+                </div>
+            </div>
+
+            <!-- Trigger & Coping Action Plan -->
+            <div class="content-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <h3 style="margin: 0; color: #1e3a8a; font-size: 1.25rem;">
+                        🛡️ Personal Trigger & Coping Action Plan
+                    </h3>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+                    <input type="text" id="inputNewTrigger" placeholder="Specific Trigger (e.g., Friday evenings alone)" style="flex: 1; min-width: 180px; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    <input type="text" id="inputNewCopingAction" placeholder="Mapped Action (e.g., Attend AA meeting or phone mentor)" style="flex: 1; min-width: 220px; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    <button type="button" class="btn btn-secondary" id="btnAddCopingPlan">+ Add Plan</button>
+                </div>
+                <div id="copingPlansList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- TAB 4: WELLNESS TOOLS & GROUNDING (16f - NO PAIN-BASED COPING) -->
+        <!-- =================================================================== -->
+        <section id="tab-tools" class="tab-panel">
+            <div class="content-card">
+                <h3 style="margin-top: 0; color: #1e3a8a; font-size: 1.25rem;">
+                    🧘 Somatic & Sensory Wellness Tools
+                </h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    Evidence-based tools for nervous system regulation during high stress, anxiety, or craving surges.
+                    <strong>Zero pain-based coping</strong> (no snapping bands or pain distractions).
+                </p>
+
+                <!-- Box Breathing Interactive Widget -->
+                <div class="breathing-box">
+                    <h4 style="margin-top: 0; color: #0f172a; font-size: 1.15rem;">Box Breathing (4-4-4-4 Technique)</h4>
+                    <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 1.5rem;">Equalized breathing down-regulates sympathetic nervous system activation.</p>
+                    <div class="breath-circle" id="breathCircle">Ready</div>
+                    <div id="breathInstruction" style="margin-top: 1.5rem; font-weight: 700; color: #0284c7; font-size: 1.1rem; height: 1.5rem;">
+                        Click Start to begin
+                    </div>
+                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                        <button type="button" class="btn btn-primary btn-sm" id="btnStartBreathing">Start 2-Minute Breathing</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnStopBreathing">Stop</button>
+                    </div>
+                </div>
+
+                <!-- 5-4-3-2-1 Grounding Tool -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h4 style="margin-top: 0; color: #0f172a; font-size: 1.1rem;">5-4-3-2-1 Sensory Grounding Guide</h4>
+                    <p style="color: #64748b; font-size: 0.88rem;">Notice your surroundings to anchor into the present moment:</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem;">
+                        <div style="background: #ffffff; padding: 0.85rem; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <strong style="color: #0284c7;">👀 5 SEE:</strong>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b;">Notice 5 objects, colors, or shadows around you.</p>
+                        </div>
+                        <div style="background: #ffffff; padding: 0.85rem; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <strong style="color: #0d9488;">✋ 4 FEEL:</strong>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b;">Feel your feet on floor, cloth on skin, or cool air.</p>
+                        </div>
+                        <div style="background: #ffffff; padding: 0.85rem; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <strong style="color: #6366f1;">👂 3 HEAR:</strong>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b;">Notice a fan hum, distant bird, or traffic sound.</p>
+                        </div>
+                        <div style="background: #ffffff; padding: 0.85rem; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <strong style="color: #d97706;">👃 2 SMELL:</strong>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b;">Detect scent of soap, fresh air, or clean linen.</p>
+                        </div>
+                        <div style="background: #ffffff; padding: 0.85rem; border-radius: 10px; border: 1px solid #e2e8f0;">
+                            <strong style="color: #10b981;">👅 1 TASTE:</strong>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.8rem; color: #64748b;">Sip cool water or notice the clean taste in mouth.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- TAB 5: FAMILY GUIDE & OFFICIAL GROUPS (16d) -->
+        <!-- =================================================================== -->
+        <section id="tab-family" class="tab-panel">
+            <div class="content-card">
+                <h3 style="margin-top: 0; color: #1e3a8a; font-size: 1.25rem;">
+                    👨‍👩‍👧 Loved Ones & Family Support Guide
+                </h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    Guidance for families navigating a loved one's depression, anxiety, or addiction recovery.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem;">
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1.25rem;">
+                        <h4 style="margin-top: 0; color: #166534; font-size: 1.05rem;">✓ Helpful Do's</h4>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.88rem; color: #14532d; line-height: 1.6;">
+                            <li>Listen without judgment, lecture, or emotional blaming.</li>
+                            <li>Acknowledge small non-substance steps and celebrate effort.</li>
+                            <li>Set clear, loving personal boundaries to avoid burnout.</li>
+                            <li>Keep emergency and helpline numbers (108, 14446, 14416) saved.</li>
+                        </ul>
+                    </div>
+                    <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; padding: 1.25rem;">
+                        <h4 style="margin-top: 0; color: #9f1239; font-size: 1.05rem;">✗ Avoid These Don'ts</h4>
+                        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.88rem; color: #881337; line-height: 1.6;">
+                            <li>Do NOT guilt-trip, shame, or dredge up past mistakes in crises.</li>
+                            <li>Do NOT cover up, lie for, or financially enable active addiction.</li>
+                            <li>Do NOT attempt forced, unsupervised cold-turkey detox at home.</li>
+                            <li>Do NOT ignore your own therapy or support (attend Al-Anon).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4 style="color: #1e3a8a; font-size: 1.1rem; margin-bottom: 0.75rem;">
+                    🏛️ Verified Official Support Groups & Fellowships in India
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;" id="supportGroupsList">
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem;">
+                        <strong style="color: #0284c7;">Alcoholics Anonymous India (AA)</strong>
+                        <p style="font-size: 0.82rem; color: #64748b; margin: 0.25rem 0 0.5rem 0;">Free peer meetings across all Indian cities.</p>
+                        <a href="https://www.aagsoindia.org" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="font-size: 0.8rem;">Official AA Website →</a>
+                    </div>
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem;">
+                        <strong style="color: #0d9488;">Narcotics Anonymous India (NA)</strong>
+                        <p style="font-size: 0.82rem; color: #64748b; margin: 0.25rem 0 0.5rem 0;">12-step fellowship for drug de-addiction.</p>
+                        <a href="https://na-india.in" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="font-size: 0.8rem;">Official NA Website →</a>
+                    </div>
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem;">
+                        <strong style="color: #4f46e5;">Al-Anon India (For Families)</strong>
+                        <p style="font-size: 0.82rem; color: #64748b; margin: 0.25rem 0 0.5rem 0;">Support groups specifically for relatives of alcoholics.</p>
+                        <a href="https://al-anon.org/al-anon-meetings/find-an-al-anon-meeting/" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="font-size: 0.8rem;">Find Al-Anon Meeting →</a>
+                    </div>
+                    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem;">
+                        <strong style="color: #d97706;">Vandrevala Foundation</strong>
+                        <p style="font-size: 0.82rem; color: #64748b; margin: 0.25rem 0 0.5rem 0;">Free 24x7 psychological and crisis counseling.</p>
+                        <a href="tel:9999666555" class="btn btn-secondary btn-sm" style="font-size: 0.8rem;">📞 Call 9999-666-555</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- TAB 6: PRIVACY & DATA EXPORT (16g) -->
+        <!-- =================================================================== -->
+        <section id="tab-privacy" class="tab-panel">
+            <div class="content-card">
+                <h3 style="margin-top: 0; color: #1e3a8a; font-size: 1.25rem;">
+                    🔒 Data Ownership, Privacy Controls & Export (SPEC 16g)
+                </h3>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                    You have complete ownership and sovereignty over your health records.
+                </p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;">
+                        <h4 style="margin-top: 0; color: #0f172a; font-size: 1.05rem;">📥 Export Complete Health Data</h4>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">
+                            Download a full JSON archive of your entire medical profile, appointment history, medications, encrypted mood notes, and recovery logs.
+                        </p>
+                        <button type="button" class="btn btn-primary btn-sm" id="btnExportData">
+                            📥 Download All Data (JSON)
+                        </button>
+                    </div>
+
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;">
+                        <h4 style="margin-top: 0; color: #0f172a; font-size: 1.05rem;">🔐 PIN Lock Protection</h4>
+                        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">
+                            Protect this mental wellness section with a dedicated 4-digit PIN. Hidden from Doctor View and Family View by default.
+                        </p>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnResetPinModal">
+                            🔑 Change 4-Digit PIN
+                        </button>
+                    </div>
+
+                    <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; padding: 1.25rem;">
+                        <h4 style="margin-top: 0; color: #9f1239; font-size: 1.05rem;">🗑️ Delete All Health & Wellness Data</h4>
+                        <p style="font-size: 0.85rem; color: #881337; margin-bottom: 1rem;">
+                            Permanently erase all appointments, medicines, reports, mood logs, and recovery trackers from the local SQLite database.
+                        </p>
+                        <button type="button" class="btn btn-secondary btn-sm" id="btnDeleteAllData" style="background: #fee2e2; color:#991b1b; border-color:#fca5a5;">
+                            ⚠️ Permanently Delete Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PIN Modal (Dialog) -->
+    <div class="pin-modal-backdrop" id="pinModal" style="display: {% if has_pin and not is_unlocked %}flex{% else %}none{% endif %};">
+        <div class="pin-modal-content">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔒</div>
+            <h3 style="margin: 0; color: #1e3a8a;" id="pinModalTitle">Enter Wellness PIN</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin: 0.5rem 0;">
+                This section is protected by your 4-digit security PIN.
+            </p>
+            <input type="password" id="inputPinCode" maxlength="4" class="pin-input" placeholder="••••" autofocus>
+            <div id="pinErrorMsg" style="color: #dc2626; font-size: 0.82rem; min-height: 1.2rem;"></div>
+            <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
+                <button type="button" class="btn btn-primary" id="btnSubmitPin">Unlock</button>
+                <a href="/" class="btn btn-secondary">Exit</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Set PIN Modal -->
+    <div class="pin-modal-backdrop" id="setPinModal" style="display: none;">
+        <div class="pin-modal-content">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔑</div>
+            <h3 style="margin: 0; color: #1e3a8a;">Configure 4-Digit PIN</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin: 0.5rem 0;">
+                Choose a 4-digit PIN to lock mental health and recovery records.
+            </p>
+            <input type="password" id="inputNewPin" maxlength="4" class="pin-input" placeholder="••••">
+            <div id="setPinErrorMsg" style="color: #dc2626; font-size: 0.82rem; min-height: 1.2rem;"></div>
+            <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
+                <button type="button" class="btn btn-primary" id="btnSaveNewPin">Save PIN</button>
+                <button type="button" class="btn btn-secondary" id="btnCloseSetPin">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configure Habit Modal -->
+    <div class="pin-modal-backdrop" id="habitModal" style="display: none;">
+        <div class="pin-modal-content" style="max-width: 400px; text-align: left;">
+            <h3 style="margin-top: 0; color: #1e3a8a;">Configure Recovery Tracker</h3>
+            <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">Target Substance / Habit to Overcome:</label>
+            <input type="text" id="inputHabitName" class="form-input" value="Alcohol" placeholder="e.g. Alcohol, Smoking / Tobacco, Cannabis..." style="width: 100%; margin: 0.4rem 0 1rem 0; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+            
+            <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">Clean Start Date:</label>
+            <input type="date" id="inputCleanStartDate" class="form-input" style="width: 100%; margin: 0.4rem 0 1.25rem 0; padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 8px;">
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+                <button type="button" class="btn btn-secondary" id="btnCloseHabitModal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btnSaveHabit">Start Journey</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        let selectedMoodScore = 3;
+        let selectedMoodLabel = "Okay";
+        let isBreathingActive = false;
+        let breathingTimer = null;
+        let breathStep = 0;
+
+        // Navigation Tabs
+        document.querySelectorAll('.tab-btn-custom').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn-custom').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                const target = document.getElementById(btn.getAttribute('data-tab'));
+                if (target) target.classList.add('active');
+            });
+        });
+
+        // Discreet Mode Toggle
+        document.getElementById('btnToggleDiscreet').addEventListener('click', async () => {
+            try {
+                const res = await fetch('/api/wellness/pin/toggle-discreet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({})
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.body.classList.toggle('discreet-active', data.discreet_mode);
+                    document.getElementById('discreetLabel').textContent = data.discreet_mode ? 'Exit Discreet Mode' : 'Discreet Mode';
+                    document.getElementById('pageTitle').textContent = data.discreet_mode ? 'Daily Reflection & Wellbeing — HealthMate AI' : 'Mental Health, Wellness & Recovery — HealthMate AI';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // Mood Buttons Selection
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedMoodScore = parseInt(btn.getAttribute('data-score'));
+                selectedMoodLabel = btn.getAttribute('data-label');
+            });
+        });
+
+        // Energy Slider
+        document.getElementById('inputEnergy').addEventListener('input', (e) => {
+            document.getElementById('energyVal').textContent = e.target.value;
+        });
+
+        // Tag Pills
+        document.querySelectorAll('.tag-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                pill.classList.toggle('active');
+            });
+        });
+
+        // Craving Slider
+        document.getElementById('inputCravingIntensity').addEventListener('input', (e) => {
+            document.getElementById('cravingIntensityVal').textContent = e.target.value;
+        });
+
+        // PIN Verification
+        document.getElementById('btnSubmitPin').addEventListener('click', async () => {
+            const pin = document.getElementById('inputPinCode').value.trim();
+            const errEl = document.getElementById('pinErrorMsg');
+            errEl.textContent = '';
+            if (pin.length !== 4) {
+                errEl.textContent = 'Please enter a 4-digit PIN.';
+                return;
+            }
+            try {
+                const res = await fetch('/api/wellness/pin/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({ pin: pin })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('pinModal').style.display = 'none';
+                    document.getElementById('pinBtnText').textContent = 'Lock Now';
+                    loadMoodHistory();
+                    loadRecoveryDashboard();
+                } else {
+                    errEl.textContent = data.error || 'Incorrect PIN.';
+                }
+            } catch (err) {
+                errEl.textContent = 'Server error. Please try again.';
+            }
+        });
+
+        // Manage PIN Button
+        document.getElementById('btnManagePin').addEventListener('click', async () => {
+            const btnText = document.getElementById('pinBtnText').textContent;
+            if (btnText === 'Lock Now') {
+                await fetch('/api/wellness/pin/lock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({})
+                });
+                document.getElementById('pinModal').style.display = 'flex';
+                document.getElementById('pinBtnText').textContent = 'Unlock';
+            } else {
+                document.getElementById('setPinModal').style.display = 'flex';
+            }
+        });
+
+        document.getElementById('btnCloseSetPin').addEventListener('click', () => {
+            document.getElementById('setPinModal').style.display = 'none';
+        });
+
+        document.getElementById('btnResetPinModal').addEventListener('click', () => {
+            document.getElementById('setPinModal').style.display = 'flex';
+        });
+
+        document.getElementById('btnSaveNewPin').addEventListener('click', async () => {
+            const pin = document.getElementById('inputNewPin').value.trim();
+            const errEl = document.getElementById('setPinErrorMsg');
+            errEl.textContent = '';
+            if (!/^\d{4}$/.test(pin)) {
+                errEl.textContent = 'PIN must be exactly 4 digits.';
+                return;
+            }
+            try {
+                const res = await fetch('/api/wellness/pin/set', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({ pin: pin })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('4-digit PIN configured successfully.');
+                    document.getElementById('setPinModal').style.display = 'none';
+                    document.getElementById('pinBtnText').textContent = 'Lock Now';
+                } else {
+                    errEl.textContent = data.error || 'Failed to set PIN.';
+                }
+            } catch (err) {
+                errEl.textContent = 'Server error.';
+            }
+        });
+
+        // Save Daily Mood
+        document.getElementById('btnSaveMood').addEventListener('click', async () => {
+            const activeTags = Array.from(document.querySelectorAll('.tag-pill.active')).map(p => p.getAttribute('data-tag'));
+            const notes = document.getElementById('moodNotes').value;
+            const energy = parseInt(document.getElementById('inputEnergy').value);
+            const sleep = parseFloat(document.getElementById('inputSleep').value);
+
+            try {
+                const res = await fetch('/api/wellness/mood', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({
+                        mood_score: selectedMoodScore,
+                        energy_level: energy,
+                        sleep_hours: sleep,
+                        tags: activeTags,
+                        notes: notes
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    let msg = 'Daily mood check-in recorded successfully!';
+                    if (data.crisis_warning) {
+                        msg += '\n\n⚠️ Tele-MANAS support is available free 24/7 on 14416.';
+                    }
+                    if (data.detox_warning) {
+                        msg += '\n\n🛡️ National De-Addiction Helpline is available free 24x7 on 14446.';
+                    }
+                    alert(msg);
+                    document.getElementById('moodNotes').value = '';
+                    loadMoodHistory();
+                } else if (data.locked) {
+                    document.getElementById('pinModal').style.display = 'flex';
+                } else {
+                    alert(data.error || 'Failed to save mood.');
+                }
+            } catch (err) {
+                alert('Connection error.');
+            }
+        });
+
+        // Load Mood History & SVG Trend Chart
+        async function loadMoodHistory() {
+            try {
+                const res = await fetch('/api/wellness/mood/history');
+                const data = await res.json();
+                if (!data.success) return;
+
+                document.getElementById('avgMoodVal').textContent = data.average_mood.toFixed(1);
+                const container = document.getElementById('trendChartContainer');
+
+                if (!data.entries || data.entries.length === 0) {
+                    container.innerHTML = '<p style="color: #94a3b8;">No mood check-ins recorded yet. Complete today\'s check-in above to start your trend chart!</p>';
+                    return;
+                }
+
+                // Render dynamic SVG trend chart
+                const width = 640;
+                const height = 180;
+                const pad = 30;
+                const entries = data.entries;
+                const stepX = entries.length > 1 ? (width - pad * 2) / (entries.length - 1) : 0;
+
+                const points = entries.map((e, idx) => {
+                    const x = pad + idx * stepX;
+                    // Y: 1 is bottom (height - pad), 5 is top (pad)
+                    const y = height - pad - ((e.mood_score - 1) / 4) * (height - pad * 2);
+                    return { x, y, score: e.mood_score, date: e.log_date, label: e.mood_label };
+                });
+
+                let pathD = `M ${points[0].x} ${points[0].y}`;
+                points.slice(1).forEach(pt => {
+                    pathD += ` L ${pt.x} ${pt.y}`;
+                });
+
+                let circlesHtml = points.map(pt => `
+                    <circle cx="${pt.x}" cy="${pt.y}" r="5" fill="#0284c7" stroke="#ffffff" stroke-width="2">
+                        <title>${pt.date}: ${pt.label} (${pt.score}/5)</title>
+                    </circle>
+                    <text x="${pt.x}" y="${height - 10}" font-size="10" text-anchor="middle" fill="#64748b">${pt.date.slice(5)}</text>
+                `).join('');
+
+                container.innerHTML = `
+                    <div style="width: 100%; overflow-x: auto;">
+                        <svg viewBox="0 0 ${width} ${height}" style="width: 100%; max-width: 640px; height: auto;">
+                            <!-- Grid lines -->
+                            <line x1="${pad}" y1="${pad}" x2="${width - pad}" y2="${pad}" stroke="#e2e8f0" stroke-dasharray="3 3"/>
+                            <line x1="${pad}" y1="${height/2}" x2="${width - pad}" y2="${height/2}" stroke="#e2e8f0" stroke-dasharray="3 3"/>
+                            <line x1="${pad}" y1="${height - pad}" x2="${width - pad}" y2="${height - pad}" stroke="#e2e8f0" stroke-dasharray="3 3"/>
+                            
+                            <!-- Trend Line -->
+                            <path d="${pathD}" fill="none" stroke="#0284c7" stroke-width="3" stroke-linecap="round"/>
+                            ${circlesHtml}
+                        </svg>
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // =====================================================================
+        // CLINICAL SCREENERS (PHQ-9, GAD-7, AUDIT)
+        // =====================================================================
+        const SCREENER_QUESTIONS = {
+            "PHQ-9": {
+                title: "PHQ-9: Depression Severity Self-Screening",
+                prompt: "Over the last 2 weeks, how often have you been bothered by any of the following problems?",
+                scale: ["0: Not at all", "1: Several days", "2: More than half the days", "3: Nearly every day"],
+                questions: [
+                    "1. Little interest or pleasure in doing things",
+                    "2. Feeling down, depressed, or hopeless",
+                    "3. Trouble falling or staying asleep, or sleeping too much",
+                    "4. Feeling tired or having little energy",
+                    "5. Poor appetite or overeating",
+                    "6. Feeling bad about yourself — or that you are a failure or have let yourself or your family down",
+                    "7. Trouble concentrating on things, such as reading the newspaper or watching television",
+                    "8. Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual",
+                    "9. Thoughts that you would be better off dead, or of hurting yourself in some way"
+                ]
+            },
+            "GAD-7": {
+                title: "GAD-7: Generalized Anxiety Severity Self-Screening",
+                prompt: "Over the last 2 weeks, how often have you been bothered by the following problems?",
+                scale: ["0: Not at all", "1: Several days", "2: More than half the days", "3: Nearly every day"],
+                questions: [
+                    "1. Feeling nervous, anxious, or on edge",
+                    "2. Not being able to stop or control worrying",
+                    "3. Worrying too much about different things",
+                    "4. Trouble relaxing",
+                    "5. Being so restless that it is hard to sit still",
+                    "6. Becoming easily annoyed or irritable",
+                    "7. Feeling afraid as if something awful might happen"
+                ]
+            },
+            "AUDIT": {
+                title: "WHO AUDIT: Alcohol Use Disorders Identification Test",
+                prompt: "Please answer each question honestly based on your alcohol consumption in the past year:",
+                scale: ["0: Never", "1: Monthly or less", "2: 2-4 times a month", "3: 2-3 times a week", "4: 4+ times a week"],
+                questions: [
+                    "1. How often do you have a drink containing alcohol?",
+                    "2. How many drinks containing alcohol do you have on a typical day when you are drinking?",
+                    "3. How often do you have six or more drinks on one occasion?",
+                    "4. How often during the last year have you found that you were not able to stop drinking once you had started?",
+                    "5. How often during the last year have you failed to do what was normally expected of you because of drinking?",
+                    "6. How often during the last year have you needed a first drink in the morning to get yourself going after a heavy drinking session?",
+                    "7. How often during the last year have you had a feeling of guilt or remorse after drinking?",
+                    "8. How often during the last year have you been unable to remember what happened the night before because of your drinking?",
+                    "9. Have you or someone else been injured because of your drinking?",
+                    "10. Has a relative, friend, doctor, or other healthcare worker been concerned about your drinking or suggested you cut down?"
+                ]
+            }
+        };
+
+        let currentScreenerType = "PHQ-9";
+
+        function renderScreenerForm(type) {
+            currentScreenerType = type;
+            const sc = SCREENER_QUESTIONS[type];
+            const container = document.getElementById('screenerFormContainer');
+
+            let html = `
+                <h4 style="margin-top: 0; color: #1e3a8a; font-size: 1.15rem;">${sc.title}</h4>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.25rem;">${sc.prompt}</p>
+                <form id="formScreenerActive">
+            `;
+
+            sc.questions.forEach((q, qIdx) => {
+                html += `
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem;">
+                        <div style="font-weight: 700; font-size: 0.9rem; color: #1e293b; margin-bottom: 0.5rem;">${q}</div>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                `;
+                sc.scale.forEach((opt, optIdx) => {
+                    html += `
+                        <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; cursor: pointer; color: #475569;">
+                            <input type="radio" name="q_${qIdx}" value="${optIdx}" ${optIdx === 0 ? 'checked' : ''}>
+                            ${opt}
+                        </label>
+                    `;
+                });
+                html += `</div></div>`;
+            });
+
+            html += `
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button type="button" class="btn btn-primary" id="btnCalculateScreener">Submit & Calculate Score</button>
+                    </div>
+                </form>
+                <div id="screenerResultBox" style="margin-top: 1.25rem; display: none;"></div>
+            `;
+
+            container.innerHTML = html;
+
+            document.getElementById('btnCalculateScreener').addEventListener('click', submitScreener);
+        }
+
+        document.querySelectorAll('.screener-nav').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.screener-nav').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderScreenerForm(btn.getAttribute('data-screener'));
+            });
+        });
+
+        async function submitScreener() {
+            const sc = SCREENER_QUESTIONS[currentScreenerType];
+            const answers = [];
+            for (let i = 0; i < sc.questions.length; i++) {
+                const checked = document.querySelector(`input[name="q_${i}"]:checked`);
+                answers.push(checked ? parseInt(checked.value) : 0);
+            }
+
+            try {
+                const res = await fetch('/api/wellness/screeners', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({
+                        screener_type: currentScreenerType,
+                        answers: answers
+                    })
+                });
+                const data = await res.json();
+                const resBox = document.getElementById('screenerResultBox');
+                resBox.style.display = 'block';
+
+                let borderStyle = data.crisis_flag ? 'border: 2px solid #ef4444; background: #fff1f2;' : 'border: 1px solid #bfdbfe; background: #eff6ff;';
+
+                resBox.innerHTML = `
+                    <div style="border-radius: 12px; padding: 1.5rem; ${borderStyle}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #1e3a8a; font-size: 1.15rem;">Screening Result: ${data.total_score} points</h4>
+                            <span class="badge-pill" style="background: #0284c7; color:#fff;">${data.severity_level}</span>
+                        </div>
+                        <p style="margin: 0.5rem 0; font-size: 0.92rem; color: #1e293b; line-height: 1.5;">${data.guidance_summary}</p>
+                        <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.75rem;">
+                            ℹ️ <em>${data.disclaimer}</em>
+                        </div>
+                        ${data.crisis_flag ? `
+                            <div style="margin-top: 1rem; padding: 0.75rem; background: #fee2e2; border-radius: 8px;">
+                                <strong style="color: #991b1b;">Immediate Crisis Support Available 24x7:</strong>
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                    <a href="tel:14416" class="emergency-pill-btn btn-call-14416">🧠 Call 14416 (Tele-MANAS Free)</a>
+                                    <a href="tel:112" class="emergency-pill-btn btn-call-112">🚨 Call 112</a>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } catch (err) {
+                alert('Error submitting screener.');
+            }
+        }
+
+        // =====================================================================
+        // RECOVERY DASHBOARD & CRAVINGS
+        // =====================================================================
+        async function loadRecoveryDashboard() {
+            try {
+                const res = await fetch('/api/wellness/recovery');
+                const data = await res.json();
+                if (!data.success) return;
+
+                if (data.tracker) {
+                    document.getElementById('displayDaysClean').textContent = data.tracker.days_clean;
+                    document.getElementById('displayStreakHabit').textContent = `Days Clean (${data.tracker.target_habit})`;
+                    document.getElementById('displayHoursClean').textContent = `${data.tracker.hours_clean} hours on your recovery path`;
+
+                    const mContainer = document.getElementById('milestonesContainer');
+                    mContainer.innerHTML = (data.tracker.milestones || []).map(m => `
+                        <div class="milestone-badge ${m.achieved ? 'achieved' : ''}">
+                            <div>${m.badge}</div>
+                            <div style="margin-top: 0.25rem;">${m.title}</div>
+                        </div>
+                    `).join('');
+                }
+
+                // Render coping plans
+                const pContainer = document.getElementById('copingPlansList');
+                if (data.coping_plans && data.coping_plans.length > 0) {
+                    pContainer.innerHTML = data.coping_plans.map(p => `
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 0.5rem;">
+                            <div>
+                                <strong style="color: #0f172a;">⚡ ${p.trigger_name}:</strong>
+                                <span style="color: #0284c7; margin-left: 0.5rem;">➔ ${p.coping_action}</span>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="deleteCopingPlan(${p.id})" style="color: #ef4444; border:none; background:transparent; font-size:1.1rem; cursor:pointer;" title="Delete">×</button>
+                        </div>
+                    `).join('');
+                } else {
+                    pContainer.innerHTML = '<p style="color: #94a3b8; font-size: 0.85rem;">No triggers registered yet. Add your personal triggers and healthy actions above.</p>';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Shame-Free Relapse Reset
+        document.getElementById('btnRelapseReset').addEventListener('click', async () => {
+            const confirmed = confirm(
+                "Shame-Free Recovery Check-in:\n\n" +
+                "Recovery is not linear, and slips are learning moments — not failures.\n\n" +
+                "Would you like to reset the clean counter and begin your fresh streak today with compassion?"
+            );
+            if (!confirmed) return;
+
+            try {
+                const res = await fetch('/api/wellness/recovery/reset', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({})
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(data.message);
+                    loadRecoveryDashboard();
+                }
+            } catch (err) {
+                alert('Server error.');
+            }
+        });
+
+        // Log Craving
+        document.getElementById('btnLogCraving').addEventListener('click', async () => {
+            const intensity = parseInt(document.getElementById('inputCravingIntensity').value);
+            const trigger = document.getElementById('inputCravingTrigger').value;
+            const strategy = document.getElementById('selectCopingStrategy').value;
+
+            try {
+                const res = await fetch('/api/wellness/recovery/cravings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({
+                        craving_intensity: intensity,
+                        trigger_description: trigger,
+                        coping_strategy_used: strategy
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    let msg = data.message;
+                    if (data.clinical_notice) {
+                        msg += '\n\n' + data.clinical_notice;
+                    }
+                    alert(msg);
+                    document.getElementById('inputCravingTrigger').value = '';
+                    loadRecoveryDashboard();
+                }
+            } catch (err) {
+                alert('Server error.');
+            }
+        });
+
+        // Add Coping Plan
+        document.getElementById('btnAddCopingPlan').addEventListener('click', async () => {
+            const trigger = document.getElementById('inputNewTrigger').value.trim();
+            const action = document.getElementById('inputNewCopingAction').value.trim();
+            if (!trigger || !action) {
+                alert('Please enter both a trigger and a coping action.');
+                return;
+            }
+            try {
+                const res = await fetch('/api/wellness/recovery/coping-plan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({ trigger_name: trigger, coping_action: action })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('inputNewTrigger').value = '';
+                    document.getElementById('inputNewCopingAction').value = '';
+                    loadRecoveryDashboard();
+                }
+            } catch (err) {
+                alert('Server error.');
+            }
+        });
+
+        window.deleteCopingPlan = async function(planId) {
+            try {
+                await fetch(`/api/wellness/recovery/coping-plan/${planId}`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-Token': CSRF_TOKEN }
+                });
+                loadRecoveryDashboard();
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        // Configure Habit Modal
+        document.getElementById('btnConfigureHabit').addEventListener('click', () => {
+            document.getElementById('inputCleanStartDate').value = new Date().toISOString().slice(0, 10);
+            document.getElementById('habitModal').style.display = 'flex';
+        });
+        document.getElementById('btnCloseHabitModal').addEventListener('click', () => {
+            document.getElementById('habitModal').style.display = 'none';
+        });
+        document.getElementById('btnSaveHabit').addEventListener('click', async () => {
+            const habit = document.getElementById('inputHabitName').value.trim();
+            const dateVal = document.getElementById('inputCleanStartDate').value;
+            if (!habit) {
+                alert('Please provide a habit name.');
+                return;
+            }
+            try {
+                const res = await fetch('/api/wellness/recovery/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({ target_habit: habit, clean_start_date: dateVal ? new Date(dateVal).toISOString() : null })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('habitModal').style.display = 'none';
+                    loadRecoveryDashboard();
+                }
+            } catch (err) {
+                alert('Error starting recovery habit.');
+            }
+        });
+
+        // =====================================================================
+        // BOX BREATHING WIDGET (4-4-4-4)
+        // =====================================================================
+        const breathCircle = document.getElementById('breathCircle');
+        const breathInst = document.getElementById('breathInstruction');
+
+        document.getElementById('btnStartBreathing').addEventListener('click', () => {
+            if (isBreathingActive) return;
+            isBreathingActive = true;
+            breathStep = 0;
+            runBreathCycle();
+            breathingTimer = setInterval(runBreathCycle, 4000);
+        });
+
+        document.getElementById('btnStopBreathing').addEventListener('click', () => {
+            isBreathingActive = false;
+            clearInterval(breathingTimer);
+            breathCircle.className = 'breath-circle';
+            breathCircle.textContent = 'Ready';
+            breathInst.textContent = 'Great job. Notice the calm in your body.';
+        });
+
+        function runBreathCycle() {
+            if (!isBreathingActive) return;
+            const steps = [
+                { name: 'Inhale', text: 'Inhale gently through nose...', cls: 'inhale' },
+                { name: 'Hold', text: 'Hold your breath softly...', cls: 'hold' },
+                { name: 'Exhale', text: 'Exhale slowly through mouth...', cls: 'exhale' },
+                { name: 'Hold', text: 'Hold empty and relaxed...', cls: 'exhale' }
+            ];
+            const current = steps[breathStep % 4];
+            breathCircle.className = `breath-circle ${current.cls}`;
+            breathCircle.textContent = current.name;
+            breathInst.textContent = current.text;
+            breathStep++;
+        }
+
+        // =====================================================================
+        // DATA EXPORT & DELETION (SPEC 16g)
+        // =====================================================================
+        document.getElementById('btnExportData').addEventListener('click', async () => {
+            try {
+                const res = await fetch('/api/user/export');
+                const data = await res.json();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `HealthMate_Complete_Data_${new Date().toISOString().slice(0, 10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } catch (err) {
+                alert('Error exporting data.');
+            }
+        });
+
+        document.getElementById('btnDeleteAllData').addEventListener('click', async () => {
+            const confirmed = prompt("Type 'DELETE' in uppercase to permanently erase all your health, wellness, and appointment records:");
+            if (confirmed !== 'DELETE') return;
+
+            try {
+                const res = await fetch('/api/user/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': CSRF_TOKEN },
+                    body: JSON.stringify({})
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('All patient data permanently erased from SQLite database.');
+                    window.location.href = '/';
+                }
+            } catch (err) {
+                alert('Error deleting data.');
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderScreenerForm('PHQ-9');
+            loadMoodHistory();
+            loadRecoveryDashboard();
+        });
+    </script>
+</body>
+</html>

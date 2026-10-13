@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="{{ active_lang or current_lang or 'en' }}" dir="{{ current_dir or 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{{ disease.name }} — Medical Guide & Reports | HealthMate AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Nirmala+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .detail-header { background: #ffffff; border-radius: 16px; padding: 2rem; border: 1px solid #e2e8f0; box-shadow: var(--shadow-sm); margin-bottom: 1.5rem; }
+        .lang-toggles { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0 0 0; }
+        .lang-pill { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 20px; padding: 0.35rem 0.85rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; color: #334155; }
+        .lang-pill.active { background: #1e3a8a; color: #ffffff; border-color: #1e3a8a; }
+        
+        .tab-nav { display: flex; gap: 0.5rem; border-bottom: 2px solid #e2e8f0; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .tab-btn { background: none; border: none; padding: 0.75rem 1.25rem; font-size: 0.95rem; font-weight: 700; color: #64748b; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+        .tab-btn.active { color: #1e3a8a; border-bottom-color: #1e3a8a; background: #f8fafc; border-top-left-radius: 8px; border-top-right-radius: 8px; }
+        
+        .tab-pane { display: none; background: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; padding: 1.75rem; box-shadow: var(--shadow-sm); }
+        .tab-pane.active { display: block; }
+        
+        .tests-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .tests-table th, .tests-table td { padding: 0.85rem 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; }
+        .tests-table th { background: #f8fafc; color: #1e293b; font-weight: 700; }
+        .normal-range-pill { display: inline-block; background: #ecfdf5; color: #047857; padding: 0.2rem 0.6rem; border-radius: 6px; font-weight: 700; font-size: 0.85rem; border: 1px solid #a7f3d0; }
+        
+        .med-card { background: #f8fafc; border-left: 4px solid #0d9488; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .med-warning-badge { background: #fef2f2; color: #b91c1c; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 4px; border: 1px solid #fecaca; }
+        
+        .disclaimer-16h-box { background: #fffbeb; border: 2px solid #f59e0b; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; color: #92400e; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <a href="/" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.75rem;">
+                    <div class="logo-icon"><span class="cross-icon">✚</span></div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">HealthMate AI</h1>
+                        <span class="brand-subtitle">ఆరోగ్య సహచరి • Personal Health Copilot</span>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="/diseases" class="btn btn-secondary">← Back to Disease Library</a>
+                <a href="/" class="btn btn-secondary">Dashboard</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Emergency Hotline Banner -->
+    <section class="emergency-strip" aria-label="Emergency Medical Hotlines">
+        <div class="container emergency-flex">
+            <div class="emergency-title">
+                <span class="pulse-icon">🚨</span>
+                <strong>Emergency Helplines:</strong>
+                <span>Call immediately in acute medical crisis</span>
+            </div>
+            <div class="emergency-numbers">
+                <a href="tel:108" class="hotline-pill"><strong>108</strong> Ambulance</a>
+                <a href="tel:112" class="hotline-pill"><strong>112</strong> National Helpline</a>
+                <a href="tel:14416" class="hotline-pill" style="background:#e0f2fe; color:#0369a1;"><strong>14416</strong> Tele-MANAS (Mental Health)</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-wrapper container" style="padding: 2rem 1rem;">
+        
+        <!-- SPEC 16a & 16h Disclaimer for Mental Health & Substance Use -->
+        {% if disease.is_mental_health_or_addiction %}
+        <div class="disclaimer-16h-box">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.4rem;">🛡️</span>
+                <strong style="font-size: 1.05rem;">SPEC 16h Sensitive Health & Mental Wellbeing Disclaimer</strong>
+            </div>
+            <p style="margin: 0 0 1rem 0; font-size: 0.95rem; line-height: 1.6;">
+                {{ disease.disclaimer_16h }}
+            </p>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <a href="tel:14416" class="btn btn-primary btn-sm" style="background: #0369a1; border-color: #0369a1;">
+                    📞 Call 14416 (Tele-MANAS Free 24x7)
+                </a>
+                <a href="tel:112" class="btn btn-secondary btn-sm">
+                    📞 Call 112 (National Emergency)
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Disease Title & Multilingual Banner -->
+        <div class="detail-header">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span style="display: inline-block; background: #e0f2fe; color: #0369a1; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem;">
+                        {{ disease.category }}
+                    </span>
+                    <h1 style="color: #0f172a; margin: 0.25rem 0; font-size: 2.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span>{{ disease.icon }}</span>
+                        <span id="displayDiseaseTitle">
+                            {% if active_lang == 'te' %}
+                                {{ disease.telugu_name }}
+                            {% elif active_lang == 'hi' %}
+                                {{ disease.hindi_name }}
+                            {% elif active_lang == 'ta' %}
+                                {{ disease.tamil_name }}
+                            {% else %}
+                                {{ disease.name }}
+                            {% endif %}
+                        </span>
+                    </h1>
+                    <div style="font-size: 1rem; color: #475569; margin-top: 0.5rem;">
+                        <strong>English:</strong> {{ disease.name }} |
+                        <strong>తెలుగు:</strong> {{ disease.telugu_name }} |
+                        <strong>हिन्दी:</strong> {{ disease.hindi_name }} |
+                        <strong>தமிழ்:</strong> {{ disease.tamil_name }}
+                    </div>
+                </div>
+
+                <!-- Multilingual Translation Toggle Pills -->
+                <div>
+                    <div style="font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 0.35rem;">TRANSLATE THIS PAGE:</div>
+                    <div class="lang-toggles">
+                        <a href="?lang=en" class="lang-pill {% if not active_lang or active_lang == 'en' %}active{% endif %}">English</a>
+                        <a href="?lang=te" class="lang-pill {% if active_lang == 'te' %}active{% endif %}">తెలుగు (Telugu)</a>
+                        <a href="?lang=hi" class="lang-pill {% if active_lang == 'hi' %}active{% endif %}">हिन्दी (Hindi)</a>
+                        <a href="?lang=ta" class="lang-pill {% if active_lang == 'ta' %}active{% endif %}">தமிழ் (Tamil)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabbed Navigation (Includes the required Reports Tab) -->
+        <div class="tab-nav">
+            <button type="button" class="tab-btn active" data-tab="tab-overview">📋 Overview & Causes</button>
+            <button type="button" class="tab-btn" data-tab="tab-reports" id="tabBtnReports">📑 Reports & Tests (Normal Ranges)</button>
+            <button type="button" class="tab-btn" data-tab="tab-treatment">💊 Treatment & Generic Medicines</button>
+            <button type="button" class="tab-btn" data-tab="tab-prevention">🥗 Diet, Lifestyle & Prevention</button>
+        </div>
+
+        <!-- 1. Overview Tab -->
+        <div class="tab-pane active" id="tab-overview">
+            <h3 style="color: #1e3a8a; margin-top: 0;">Medical Overview</h3>
+            <p style="font-size: 1.05rem; line-height: 1.6; color: #334155; margin-bottom: 1.5rem;">
+                {{ disease.overview }}
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                <!-- Symptoms -->
+                <div style="background: #f8fafc; padding: 1.25rem; border-radius: 10px; border-left: 4px solid #0284c7;">
+                    <h4 style="margin: 0 0 0.75rem 0; color: #0f172a; font-size: 1.05rem;">🩺 Characteristic Symptoms</h4>
+                    <ul style="margin: 0; padding-left: 1.25rem; color: #475569; font-size: 0.95rem; line-height: 1.6;">
+                        {% for s in disease.symptoms %}
+                        <li>{{ s }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Causes -->
+                <div style="background: #f8fafc; padding: 1.25rem; border-radius: 10px; border-left: 4px solid #6366f1;">
+                    <h4 style="margin: 0 0 0.75rem 0; color: #0f172a; font-size: 1.05rem;">🔬 Common Causes & Risk Factors</h4>
+                    <ul style="margin: 0; padding-left: 1.25rem; color: #475569; font-size: 0.95rem; line-height: 1.6;">
+                        {% for c in disease.causes %}
+                        <li>{{ c }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Red Flag Emergency Signs -->
+            <div style="background: #fef2f2; border: 1px solid #fecaca; border-left: 5px solid #dc2626; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.5rem;">
+                <h4 style="margin: 0 0 0.5rem 0; color: #991b1b; display: flex; align-items: center; gap: 0.5rem;">
+                    <span>🚨</span> When to See a Doctor Urgently (Red Flags)
+                </h4>
+                <ul style="margin: 0; padding-left: 1.25rem; color: #7f1d1d; font-size: 0.95rem; line-height: 1.6;">
+                    {% for sign in disease.emergency_signs %}
+                    <li><strong>{{ sign }}</strong></li>
+                    {% endfor %}
+                </ul>
+                <div style="margin-top: 1rem;">
+                    <a href="tel:108" class="btn btn-primary btn-sm" style="background:#dc2626; border-color:#dc2626;">
+                        🚑 Dial 108 Free Emergency Ambulance
+                    </a>
+                </div>
+            </div>
+
+            <!-- Specialists -->
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1rem 1.25rem;">
+                <strong style="color: #166534;">Recommended Specialists to Consult:</strong>
+                <span style="color: #15803d; margin-left: 0.5rem; font-weight: 600;">
+                    {{ disease.specialists|join(', ') }}
+                </span>
+            </div>
+        </div>
+
+        <!-- 2. Reports & Diagnostic Tests Tab (SPEC 5 Requirement) -->
+        <div class="tab-pane" id="tab-reports">
+            <h3 style="color: #1e3a8a; margin-top: 0;">📑 Diagnostic Reports & Lab Tests Explained</h3>
+            <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 1.25rem;">
+                Key medical tests used by licensed doctors to diagnose and monitor <strong>{{ disease.name }}</strong>, along with their standard healthy normal ranges and clinical significance.
+            </p>
+
+            <table class="tests-table">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Test / Parameter</th>
+                        <th style="width: 30%;">Normal Range Explained</th>
+                        <th style="width: 45%;">Why It Is Ordered & Clinical Significance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in disease.reports_tests %}
+                    <tr>
+                        <td>
+                            <strong style="color: #0f172a; font-size: 0.95rem;">{{ report.test }}</strong>
+                        </td>
+                        <td>
+                            <span class="normal-range-pill">{{ report.normal_range }}</span>
+                        </td>
+                        <td style="color: #334155; line-height: 1.5;">
+                            {{ report.explanation }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div style="margin-top: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; font-size: 0.85rem; color: #64748b;">
+                ℹ️ <em>Lab test reference ranges may vary slightly between diagnostic laboratories. Always review your official printed report with your treating physician.</em>
+            </div>
+        </div>
+
+        <!-- 3. Treatment & Generic Medicines Tab -->
+        <div class="tab-pane" id="tab-treatment">
+            <h3 style="color: #1e3a8a; margin-top: 0;">💊 Standard Treatment & Generic Medicines</h3>
+            <p style="font-size: 1rem; line-height: 1.6; color: #334155; margin-bottom: 1.5rem;">
+                {{ disease.treatment }}
+            </p>
+
+            <h4 style="color: #0f172a; margin-bottom: 0.75rem;">Commonly Prescribed Generic Medicines</h4>
+            <div style="margin-bottom: 1.5rem;">
+                {% for med in disease.generic_medicines %}
+                <div class="med-card">
+                    <div>
+                        <strong style="color: #0f172a; font-size: 1rem;">{{ med.name }}</strong>
+                        <div style="margin-top: 0.25rem;">
+                            <span class="med-warning-badge">⚠️ {{ med.warning }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary btn-sm btn-quick-add-tracker" data-med="{{ med.name }}">
+                            + Add to Medicine Tracker
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.85rem 1rem; font-size: 0.85rem; color: #991b1b;">
+                ⚠️ <strong>Mandatory Safety Guardrail:</strong> HealthMate AI provides generic educational medicine names for health literacy only. NEVER start, stop, or adjust prescription dosages without an official prescription from a licensed medical practitioner.
+            </div>
+        </div>
+
+        <!-- 4. Diet, Lifestyle & Prevention Tab -->
+        <div class="tab-pane" id="tab-prevention">
+            <h3 style="color: #1e3a8a; margin-top: 0;">🥗 Daily Diet & Lifestyle Recommendations</h3>
+            <ul style="margin: 0 0 1.5rem 1.25rem; padding: 0; color: #334155; font-size: 0.95rem; line-height: 1.6;">
+                {% for d in disease.diet_lifestyle %}
+                <li>{{ d }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3 style="color: #1e3a8a; margin-top: 1.5rem;">🛡️ Prevention & Long-term Wellness Steps</h3>
+            <ul style="margin: 0 0 1.5rem 1.25rem; padding: 0; color: #334155; font-size: 0.95rem; line-height: 1.6;">
+                {% for p in disease.prevention %}
+                <li>{{ p }}</li>
+                {% endfor %}
+            </ul>
+
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <a href="{{ disease.trusted_source }}" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; color: #2563eb; font-weight: 600; text-decoration: none;">
+                    🔗 Trusted Source: {{ disease.trusted_source_label }} ↗
+                </a>
+                <span style="font-size: 0.8rem; color: #94a3b8;">HealthMate AI Verified Medical Engine</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Tab switching
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-tab');
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanes.forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                const targetPane = document.getElementById(targetId);
+                if (targetPane) targetPane.classList.add('active');
+            });
+        });
+
+        // Add to tracker functionality
+        document.querySelectorAll('.btn-quick-add-tracker').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const medName = btn.getAttribute('data-med');
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                try {
+                    const res = await fetch('/api/medicines', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': csrfToken
+                        },
+                        body: JSON.stringify({
+                            medicine_name: medName,
+                            prescribed_dosage: 'As prescribed by doctor',
+                            timing_slot: 'Morning',
+                            frequency: 'Daily',
+                            doctor_prescribed: 'Self-Added from Disease Library (Consult doctor)',
+                            instructions: 'Consult your doctor before use.'
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        btn.textContent = '✓ Added to Tracker!';
+                        btn.style.background = '#dcfce7';
+                        btn.style.color = '#15803d';
+                        btn.disabled = true;
+                    } else {
+                        alert(data.error || 'Failed to add medicine');
+                    }
+                } catch(e) {
+                    alert('Error adding medicine: ' + e);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
