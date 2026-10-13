@@ -3,8 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# C extensions
+# C extensions & executables
 *.so
+*.exe
+cloudflared.exe
 
 # Distribution / packaging
 .Python
@@ -35,10 +37,16 @@ ENV/
 .env
 .env.local
 .env.*.local
+*.pem
+*.key
+*.token
 
 # Database files
+*.db
+*.sqlite
 *.sqlite3
 *.db-journal
+*.sqlite-journal
 
 # Uploaded files
 uploads/*
