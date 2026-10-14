@@ -6074,6 +6074,13 @@ def create_app(test_config=None):
     except Exception:
         pass
 
+    # Initialize SQLite database and seed sample data on fresh deployment
+    try:
+        init_db(app.config.get("DATABASE"))
+        seed_sample_data(db_path=app.config.get("DATABASE"))
+    except Exception as e:
+        print(f"[Warning] Database initialization error: {e}")
+
     # Run Database Migrations
     try:
         database.run_migrations(app)
@@ -6111,7 +6118,9 @@ if __name__ == "__main__":
     print(" SQLite Database initialized at:", DATABASE_PATH)
     status = check_ai_status()
     print(f" AI Status: {status['badge_text']} ({status['provider']})")
-    print(" Server running locally at: http://127.0.0.1:5000")
-    print(" Also accessible at:        http://localhost:5000")
+    port = int(os.environ.get("PORT", 5000))
+    print(f" Server running locally at: http://127.0.0.1:{port}")
+    print(f" Also accessible at:        http://localhost:{port}")
     print("==========================================================")
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    debug_mode = os.environ.get("FLASK_DEBUG", "1").lower() in ("1", "true")
+    app.run(host="0.0.0.0", port=port, debug=debug_mode)
