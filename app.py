@@ -55,9 +55,20 @@ except ImportError:
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
-DATABASE_PATH = BASE_DIR / "healthmate.db"
-UPLOAD_FOLDER = BASE_DIR / "uploads"
-UPLOAD_FOLDER.mkdir(exist_ok=True)
+
+# On cloud platforms (Render, Railway, Heroku), the app directory may be read-only.
+# Use DATABASE_URL env var if set, else use /tmp for ephemeral SQLite, else local file.
+_db_env = os.environ.get("DATABASE_PATH")
+if _db_env:
+    DATABASE_PATH = Path(_db_env)
+elif not os.access(str(BASE_DIR), os.W_OK):
+    # Filesystem is read-only (cloud container) — use writable /tmp
+    DATABASE_PATH = Path("/tmp") / "healthmate.db"
+else:
+    DATABASE_PATH = BASE_DIR / "healthmate.db"
+
+UPLOAD_FOLDER = Path(os.environ.get("UPLOAD_FOLDER", str(BASE_DIR / "uploads")))
+UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
 ALLOWED_EXTENSIONS = {"txt", "pdf", "png", "jpg", "jpeg"}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB limit
